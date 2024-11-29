@@ -6,6 +6,7 @@ export const naiveThemeOverrides: GlobalThemeOverrides = {
     primaryColor: theme.colors.sky[500],
     primaryColorHover: theme.colors.sky[400],
     primaryColorPressed: theme.colors.sky[300],
+
   },
   Slider: {
     fillColor: theme.colors.sky[500],

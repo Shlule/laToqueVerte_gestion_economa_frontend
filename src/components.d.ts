@@ -7,19 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    CreationRecipeModal: typeof import('./components/recipe/creationRecipeModal.vue')['default']
     IngredientBlock: typeof import('./components/ingredient/ingredientBlock.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
-    NCard: typeof import('naive-ui')['NCard']
-    NConfigProvider: typeof import('naive-ui')['NConfigProvider']
-    NDialog: typeof import('naive-ui')['NDialog']
-    NInput: typeof import('naive-ui')['NInput']
-    NModal: typeof import('naive-ui')['NModal']
     README: typeof import('./components/README.md')['default']
     RecipeBlock: typeof import('./components/recipe/recipeBlock.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Test: typeof import('./components/test.vue')['default']
+    StockBlock: typeof import('./components/stock/stockBlock.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']

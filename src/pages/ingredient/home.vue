@@ -1,8 +1,7 @@
 <script setup lang="ts">
-// import api from '~/composables/apiService'
 import { getAllIngredient } from '~/composables/apiService'
 
-// const { data } = useAxios('/ingredients', { method: 'GET' }, api)
+// const { data } = useAxios('/api/ingredients', { method: 'GET' }, api)
 const { data: ingredients, error } = getAllIngredient()
 </script>
 
@@ -13,8 +12,9 @@ const { data: ingredients, error } = getAllIngredient()
         Une erreur est survenue {{ error }}
       </p>
     </div>
-    <IngredientBlock v-for="ingredient in ingredients" :key="ingredient.id" :ingredient-data="ingredient" />
-    <!-- {{ ingredients }} -->
+    <div flex gap-12>
+      <IngredientBlock v-for="ingredient in ingredients" :key="ingredient.id" :ingredient-data="ingredient" />
+    </div>
   </div>
 </template>
 

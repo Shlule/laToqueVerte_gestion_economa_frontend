@@ -13,7 +13,8 @@ export type Unit = typeof units[keyof typeof units]
 export interface Ingredient {
   id: string
   name: string
-  pricePerKg: number
+  pricePerUnit: number
+  fournisseur: string
   unit: Unit
   RecipeIngredients?: RecipeIngredient[]
   stock?: Stock

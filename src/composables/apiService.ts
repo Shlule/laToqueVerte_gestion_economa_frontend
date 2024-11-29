@@ -3,7 +3,7 @@ import { useAxios } from '@vueuse/integrations/useAxios'
 import type { Ingredient, Recipe } from '~/types'
 
 const economa_backend_api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },

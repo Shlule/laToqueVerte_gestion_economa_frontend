@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAxios } from '@vueuse/integrations/useAxios'
-import type { Ingredient, Recipe } from '~/types'
+import type { Ingredient, Recipe, Stock } from '~/types'
 
 const economa_backend_api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -22,4 +22,8 @@ export function createRecipe() {
   return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)
 }
 
-// export default api
+export function getAllStocks(params?: string) {
+  return useAxios<Stock[]>('/stocks/byIngredient/', { method: 'GET', params }, economa_backend_api)
+}
+
+export default economa_backend_api

@@ -39,6 +39,7 @@ declare global {
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const getAllIngredient: typeof import('./composables/apiService')['getAllIngredient']
   const getAllRecipe: typeof import('./composables/apiService')['getAllRecipe']
+  const getAllStocks: typeof import('./composables/apiService')['getAllStocks']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getIngredients: typeof import('./composables/apiService')['getIngredients']
@@ -318,6 +319,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly apiService: UnwrapRef<typeof import('./composables/apiService')['default']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -347,6 +349,7 @@ declare module 'vue' {
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly getAllIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllIngredient']>
     readonly getAllRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipe']>
+    readonly getAllStocks: UnwrapRef<typeof import('./composables/apiService')['getAllStocks']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>

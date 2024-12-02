@@ -9,7 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     IngredientBlock: typeof import('./components/ingredient/ingredientBlock.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
-    NCollapseItem: typeof import('naive-ui')['NCollapseItem']
+    NScrollbar: typeof import('naive-ui')['NScrollbar']
     README: typeof import('./components/README.md')['default']
     RecipeBlock: typeof import('./components/recipe/recipeBlock.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

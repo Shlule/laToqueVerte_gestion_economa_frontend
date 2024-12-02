@@ -5,12 +5,12 @@ import type { Ingredient } from '~/types'
 const props = defineProps<{ ingredientData: Ingredient }>()
 const ingredientData = useVModel(props, 'ingredientData')
 const [showCollapse, toggleShowCollapse] = useToggle()
-const { data } = getAllStocks(ingredientData.value.stock?.id)
+const { data: stocksData } = getAllStocks(ingredientData.value.id)
 </script>
 
 <template>
   <div w-full flex flex-col gap-2>
-    <NCard :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl rounded-lg shadow-md active:bg-stone-2 hover:bg-stone-1 hover:shadow-2xl>
+    <NCard :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl dark:ncard-dark light:ncard-light>
       <div h-full w-full flex items-center justify-between @click="toggleShowCollapse()">
         <div flex gap-2>
           <div text-3xl>
@@ -18,24 +18,28 @@ const { data } = getAllStocks(ingredientData.value.stock?.id)
           </div>
           <div self-end>
             de "{{ ingredientData.fournisseur }}"
-            {{ data }}
           </div>
         </div>
         <div flex gap-2>
           <div text-3xl>
-            {{ ingredientData.pricePerUnit }}
+            {{ ingredientData.pricePerUnit }}€
           </div>
           <p text-lg>
-            per Unit
+            per {{ ingredientData.unitType }}
           </p>
         </div>
-        <NButton circle type="error" text-red>
+        <NButton circle type="error" text-red @click.stop>
           <div i-fluent:delete-24-regular />
         </NButton>
       </div>
     </NCard>
     <NCollapseTransition :show="showCollapse">
-      <StockBlock />
+      <div m-l-8 text-align-start text-8>
+        Stocks de {{ ingredientData.name }}
+      </div>
+      <NScrollbar max-h-17rem>
+        <StockBlock v-for="stock in stocksData" :key="stock.id" :stock-data="stock" />
+      </NScrollbar>
     </NCollapseTransition>
   </div>
 </template>

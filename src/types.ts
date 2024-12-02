@@ -15,9 +15,9 @@ export interface Ingredient {
   name: string
   pricePerUnit: number
   fournisseur: string
-  unit: Unit
-  RecipeIngredients?: RecipeIngredient[]
-  stock?: Stock
+  unitType: Unit
+  RecipeIngredients: RecipeIngredient[]
+  stock: Stock
 
 }
 

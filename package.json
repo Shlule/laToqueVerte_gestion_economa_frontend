@@ -26,6 +26,7 @@
     "axios": "^1.7.7",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "date-fns": "^4.1.0",
     "nprogress": "^0.2.0",
     "pinia": "^2.2.2",
     "vue": "^3.4.38",

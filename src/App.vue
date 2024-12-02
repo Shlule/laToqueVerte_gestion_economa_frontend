@@ -11,7 +11,7 @@ const currentTheme = computed(() => {
 })
 
 useHead({
-  title: 'Vitesse',
+  title: 'laToqueVerteGestion',
   meta: [
     {
       name: 'description',

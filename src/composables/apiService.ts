@@ -10,6 +10,10 @@ const economa_backend_api = axios.create({
   withCredentials: true,
 })
 
+// export function get(url: string, config = {}, snackBarText = ''): Promise<AxiosResponse>{
+
+// }
+
 export function getAllIngredient() {
   return useAxios<Ingredient[]>('/ingredients', { method: 'GET' }, economa_backend_api)
 }
@@ -22,8 +26,8 @@ export function createRecipe() {
   return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)
 }
 
-export function getAllStocks(params?: string) {
-  return useAxios<Stock[]>('/stocks/byIngredient/', { method: 'GET', params }, economa_backend_api)
+export function getAllStocks(ingredientId: string) {
+  return useAxios<Stock[]>(`/stocks/byIngredient/${ingredientId}`, { method: 'GET' }, economa_backend_api)
 }
 
 export default economa_backend_api

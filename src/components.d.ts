@@ -9,8 +9,12 @@ declare module 'vue' {
   export interface GlobalComponents {
     CreateStock: typeof import('./components/stock/createStock.vue')['default']
     IngredientBlock: typeof import('./components/ingredient/ingredientBlock.vue')['default']
+    IngredientCreate: typeof import('./components/ingredient/ingredientCreate.vue')['default']
+    IngredientHeader: typeof import('./components/ingredient/ingredientHeader.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
+    NDropdown: typeof import('naive-ui')['NDropdown']
+    NModal: typeof import('naive-ui')['NModal']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     README: typeof import('./components/README.md')['default']
     RecipeBlock: typeof import('./components/recipe/recipeBlock.vue')['default']

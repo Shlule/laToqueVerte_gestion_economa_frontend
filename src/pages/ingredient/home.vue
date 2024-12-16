@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { getAllIngredient } from '~/composables/apiService'
-
-// const { data } = useAxios('/api/ingredients', { method: 'GET' }, api)
-const { data: ingredients, error } = getAllIngredient()
+const ingredientStore = useIngredientStore()
 </script>
 
 <template>
   <div>
     <div id="error-message">
-      <p v-if="error">
-        Une erreur est survenue {{ error }}
+      <p v-if="ingredientStore.ingredientError">
+        Une erreur est survenue {{ ingredientStore.ingredientError }}
       </p>
     </div>
-    <div flex gap-12>
-      <IngredientBlock v-for="ingredient in ingredients" :key="ingredient.id" :ingredient-data="ingredient" />
+    <IngredientHeader />
+    <div grid gap-2 md:grid-cols-2 xl:grid-cols-3>
+      <IngredientBlock v-for="ingredient in ingredientStore.sortedIngredientList" :key="ingredient.id" :ingredient-data="ingredient" />
     </div>
   </div>
 </template>

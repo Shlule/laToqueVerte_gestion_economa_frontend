@@ -10,6 +10,8 @@ export const units = {
 
 export type Unit = typeof units[keyof typeof units]
 
+export type IngredientCreation = Omit<Ingredient, 'RecipeIngredients' | 'stock' | 'id'>
+
 export interface Ingredient {
   id: string
   name: string

@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { NInput, NInputNumber, NSelect } from 'naive-ui'
 
+const props = defineProps<{ showCreateIngredient: boolean }>()
+const showCreateIngredient = useVModel(props, 'showCreateIngredient')
+
+function toggleShowCreateIngredient() {
+  showCreateIngredient.value = !showCreateIngredient.value
+}
+
 const createIngredientStore = useCreateIngredientStore()
 
 const unitOptions = [{
@@ -36,10 +43,10 @@ const unitOptions = [{
       <NInput v-model:value="createIngredientStore.newIngredientFournisseur" type="text" placeholder="Nom du Fournisseur" text-center text-4 />
     </div>
     <div id="buttons" m-t-4 flex justify-end gap-2>
-      <NButton type="success" text-green>
+      <NButton type="success" text-green @click="createIngredientStore.createIngredient">
         Confirm
       </NButton>
-      <NButton>
+      <NButton @click="toggleShowCreateIngredient()">
         Cancel
       </NButton>
     </div>

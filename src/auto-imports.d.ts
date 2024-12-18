@@ -20,6 +20,8 @@ declare global {
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
+  const createIngredient: typeof import('./composables/apiService')['createIngredient']
+  const createIngredientBackend: typeof import('./composables/apiService')['createIngredientBackend']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createRecipe: typeof import('./composables/apiService')['createRecipe']
@@ -335,6 +337,7 @@ declare module 'vue' {
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
+    readonly createIngredientBackend: UnwrapRef<typeof import('./composables/apiService')['createIngredientBackend']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createRecipe: UnwrapRef<typeof import('./composables/apiService')['createRecipe']>

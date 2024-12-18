@@ -88,6 +88,7 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     sortSelected,
     ingredientError,
     isAscendantOrder,
+    allIngredient,
   }
 })
 

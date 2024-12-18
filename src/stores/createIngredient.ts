@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import type { Unit } from '~/types'
+import { createIngredientBackend } from '~/composables/apiService'
+import type { IngredientCreation, Unit } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
 
@@ -9,12 +10,23 @@ export const useCreateIngredientStore = defineStore('createIngredient', () => {
   const newIngredientPrice = ref<number>(0)
   const newIngredientFournisseur = ref('')
 
-  const newIngredient = computed(() => ({
+  const { ingredientList } = useIngredientStore()
+
+  const newIngredient = computed<IngredientCreation>(() => ({
     name: newIngredientName.value,
-    unit: newIngredientUnit.value,
-    price: newIngredientPrice.value,
+    unitType: newIngredientUnit.value,
+    pricePerUnit: newIngredientPrice.value,
     fournisseur: newIngredientFournisseur.value,
   }))
+
+  async function createIngredient() {
+    const ingredientData = await createIngredientBackend(newIngredient.value)
+
+    if (!ingredientList || !ingredientData) {
+      return
+    }
+    ingredientList.push(ingredientData.data)
+  }
 
   function resetForm() {
     newIngredientName.value = ''
@@ -30,6 +42,7 @@ export const useCreateIngredientStore = defineStore('createIngredient', () => {
     newIngredientPrice,
     newIngredientUnit,
     resetForm,
+    createIngredient,
   }
 })
 

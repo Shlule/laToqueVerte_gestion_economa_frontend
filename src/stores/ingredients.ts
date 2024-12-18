@@ -10,6 +10,8 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
 
   const { data: allIngredient, error: ingredientError } = getAllIngredient()
 
+  const searchBarInput = ref('')
+
   const isAscendantOrder = ref<boolean>(true)
 
   // does this to keep reactivity
@@ -69,18 +71,22 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     })
   }
 
-  const sortedIngredientList = computed(() => {
+  const ingredientList = computed(() => {
     if (!allIngredient.value) {
-      return []
+      return
     }
-    return sortIngredientsBy(allIngredient.value, sortKey.value, isAscendantOrder.value)
+    const filteredIngredientList = allIngredient.value.filter((ingredient: Ingredient) => {
+      return ingredient.name.toLocaleLowerCase().includes(searchBarInput.value.toLowerCase())
+    })
+    return sortIngredientsBy(filteredIngredientList, sortKey.value, isAscendantOrder.value)
   })
 
   return {
+    searchBarInput,
+    ingredientList,
     sortOptions,
     sortSelected,
     ingredientError,
-    sortedIngredientList,
     isAscendantOrder,
   }
 })

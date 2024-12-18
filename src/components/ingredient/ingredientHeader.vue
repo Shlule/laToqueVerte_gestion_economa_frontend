@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { NInput } from 'naive-ui'
 import { useIngredientStore } from '~/stores/ingredients'
 
 const ingredientStore = useIngredientStore()
@@ -23,11 +24,16 @@ const sortOrder = computed(() => {
 </script>
 
 <template>
-  <div id="ingredient-header-container" flex items-center justify-between>
-    <div m-l-10 flex text-16>
-      title
+  <div id="ingredient-header-container" flex items-center justify-between gap-4>
+    <div m-l-10 flex shrink-0 text-16>
+      Ingredient
     </div>
-    <div id="button-menu" m-r-12 flex gap-6>
+    <NInput v-model:value="ingredientStore.searchBarInput" placeholder="search Ingredient" type="text" round flex>
+      <template #prefix>
+        <div i-fluent:search-20-filled text-4 />
+      </template>
+    </NInput>
+    <div id="button-menu" m-r-12 flex gap-4>
       <div>
         {{ sortOrder }}
       </div>

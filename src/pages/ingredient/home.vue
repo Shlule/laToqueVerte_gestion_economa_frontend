@@ -11,7 +11,7 @@ const ingredientStore = useIngredientStore()
     </div>
     <IngredientHeader />
     <div grid gap-2 md:grid-cols-2 xl:grid-cols-3>
-      <IngredientBlock v-for="ingredient in ingredientStore.sortedIngredientList" :key="ingredient.id" :ingredient-data="ingredient" />
+      <IngredientBlock v-for="ingredient in ingredientStore.ingredientList" :key="ingredient.id" :ingredient-data="ingredient" />
     </div>
   </div>
 </template>

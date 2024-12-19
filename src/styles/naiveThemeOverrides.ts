@@ -14,14 +14,4 @@ export const naiveThemeOverrides: GlobalThemeOverrides = {
     fillColor: theme.colors.sky[500],
     fillColorHover: theme.colors.sky[400],
   },
-
-}
-
-export const lightTheme: GlobalThemeOverrides = {
-  common: {
-    primaryColor: '#3498db',
-    primaryColorHover: '#2980b9',
-    primaryColorPressed: '#1abc9c',
-    baseColor: '#ecf0f1',
-  },
 }

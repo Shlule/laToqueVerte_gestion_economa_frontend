@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NConfigProvider, darkTheme } from 'naive-ui'
+import { NConfigProvider, NNotificationProvider, darkTheme } from 'naive-ui'
 import { naiveThemeOverrides } from './styles/naiveThemeOverrides'
 // https://github.com/vueuse/head
 // you can use this to manipulate the document head in any components,
@@ -33,7 +33,9 @@ useHead({
 </script>
 
 <template>
-  <NConfigProvider :theme-overrides="naiveThemeOverrides" :theme="currentTheme" h-100dvh>
-    <RouterView />
-  </NConfigProvider>
+  <NNotificationProvider>
+    <NConfigProvider :theme-overrides="naiveThemeOverrides" :theme="currentTheme" h-100dvh>
+      <RouterView />
+    </NConfigProvider>
+  </NNotificationProvider>
 </template>

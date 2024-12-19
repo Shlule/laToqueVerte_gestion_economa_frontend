@@ -6,6 +6,8 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const CreateIngredient: typeof import('./composables/apiService')['CreateIngredient']
+  const CreateIngredientBackend: typeof import('./composables/apiService')['CreateIngredientBackend']
   const EffectScope: typeof import('vue')['EffectScope']
   const apiService: typeof import('./composables/apiService')['default']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
@@ -337,7 +339,7 @@ declare module 'vue' {
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
-    readonly createIngredientBackend: UnwrapRef<typeof import('./composables/apiService')['createIngredientBackend']>
+    readonly createIngredient: UnwrapRef<typeof import('./composables/apiService')['createIngredient']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createRecipe: UnwrapRef<typeof import('./composables/apiService')['createRecipe']>

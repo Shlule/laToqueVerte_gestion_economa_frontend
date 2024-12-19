@@ -16,6 +16,7 @@ declare module 'vue' {
     NDropdown: typeof import('naive-ui')['NDropdown']
     NIcon: typeof import('naive-ui')['NIcon']
     NModal: typeof import('naive-ui')['NModal']
+    NNotificationProvider: typeof import('naive-ui')['NNotificationProvider']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     README: typeof import('./components/README.md')['default']
     RecipeBlock: typeof import('./components/recipe/recipeBlock.vue')['default']

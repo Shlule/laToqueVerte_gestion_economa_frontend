@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NInput, NInputNumber, NSelect } from 'naive-ui'
+import { NInput, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
 const props = defineProps<{ showCreateIngredient: boolean }>()
 const showCreateIngredient = useVModel(props, 'showCreateIngredient')
@@ -9,6 +9,18 @@ function toggleShowCreateIngredient() {
 }
 
 const createIngredientStore = useCreateIngredientStore()
+const notification = useNotification()
+
+function createIngredient() {
+  createIngredientStore.addNewIngredient()
+  toggleShowCreateIngredient()
+  notification.create({
+    title: 'Reussite',
+    content: ' la creation de l\'ingredient est un succes',
+    type: 'success',
+    duration: 2500,
+  })
+}
 
 const unitOptions = [{
   label: 'kg',
@@ -43,7 +55,7 @@ const unitOptions = [{
       <NInput v-model:value="createIngredientStore.newIngredientFournisseur" type="text" placeholder="Nom du Fournisseur" text-center text-4 />
     </div>
     <div id="buttons" m-t-4 flex justify-end gap-2>
-      <NButton type="success" text-green @click="createIngredientStore.createIngredient">
+      <NButton type="success" text-green @click="createIngredient">
         Confirm
       </NButton>
       <NButton @click="toggleShowCreateIngredient()">

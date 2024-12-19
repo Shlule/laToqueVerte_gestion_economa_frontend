@@ -12,7 +12,7 @@ const economa_backend_api = axios.create({
 
 // here useAxios does not provide response correctly
 // impossible to access value with useAxios
-export async function createIngredientBackend(newIngredient: IngredientCreation) {
+export async function createIngredient(newIngredient: IngredientCreation) {
   try {
     const response = await economa_backend_api.post<Ingredient>('/ingredients', newIngredient)
     return response

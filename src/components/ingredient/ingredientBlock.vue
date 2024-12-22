@@ -6,7 +6,7 @@ import type { Ingredient } from '~/types'
 const props = defineProps<{ ingredientData: Ingredient }>()
 const ingredientData = useVModel(props, 'ingredientData')
 const [showCollapse, toggleShowCollapse] = useToggle()
-const [showCreateStock, toggleShowCreateStock] = useToggle()
+const [isCreateStocks, toggleShowCreateStock] = useToggle()
 const { data: stocksData } = getAllStocks(ingredientData.value.id)
 const isNoStock = computed(() => {
   if (stocksData.value?.length === 0) {
@@ -44,8 +44,8 @@ function deleteIngredient() {
           </p>
         </div>
         <div id="button-menu" flex gap-4>
-          <NButton circle type="success" text-green @click.stop @click="toggleShowCreateStock()">
-            <div i-fluent:add-20-filled />
+          <NButton circle type="success" text-green @click.stop>
+            <div i-fluent:edit-20-filled />
           </NButton>
           <NButton circle type="error" text-red @click.stop @click="deleteIngredient()">
             <div i-fluent:delete-24-regular />
@@ -53,22 +53,25 @@ function deleteIngredient() {
         </div>
       </div>
     </NCard>
-    <NCollapseTransition v-if="isNoStock" :show="showCollapse">
-      <div text-8>
-        vous n'avez pas de stock
-      </div>
-    </NCollapseTransition>
-    <NCollapseTransition v-else id="stockBlock-container" :show="showCollapse">
-      <div id="stockBlock-header" flex items-center justify-between>
-        <div m-l-8 text-align-start text-8>
+    <NCollapseTransition id="stockBlock-container" :show="showCollapse" flex flex-col>
+      <div id="stockBlock-header" w-full flex flex-col items-center gap-2>
+        <div v-if="isNoStock" text-6>
+          Vous n'avez pas de stocks de {{ ingredientData.name }}
+        </div>
+        <div v-else self-baseline text-8>
           Stocks de {{ ingredientData.name }}
         </div>
+        <NButton round @click="toggleShowCreateStock()">
+          Add Stock
+        </NButton>
       </div>
       <NScrollbar max-h-17rem>
         <StockBlock v-for="stock in stocksData" :key="stock.id" :stock-data="stock" />
       </NScrollbar>
     </NCollapseTransition>
-    <CreateStock :show-create-stock="showCreateStock" />
+    <NModal v-model:show="isCreateStocks">
+      <CreateStock v-model:show-create-stock="isCreateStocks" />
+    </NModal>
   </div>
 </template>
 

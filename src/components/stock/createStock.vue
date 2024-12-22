@@ -1,31 +1,67 @@
 <script setup lang="ts">
-import { NModal } from 'naive-ui'
+import { NInput, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
 const props = defineProps<{ showCreateStock: boolean }>()
-const show = useVModel(props, 'showCreateStock')
+const showCreateIngredient = useVModel(props, 'showCreateStock')
+
+function toggleShowCreateStock() {
+  showCreateIngredient.value = !showCreateIngredient.value
+}
+
+const createIngredientStore = useCreateIngredientStore()
+const notification = useNotification()
+
+function createStock() {
+  toggleShowCreateStock()
+  notification.create({
+    title: 'Reussite',
+    content: ' la creation du Stock est un succes',
+    type: 'success',
+    duration: 2500,
+  })
+}
+
+const unitOptions = [{
+  label: 'kg',
+  value: 'kg',
+}, {
+  label: 'g',
+  value: 'g',
+}, {
+  label: 'unit',
+  value: 'unit',
+}]
 </script>
 
 <template>
-  <div>
-    <NModal v-model:show="show">
-      <n-card
-        style="width: 600px"
-        title="Modal"
-        :bordered="false"
-        size="huge"
-        role="dialog"
-        aria-modal="true"
-      >
-        <template #header-extra>
-          Oops!
-        </template>
-        Content
-        <template #footer>
-          Footer
-        </template>
-      </n-card>
-    </NModal>
-  </div>
+  <NCard role="form-dialog" title="Create New Stock" w-36rem flex>
+    <div id="forms-input" flex flex-col gap-2>
+      <NInput v-model:value="createIngredientStore.newIngredientName" type="text" placeholder="Nom de l'Ingredient" text-center text-6 />
+      <div flex gap-2>
+        <div class="flex-basis-2/3" flex items-center gap-2>
+          <p flex-shrink-0>
+            prix par unite
+          </p>
+          <NInputNumber v-model:value="createIngredientStore.newIngredientPrice" />
+        </div>
+        <div flex items-center gap-2 class="flex flex-basis-1/3">
+          <p flex shrink-0>
+            unite
+          </p>
+          <NSelect v-model:value="createIngredientStore.newIngredientUnit" :options="unitOptions" />
+        </div>
+      </div>
+      <NInput v-model:value="createIngredientStore.newIngredientFournisseur" type="text" placeholder="Nom du Fournisseur" text-center text-4 />
+    </div>
+    <div id="buttons" m-t-4 flex justify-end gap-2>
+      <NButton type="success" text-green @click="createStock">
+        Confirm
+      </NButton>
+      <NButton @click="toggleShowCreateStock()">
+        Cancel
+      </NButton>
+    </div>
+  </NCard>
 </template>
 
 <style scoped>

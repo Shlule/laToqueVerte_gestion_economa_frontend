@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { NInput, NInputNumber, NSelect, useNotification } from 'naive-ui'
+import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
-const props = defineProps<{ showCreateStock: boolean }>()
+const props = defineProps<{ showCreateStock: boolean, ingredientId: string }>()
 const showCreateIngredient = useVModel(props, 'showCreateStock')
+const ingredientId = useVModel(props, 'ingredientId')
 
 function toggleShowCreateStock() {
   showCreateIngredient.value = !showCreateIngredient.value
 }
 
-const createIngredientStore = useCreateIngredientStore()
+const createStockStore = useCreateStockStore()
+const { dayFormat } = useDateStore()
 const notification = useNotification()
+
+createStockStore.ingredientId = ingredientId.value
 
 function createStock() {
   toggleShowCreateStock()
@@ -35,23 +39,24 @@ const unitOptions = [{
 
 <template>
   <NCard role="form-dialog" title="Create New Stock" w-36rem flex>
-    <div id="forms-input" flex flex-col gap-2>
-      <NInput v-model:value="createIngredientStore.newIngredientName" type="text" placeholder="Nom de l'Ingredient" text-center text-6 />
+    <div id="forms-input" flex gap-2>
       <div flex gap-2>
-        <div class="flex-basis-2/3" flex items-center gap-2>
+        <div flex items-center gap-2 class="flex-basis-1/3">
           <p flex-shrink-0>
-            prix par unite
+            quantite
           </p>
-          <NInputNumber v-model:value="createIngredientStore.newIngredientPrice" />
+          <NInputNumber v-model:value="createStockStore.newStockQuantity" />
         </div>
-        <div flex items-center gap-2 class="flex flex-basis-1/3">
+        <div flex items-center gap-2 class="flex-basis-1/3">
           <p flex shrink-0>
             unite
           </p>
-          <NSelect v-model:value="createIngredientStore.newIngredientUnit" :options="unitOptions" />
+          <NSelect v-model:value="createStockStore.newStockUnit" :options="unitOptions" />
+        </div>
+        <div flex class="flex-basis-1/3">
+          <NDatePicker v-model:formatted-value="createStockStore.expirationDateDisplayed" :format="dayFormat" type="date" />
         </div>
       </div>
-      <NInput v-model:value="createIngredientStore.newIngredientFournisseur" type="text" placeholder="Nom du Fournisseur" text-center text-4 />
     </div>
     <div id="buttons" m-t-4 flex justify-end gap-2>
       <NButton type="success" text-green @click="createStock">

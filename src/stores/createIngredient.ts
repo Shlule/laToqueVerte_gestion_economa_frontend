@@ -30,7 +30,7 @@ export const useCreateIngredientStore = defineStore('createIngredient', () => {
     ingredientStore.allIngredient = [...ingredientStore.allIngredient, ingredientData.data]
   }
 
-  function resetForm() {
+  function resetIngredientForm() {
     newIngredientName.value = ''
     newIngredientUnit.value = 'kg'
     newIngredientPrice.value = 0
@@ -43,7 +43,7 @@ export const useCreateIngredientStore = defineStore('createIngredient', () => {
     newIngredientFournisseur,
     newIngredientPrice,
     newIngredientUnit,
-    resetForm,
+    resetIngredientForm,
     addNewIngredient,
   }
 })

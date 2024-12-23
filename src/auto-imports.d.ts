@@ -155,6 +155,7 @@ declare global {
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCreateIngredientStore: typeof import('./stores/createIngredient')['useCreateIngredientStore']
   const useCreateRecipeStore: typeof import('./stores/recipe')['useCreateRecipeStore']
+  const useCreateStockStore: typeof import('./stores/createStock')['useCreateStockStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVar: typeof import('@vueuse/core')['useCssVar']
   const useCssVars: typeof import('vue')['useCssVars']
@@ -162,7 +163,7 @@ declare global {
   const useCycleList: typeof import('@vueuse/core')['useCycleList']
   const useDark: typeof import('@vueuse/core')['useDark']
   const useDateFormat: typeof import('@vueuse/core')['useDateFormat']
-  const useDateStore: typeof import('./stores/createRecipe')['useDateStore']
+  const useDateStore: typeof import('./stores/date')['useDateStore']
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
@@ -467,6 +468,7 @@ declare module 'vue' {
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCreateIngredientStore: UnwrapRef<typeof import('./stores/createIngredient')['useCreateIngredientStore']>
+    readonly useCreateStockStore: UnwrapRef<typeof import('./stores/createStock')['useCreateStockStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVar: UnwrapRef<typeof import('@vueuse/core')['useCssVar']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
@@ -474,6 +476,7 @@ declare module 'vue' {
     readonly useCycleList: UnwrapRef<typeof import('@vueuse/core')['useCycleList']>
     readonly useDark: UnwrapRef<typeof import('@vueuse/core')['useDark']>
     readonly useDateFormat: UnwrapRef<typeof import('@vueuse/core')['useDateFormat']>
+    readonly useDateStore: UnwrapRef<typeof import('./stores/date')['useDateStore']>
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>

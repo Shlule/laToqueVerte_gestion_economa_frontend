@@ -3,7 +3,8 @@ import { NInput } from 'naive-ui'
 import { useIngredientStore } from '~/stores/ingredients'
 
 const ingredientStore = useIngredientStore()
-const createIngredientStore = useCreateIngredientStore()
+// const createIngredientStore = useCreateIngredientStore()
+const { resetIngredientForm } = useCreateIngredientStore()
 function handleSelect(key: string) {
   ingredientStore.sortSelected = key
 }
@@ -12,7 +13,7 @@ const [isCreateNewIngredient, toggleCreateNewIngredient] = useToggle()
 
 watch(isCreateNewIngredient, (newX) => {
   if (newX === false) {
-    createIngredientStore.resetForm()
+    resetIngredientForm()
   }
 })
 
@@ -61,7 +62,7 @@ const sortOrder = computed(() => {
       </NButton>
     </div>
   </div>
-  <NModal v-model:show="isCreateNewIngredient" @close="createIngredientStore.resetForm()">
+  <NModal v-model:show="isCreateNewIngredient" @close="resetIngredientForm()">
     <IngredientCreate v-model:show-create-ingredient="isCreateNewIngredient" />
   </NModal>
 </template>

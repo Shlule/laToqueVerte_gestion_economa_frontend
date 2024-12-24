@@ -5,6 +5,12 @@ button:
   home: Accueil
   toggle_dark: Basculer en mode sombre
   toggle_langs: Changer de langue
+  add_ingredient: Nouveaux Ingredient
+  sorting_mode: Trier par
+  add_stock: Nouveaux Stock
+  confirm: Confirmer
+  cancel: Annuler
+
 intro:
   desc: Exemple d'application Vite
   dynamic-route: Démo de route dynamique
@@ -12,3 +18,23 @@ intro:
   aka: Aussi connu sous le nom de
   whats-your-name: Comment t'appelles-tu ?
 not-found: Page non trouvée
+
+ingredient:
+  sort_option:
+    alphabetical: Alphabetique
+    price: Prix
+    supplier: Fournisseur
+
+ingredient-header:
+  title: Ingrédient
+  search_bar: rechercher un Ingrédient
+
+stock-header:
+  no_stock: Vous n'avez pas de stocks de
+  stock: Stocks de
+
+stock-create:
+title: Creation d'un Nouveaux stock
+form_input:
+  quantity: quantité
+  unit: unité

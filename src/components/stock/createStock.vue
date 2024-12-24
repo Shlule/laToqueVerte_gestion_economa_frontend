@@ -5,13 +5,14 @@ const props = defineProps<{ showCreateStock: boolean, ingredientId: string }>()
 const showCreateIngredient = useVModel(props, 'showCreateStock')
 const ingredientId = useVModel(props, 'ingredientId')
 
-function toggleShowCreateStock() {
-  showCreateIngredient.value = !showCreateIngredient.value
-}
-
 const createStockStore = useCreateStockStore()
 const { dayFormat } = useDateStore()
 const notification = useNotification()
+const { t } = useI18n()
+
+function toggleShowCreateStock() {
+  showCreateIngredient.value = !showCreateIngredient.value
+}
 
 createStockStore.ingredientId = ingredientId.value
 
@@ -43,13 +44,13 @@ const unitOptions = [{
       <div flex gap-2>
         <div flex items-center gap-2 class="flex-basis-1/3">
           <p flex-shrink-0>
-            quantite
+            {{ t('stock-create.form_input.quantity') }}
           </p>
           <NInputNumber v-model:value="createStockStore.newStockQuantity" />
         </div>
         <div flex items-center gap-2 class="flex-basis-1/3">
           <p flex shrink-0>
-            unite
+            {{ t('stock-create.form_input.unit') }}
           </p>
           <NSelect v-model:value="createStockStore.newStockUnit" :options="unitOptions" />
         </div>
@@ -60,10 +61,10 @@ const unitOptions = [{
     </div>
     <div id="buttons" m-t-4 flex justify-end gap-2>
       <NButton type="success" text-green @click="createStock">
-        Confirm
+        {{ t('button.confirm') }}
       </NButton>
       <NButton @click="toggleShowCreateStock()">
-        Cancel
+        {{ t('button.cancel') }}
       </NButton>
     </div>
   </NCard>

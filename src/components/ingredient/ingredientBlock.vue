@@ -5,9 +5,47 @@ import type { Ingredient } from '~/types'
 
 const props = defineProps<{ ingredientData: Ingredient }>()
 const ingredientData = useVModel(props, 'ingredientData')
+
+const { t } = useI18n()
 const [showCollapse, toggleShowCollapse] = useToggle()
 const [isCreateStocks, toggleShowCreateStock] = useToggle()
+const { resetStockForm } = useCreateStockStore()
 const { data: stocksData } = getAllStocks(ingredientData.value.id)
+
+const showIngredientBlock = ref(true)
+
+function convertUnit(quantity: number, fromUnit: string, toUnit: string): number {
+  const conversionRates = {
+    kg: { g: 1000, kg: 1 },
+    g: { g: 1, kg: 0.001 },
+    unit: { unit: 1 },
+  }
+
+  return quantity * conversionRates[fromUnit][toUnit]
+}
+
+const totalQuantity = computed(() => {
+  if (!stocksData.value) {
+    return
+  }
+  return stocksData.value.reduce((sum, stock) => {
+    if (stock.unit === ingredientData.value.unitType) {
+      return sum + stock.quantity
+    }
+    else {
+      const convertedQuantity = convertUnit(stock.quantity, stock.unit, ingredientData.value.unitType)
+      return sum + convertedQuantity
+    }
+  }, 0)
+})
+
+const totalPrice = computed(() => {
+  if (!totalQuantity.value) {
+    return
+  }
+  return totalQuantity.value * ingredientData.value.pricePerUnit
+})
+
 const isNoStock = computed(() => {
   if (stocksData.value?.length === 0) {
     return true
@@ -16,11 +54,17 @@ const isNoStock = computed(() => {
     return false
   }
 })
-const showIngredientBlock = ref(true)
+
 function deleteIngredient() {
   showIngredientBlock.value = false
   economa_backend_api.delete(`/ingredients/${ingredientData.value.id}`)
 }
+
+watch(isCreateStocks, (newX) => {
+  if (newX === false) {
+    resetStockForm()
+  }
+})
 </script>
 
 <template>
@@ -54,15 +98,32 @@ function deleteIngredient() {
       </div>
     </NCard>
     <NCollapseTransition id="stockBlock-container" :show="showCollapse" flex flex-col>
-      <div id="stockBlock-header" w-full flex flex-col items-center gap-2>
+      <div id="stockBlock-header" flex flex-col items-center gap-2>
         <div v-if="isNoStock" text-6>
-          Vous n'avez pas de stocks de {{ ingredientData.name }}
+          {{ t('stock-header.no_stock') }} {{ ingredientData.name }}
         </div>
-        <div v-else self-baseline text-8>
-          Stocks de {{ ingredientData.name }}
+        <div v-else w-full flex justify-between gap-2>
+          <div text-9>
+            {{ t('stock-header.stock') }} {{ ingredientData.name }}
+          </div>
+          <div flex flex-col items-center gap-1>
+            <p text-6>
+              total
+            </p>
+            <div flex items-center gap-2>
+              <p> {{ t('stock-header.total_price') }}:</p>
+              <div text-6>
+                {{ totalPrice }}€
+              </div>
+              <p> {{ t('stock-header.total_quantity') }}:</p>
+              <div text-6>
+                {{ totalQuantity }} {{ ingredientData.unitType }}
+              </div>
+            </div>
+          </div>
         </div>
         <NButton round @click="toggleShowCreateStock()">
-          Add Stock
+          {{ t('button.add_stock') }}
         </NButton>
       </div>
       <NScrollbar max-h-17rem>
@@ -70,7 +131,7 @@ function deleteIngredient() {
       </NScrollbar>
     </NCollapseTransition>
     <NModal v-model:show="isCreateStocks">
-      <CreateStock v-model:show-create-stock="isCreateStocks" />
+      <CreateStock v-model:show-create-stock="isCreateStocks" :ingredient-id="ingredientData.id" />
     </NModal>
   </div>
 </template>

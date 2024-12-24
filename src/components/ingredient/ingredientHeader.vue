@@ -2,14 +2,14 @@
 import { NInput } from 'naive-ui'
 import { useIngredientStore } from '~/stores/ingredients'
 
+const { t } = useI18n()
 const ingredientStore = useIngredientStore()
-// const createIngredientStore = useCreateIngredientStore()
 const { resetIngredientForm } = useCreateIngredientStore()
+const [isCreateNewIngredient, toggleCreateNewIngredient] = useToggle()
+
 function handleSelect(key: string) {
   ingredientStore.sortSelected = key
 }
-
-const [isCreateNewIngredient, toggleCreateNewIngredient] = useToggle()
 
 watch(isCreateNewIngredient, (newX) => {
   if (newX === false) {
@@ -20,45 +20,30 @@ watch(isCreateNewIngredient, (newX) => {
 function swapOrder() {
   ingredientStore.isAscendantOrder = !ingredientStore.isAscendantOrder
 }
-
-const sortOrder = computed(() => {
-  if (ingredientStore.isAscendantOrder) {
-    return 'croissant'
-  }
-  else {
-    return 'decroissant'
-  }
-})
 </script>
 
 <template>
   <div id="ingredient-header-container" flex items-center justify-between gap-4>
     <div m-l-10 flex shrink-0 text-16>
-      Ingredient
+      {{ t('ingredient-header.title') }}
     </div>
-    <NInput v-model:value="ingredientStore.searchBarInput" placeholder="search Ingredient" type="text" round flex>
+    <NInput v-model:value="ingredientStore.searchBarInput" :placeholder="t('ingredient-header.search_bar')" type="text" round flex>
       <template #prefix>
         <div i-fluent:search-20-filled text-4 />
       </template>
     </NInput>
     <div id="button-menu" m-r-12 flex gap-4>
-      <div>
-        {{ sortOrder }}
-      </div>
       <NButton circle @click="swapOrder()">
         <div i-fluent:arrow-sort-20-regular />
       </NButton>
       <div />
-      <div>
-        {{ ingredientStore.sortSelected }}
-      </div>
       <NDropdown trigger="hover" :options="ingredientStore.sortOptions" @select="handleSelect">
         <NButton>
-          Trier par
+          {{ t('button.sorting_mode') }}
         </NButton>
       </NDropdown>
       <NButton @click="toggleCreateNewIngredient()">
-        New Ingredient
+        {{ t('button.add_ingredient') }}
       </NButton>
     </div>
   </div>

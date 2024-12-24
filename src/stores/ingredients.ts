@@ -6,38 +6,35 @@ import type { Ingredient } from '~/types'
 // the sorting of ingredient list are made here only in front end
 
 export const useIngredientStore = defineStore('useIngredientStore', () => {
-  const sortSelected = ref<string>('alphabetique')
-
   const { data: allIngredient, error: ingredientError } = getAllIngredient()
+  const { t } = useI18n()
 
+  const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
   const searchBarInput = ref('')
-
   const isAscendantOrder = ref<boolean>(true)
 
-  // does this to keep reactivity
-  const sortOptions = [{
-    label: 'alphabetique',
-    key: 'alphabetique',
+  // use computed to keep reactivity on I18n
+  const sortOptions = computed(() => [{
+    label: t('ingredient.sort_option.alphabetical'),
+    key: t('ingredient.sort_option.alphabetical'),
   }, {
-    label: 'prix',
-    key: 'prix',
+    label: t('ingredient.sort_option.price'),
+    key: t('ingredient.sort_option.price'),
   }, {
-    label: 'fournisseur',
-    key: 'fournisseur',
-  }]
+    label: t('ingredient.sort_option.supplier'),
+    key: t('ingredient.sort_option.supplier'),
+  }])
 
   const sortKey = computed(() => {
-    if (sortSelected.value === 'alphabetique') {
-      return 'name'
-    }
-    else if (sortSelected.value === 'prix') {
-      return 'pricePerUnit'
-    }
-    else if (sortSelected.value === 'fournisseur') {
-      return 'fournisseur'
-    }
-    else {
-      return 'name'
+    switch (sortSelected.value) {
+      case t('ingredient.sort_option.alphabetical'):
+        return 'name'
+      case t('ingredient.sort_option.price'):
+        return 'pricePerUnit'
+      case t('ingredient.sort_option.supplier'):
+        return 'fournisseur'
+      default:
+        return 'name'
     }
   })
 

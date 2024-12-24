@@ -28,18 +28,14 @@ export const useCreateStockStore = defineStore('createStock', () => {
     expirationDate: newStockExpirationDate.value,
   }))
 
-  //   async function addNewStock() {
-  //     const ingredientData = await createIngredient(newIngredient.value)
+  // cannot add stock dynamicly in list here because is ingredient block that host
+  // list of stocks
+  async function addNewStock() {
+    const stockData = await createStock(newStock.value)
+    return stockData
+  }
 
-  //     if (!ingredientData || !ingredientStore.allIngredient) {
-  //       return
-  //     }
-  //     // use spread operator to keep reactivity
-  //     // @todo do it with push and keep reactivity
-  //     ingredientStore.allIngredient = [...ingredientStore.allIngredient, ingredientData.data]
-  //   }
-
-  function resetForm() {
+  function resetStockForm() {
     newStockUnit.value = 'kg'
     newStockQuantity.value = 0
     // this will automaticly update newExpirationDate
@@ -52,7 +48,8 @@ export const useCreateStockStore = defineStore('createStock', () => {
     expirationDateDisplayed,
     newStockQuantity,
     newStockUnit,
-    resetForm,
+    resetStockForm,
+    addNewStock,
   }
 })
 

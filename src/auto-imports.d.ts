@@ -29,6 +29,7 @@ declare global {
   const createRecipe: typeof import('./composables/apiService')['createRecipe']
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
+  const createStock: typeof import('./composables/apiService')['createStock']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
   const customRef: typeof import('vue')['customRef']
@@ -346,6 +347,7 @@ declare module 'vue' {
     readonly createRecipe: UnwrapRef<typeof import('./composables/apiService')['createRecipe']>
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
+    readonly createStock: UnwrapRef<typeof import('./composables/apiService')['createStock']>
     readonly createTemplatePromise: UnwrapRef<typeof import('@vueuse/core')['createTemplatePromise']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>

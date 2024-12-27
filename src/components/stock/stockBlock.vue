@@ -1,24 +1,28 @@
 <script setup lang="ts">
 import { NCard } from 'naive-ui'
-import { format } from 'date-fns'
+import { differenceInDays, format, startOfDay } from 'date-fns'
 import type { Stock } from '~/types'
-import { useExpirationIndicator } from '~/composables/expirationIndicator'
 import economa_backend_api from '~/composables/apiService'
 
 const props = defineProps<{ stockData: Stock }>()
 const stockData = useVModel(props, 'stockData')
-const convertedDate = computed(() => {
+const { today, dayFormat } = useDateStore()
+
+// this is for the date Displayed
+const convertedExpirationDate = computed(() => {
   const expirationDate = stockData.value?.expirationDate
-  return expirationDate ? format(expirationDate, 'P') : null
+  return expirationDate ? format(expirationDate, dayFormat) : null
 })
 
 const localStockData = ref(stockData.value)
 const showStockBlock = ref(true)
 const showEditStockBlock = ref(false)
-const { calculateExpirationInterval } = useExpirationIndicator()
-const expirationInterval = computed(() => {
-  const expirationDate = stockData.value?.expirationDate
-  return expirationDate ? calculateExpirationInterval(expirationDate).days : null
+const daysRemaining = computed(() => {
+  if (!stockData.value.expirationDate) {
+    return
+  }
+  const expirationDate = startOfDay(stockData.value.expirationDate)
+  return differenceInDays(expirationDate, today)
 })
 
 function deleteStock() {
@@ -33,28 +37,27 @@ function editStock() {
 // @TODO create function with kwargs can possibly get how many argument
 // key value with seuil and value
 const backgroundExpiration = computed(() => {
-  const expirationDate = stockData.value.expirationDate
-  if (!expirationDate) {
-    return
-  }
-  if (!expirationInterval.value) {
-    return
-  }
   let backgroundColor: string = ''
+
+  if (!daysRemaining.value) {
+    backgroundColor = 'bg-dark-1'
+    return backgroundColor
+  }
+
   switch (true) {
-    case expirationInterval.value > 10:
+    case daysRemaining.value > 10:
       backgroundColor = 'bg-green'
       break
 
-    case expirationInterval.value < 0:
+    case daysRemaining.value < -1:
       backgroundColor = 'bg-dark-1'
       break
 
-    case expirationInterval.value < 10 && expirationInterval.value > 3 :
+    case daysRemaining.value < 10 && daysRemaining.value >= 3 :
       backgroundColor = 'bg-amber'
       break
 
-    case expirationInterval.value < 3 && expirationInterval.value > 0:
+    case daysRemaining.value < 3 && daysRemaining.value >= 0:
       backgroundColor = 'bg-red-7'
       break
 
@@ -78,7 +81,7 @@ const backgroundExpiration = computed(() => {
             <div m-r-4 self-end text-4>
               date d'expiration
             </div>
-            {{ convertedDate }} {{ expirationInterval }}
+            {{ convertedExpirationDate }} {{ daysRemaining }}
           </div>
         </div>
       </NCard>

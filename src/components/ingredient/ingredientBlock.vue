@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NCard, NCollapseTransition } from 'naive-ui'
 import economa_backend_api from '~/composables/apiService'
-import type { Ingredient } from '~/types'
+import type { Ingredient, Stock } from '~/types'
 
 const props = defineProps<{ ingredientData: Ingredient }>()
 const ingredientData = useVModel(props, 'ingredientData')
@@ -26,24 +26,23 @@ function convertUnit(quantity: number, fromUnit: string, toUnit: string): number
 
 const totalQuantity = computed(() => {
   if (!stocksData.value) {
-    return
+    return 0
   }
-  return stocksData.value.reduce((sum, stock) => {
-    if (stock.unit === ingredientData.value.unitType) {
-      return sum + stock.quantity
-    }
-    else {
-      const convertedQuantity = convertUnit(stock.quantity, stock.unit, ingredientData.value.unitType)
-      return sum + convertedQuantity
-    }
+  const total = stocksData.value.reduce((sum, stock) => {
+    const currentQuantity = stock.unit === ingredientData.value.unitType
+      ? stock.quantity
+      : convertUnit(stock.quantity, stock.unit, ingredientData.value.unitType)
+    return sum + Number(currentQuantity)
   }, 0)
+
+  return Number(total.toFixed(2))
 })
 
 const totalPrice = computed(() => {
   if (!totalQuantity.value) {
     return
   }
-  return totalQuantity.value * ingredientData.value.pricePerUnit
+  return (totalQuantity.value * ingredientData.value.pricePerUnit).toFixed(2)
 })
 
 const isNoStock = computed(() => {
@@ -65,6 +64,12 @@ watch(isCreateStocks, (newX) => {
     resetStockForm()
   }
 })
+function addStock(newStock: Stock) {
+  if (!stocksData.value) {
+    return
+  }
+  stocksData.value = [...stocksData.value, newStock]
+}
 </script>
 
 <template>
@@ -131,7 +136,7 @@ watch(isCreateStocks, (newX) => {
       </NScrollbar>
     </NCollapseTransition>
     <NModal v-model:show="isCreateStocks">
-      <CreateStock v-model:show-create-stock="isCreateStocks" :ingredient-id="ingredientData.id" />
+      <CreateStock v-model:show-create-stock="isCreateStocks" :ingredient-id="ingredientData.id" @stock-created="addStock" />
     </NModal>
   </div>
 </template>

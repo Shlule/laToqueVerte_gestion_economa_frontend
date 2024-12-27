@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { formatRFC3339, isValid, parse } from 'date-fns'
+import { formatISO, isValid, parse } from 'date-fns'
 import type { StockCreation, Unit } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
@@ -17,22 +17,21 @@ export const useCreateStockStore = defineStore('createStock', () => {
     if (isValid(parsedDate) === false) {
       throw new Error('Invalid date format. Expected format: dd/MM/yyyy')
     }
-    return formatRFC3339(parsedDate)
+    return formatISO(parsedDate)
   })
 
   const newStock = computed<StockCreation>(() => ({
-    ingredientId: ingredientId.value,
+    ingredient: ingredientId.value,
     unit: newStockUnit.value,
     quantity: newStockQuantity.value,
-    // this value must be in RFC3339 format
+    // this value must be in ISO format
     expirationDate: newStockExpirationDate.value,
   }))
 
-  // cannot add stock dynamicly in list here because is ingredient block that host
+  // cannot add stock dynamically in list here because is ingredient block that host
   // list of stocks
   async function addNewStock() {
-    const stockData = await createStock(newStock.value)
-    return stockData
+    return await createStock(newStock.value)
   }
 
   function resetStockForm() {
@@ -45,6 +44,7 @@ export const useCreateStockStore = defineStore('createStock', () => {
   return {
     ingredientId,
     newStock,
+    newStockExpirationDate,
     expirationDateDisplayed,
     newStockQuantity,
     newStockUnit,

@@ -2,6 +2,7 @@
 import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
 const props = defineProps<{ showCreateStock: boolean, ingredientId: string }>()
+const emit = defineEmits(['stockCreated'])
 const showCreateIngredient = useVModel(props, 'showCreateStock')
 const ingredientId = useVModel(props, 'ingredientId')
 
@@ -16,14 +17,27 @@ function toggleShowCreateStock() {
 
 createStockStore.ingredientId = ingredientId.value
 
-function createStock() {
+async function createStock() {
+  const { data: stockData, error } = await createStockStore.addNewStock()
   toggleShowCreateStock()
-  notification.create({
-    title: 'Reussite',
-    content: ' la creation du Stock est un succes',
-    type: 'success',
-    duration: 2500,
-  })
+
+  if (error.value) {
+    notification.create({
+      title: 'Erreur',
+      content: `Échec de la création du stock : ${error.value || 'Une erreur inconnue est survenue.'}`,
+      type: 'error',
+      duration: 3000,
+    })
+  }
+  else {
+    notification.create({
+      title: 'Reussite',
+      content: ' la creation du Stock est un succes',
+      type: 'success',
+      duration: 2500,
+    })
+    emit('stockCreated', stockData.value)
+  }
 }
 
 const unitOptions = [{

@@ -11,7 +11,7 @@ const economa_backend_api = axios.create({
 })
 
 // here useAxios does not provide response correctly
-// impossible to access value with useAxios
+// impossible to access value with useAxios because return undefined value
 export async function createIngredient(newIngredient: IngredientCreation) {
   try {
     const response = await economa_backend_api.post<Ingredient>('/ingredients', newIngredient)
@@ -19,17 +19,25 @@ export async function createIngredient(newIngredient: IngredientCreation) {
   }
   catch (error) {
     console.error('Erreur lors de la création de l\'ingrédient:', error)
+    return error
   }
 }
 
-export async function createStock(newStock: StockCreation) {
-  try {
-    const response = await economa_backend_api.post<Ingredient>('/stocks', newStock)
-    return response
-  }
-  catch (error) {
-    console.error('Erreur lors de la création de le stock:', error)
-  }
+// here useAxios does not provide response correctly
+// impossible to access value with useAxios because return undefined value
+// export async function createStock(newStock: StockCreation) {
+//   try {
+//     const response = await economa_backend_api.post<Stock>('/stocks', newStock)
+//     return response
+//   }
+//   catch (error) {
+//     console.error('Erreur lors de la création de le stock:', error)
+//     return error
+//   }
+// }
+
+export function createStock(newStock: StockCreation) {
+  return useAxios<Ingredient[]>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
 }
 
 export function getAllIngredient() {

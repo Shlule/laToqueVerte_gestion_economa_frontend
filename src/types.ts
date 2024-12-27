@@ -40,7 +40,7 @@ export interface RecipeIngredient {
 }
 
 export interface StockCreation {
-  ingredientId: string
+  ingredient: string
   quantity: number
   unit: Unit
   expirationDate: string

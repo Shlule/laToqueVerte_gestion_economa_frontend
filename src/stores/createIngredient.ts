@@ -1,4 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { createIngredient } from '~/composables/apiService'
 import type { IngredientCreation, Unit } from '~/types'
 
@@ -47,6 +47,3 @@ export const useCreateIngredientStore = defineStore('createIngredient', () => {
     addNewIngredient,
   }
 })
-
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useCreateIngredientStore as any, import.meta.hot))

@@ -23,21 +23,12 @@ export async function createIngredient(newIngredient: IngredientCreation) {
   }
 }
 
-// here useAxios does not provide response correctly
-// impossible to access value with useAxios because return undefined value
-// export async function createStock(newStock: StockCreation) {
-//   try {
-//     const response = await economa_backend_api.post<Stock>('/stocks', newStock)
-//     return response
-//   }
-//   catch (error) {
-//     console.error('Erreur lors de la création de le stock:', error)
-//     return error
-//   }
-// }
-
 export function createStock(newStock: StockCreation) {
-  return useAxios<Ingredient[]>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
+  return useAxios<Stock[]>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
+}
+
+export function editStock(newStockData: Stock) {
+  return useAxios<Stock>(`/stocks/${newStockData.id}`, { method: 'PUT', data: newStockData }, economa_backend_api)
 }
 
 export function getAllIngredient() {

@@ -12,6 +12,17 @@ export const useCreateStockStore = defineStore('createStock', () => {
   const newStockQuantity = ref<number>(0)
   const expirationDateDisplayed = ref<string>(dateStore.todayFormated)
 
+  const unitOptions = [{
+    label: 'kg',
+    value: 'kg',
+  }, {
+    label: 'g',
+    value: 'g',
+  }, {
+    label: 'unit',
+    value: 'unit',
+  }]
+
   const newStockExpirationDate = computed(() => {
     const parsedDate = parse(expirationDateDisplayed.value, dateStore.dayFormat, new Date())
     if (isValid(parsedDate) === false) {
@@ -28,8 +39,9 @@ export const useCreateStockStore = defineStore('createStock', () => {
     expirationDate: newStockExpirationDate.value,
   }))
 
-  // cannot add stock dynamically in list here because is ingredient block that host
-  // list of stocks
+  // cannot add stock dynamically in list here like ingredient
+  //  because is ingredient block that host list of stocks
+  // this function must await create stock to get non undefined value
   async function addNewStock() {
     return await createStock(newStock.value)
   }
@@ -44,6 +56,7 @@ export const useCreateStockStore = defineStore('createStock', () => {
   return {
     ingredientId,
     newStock,
+    unitOptions,
     newStockExpirationDate,
     expirationDateDisplayed,
     newStockQuantity,

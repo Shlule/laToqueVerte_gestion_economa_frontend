@@ -32,9 +32,11 @@ ingredient-header:
 stock-header:
   no_stock: Vous n'avez pas de stocks de
   stock: Stocks de
+  total_price: prix
+  total_quantity: quantité
 
 stock-create:
-title: Creation d'un Nouveaux stock
-form_input:
-  quantity: quantité
-  unit: unité
+  title: Creation d'un Nouveaux stock
+  form_input:
+    quantity: quantité
+    unit: unité

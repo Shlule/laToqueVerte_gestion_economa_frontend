@@ -51,5 +51,5 @@ export interface Stock {
   ingredient: Ingredient
   quantity: number
   unit: Unit
-  expirationDate?: Date
+  expirationDate: Date
 }

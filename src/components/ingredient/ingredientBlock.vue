@@ -3,8 +3,10 @@ import { NCard, NCollapseTransition } from 'naive-ui'
 import economa_backend_api from '~/composables/apiService'
 import type { Ingredient, Stock } from '~/types'
 
-const props = defineProps<{ ingredientData: Ingredient }>()
-const ingredientData = useVModel(props, 'ingredientData')
+const { ingredientData } = defineModels<{ ingredientData: Ingredient }>()
+
+// const props = defineProps<{ ingredientData: Ingredient }>()
+// const ingredientData = useVModel(props, 'ingredientData')
 
 const { t } = useI18n()
 const [showCollapse, toggleShowCollapse] = useToggle()
@@ -35,7 +37,7 @@ const totalQuantity = computed(() => {
     return sum + Number(currentQuantity)
   }, 0)
 
-  return Number(total.toFixed(2))
+  return Number(total.toFixed(3))
 })
 
 const totalPrice = computed(() => {

@@ -4,17 +4,16 @@ import { differenceInDays, format, startOfDay } from 'date-fns'
 import type { Stock } from '~/types'
 import economa_backend_api from '~/composables/apiService'
 
-const props = defineProps<{ stockData: Stock }>()
-const stockData = useVModel(props, 'stockData')
+const { stockData } = defineModels<{ stockData: Stock }>()
+
 const { today, dayFormat } = useDateStore()
 
 // this is for the date Displayed
 const convertedExpirationDate = computed(() => {
-  const expirationDate = stockData.value?.expirationDate
+  const expirationDate = stockData.value.expirationDate
   return expirationDate ? format(expirationDate, dayFormat) : null
 })
 
-const localStockData = ref(stockData.value)
 const showStockBlock = ref(true)
 const showEditStockBlock = ref(false)
 const daysRemaining = computed(() => {
@@ -29,9 +28,9 @@ function deleteStock() {
   showStockBlock.value = false
   economa_backend_api.delete(`/stocks/${stockData.value.id}`)
 }
-function editStock() {
-  showStockBlock.value = false
-  showEditStockBlock.value = true
+function toggleEditStock() {
+  showStockBlock.value = !showStockBlock.value
+  showEditStockBlock.value = !showEditStockBlock.value
 }
 
 // @TODO create function with kwargs can possibly get how many argument
@@ -75,20 +74,20 @@ const backgroundExpiration = computed(() => {
       <NCard :bordered="false" flex rounded-l-2xl p-0 shadow-xl>
         <div h-full flex justify-between>
           <div align-center text-6>
-            {{ localStockData.quantity }} {{ stockData.unit }}
+            {{ stockData.quantity }} {{ stockData.unit }}
           </div>
           <div id="expiration-date-block" flex self-center text-5>
             <div m-r-4 self-end text-4>
               date d'expiration
             </div>
-            {{ convertedExpirationDate }} {{ daysRemaining }}
+            {{ convertedExpirationDate }}
           </div>
         </div>
       </NCard>
       <div id="expiration-date-indicator" w-8 rounded-r-2xl :class="backgroundExpiration" />
     </div>
     <div id="button-menu" flex gap-3>
-      <NButton type="success" circle disabled text-green @click="editStock()">
+      <NButton type="success" circle text-green @click="toggleEditStock()">
         <div i-fluent:edit-20-regular />
       </NButton>
       <NButton circle type="error" text-red @click="deleteStock()">
@@ -96,7 +95,7 @@ const backgroundExpiration = computed(() => {
       </NButton>
     </div>
   </div>
-  <StockBlockEdit v-if="showEditStockBlock" :stock-data="localStockData" />
+  <StockBlockEdit v-if="showEditStockBlock" :stock-data="stockData" @toggle-edit-stock-block="toggleEditStock" />
 </template>
 
 <style scoped>

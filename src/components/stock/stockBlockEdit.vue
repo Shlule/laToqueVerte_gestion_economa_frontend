@@ -1,40 +1,85 @@
 <script setup lang="ts">
-import type { Stock } from '~/types'
+import { format, parse } from 'date-fns'
+import type { Stock, Unit } from '~/types'
 
-const props = defineProps<{ stockData: Stock }>()
-const emit = defineEmits(['update:stockData'])
+const emit = defineEmits<{
+  (event: 'toggleEditStockBlock'): void
+}>()
+const { stockData } = defineModels<{ stockData: Stock }>()
 
-const stockData = useVModel(props, 'stockData', emit)
-function confirm() {
-  stockData.value.quantity = 2.0
+const { dayFormat } = useDateStore()
+const { unitOptions } = useCreateStockStore()
+const { t } = useI18n()
+
+// work with localStockDate because modifying stock impact real data
+const localStockData = stockData.value
+const editExpirationDateDisplayed = ref<string>(format(localStockData.expirationDate, dayFormat))
+const editQuantity = ref<number>(Number(localStockData.quantity))
+const editUnit = ref<Unit>(localStockData.unit)
+
+// Not used already
+// const editExpirationDate = computed(() => {
+//   const parsedDate = parse(editExpirationDateDisplayed.value, dayFormat, new Date())
+//   if (isValid(parsedDate) === false) {
+//     throw new Error('Invalid date format. Expected format: dd/MM/yyyy')
+//   }
+//   return formatISO(parsedDate)
+// })
+
+const editStockData = computed<Stock>(() => ({
+  quantity: editQuantity.value,
+  unit: editUnit.value,
+  expirationDate: parse(editExpirationDateDisplayed.value, dayFormat, new Date()),
+  id: stockData.value.id,
+  ingredient: stockData.value.ingredient,
+}))
+
+function cancel() {
+  emit('toggleEditStockBlock')
 }
 
-// const temporaryStockData = stockData.value
+function confirm() {
+  // modify on backend
+  editStock(editStockData.value)
+  // modify in local version
+  stockData.value.expirationDate = parse(editExpirationDateDisplayed.value, dayFormat, new Date())
+  stockData.value.quantity = editQuantity.value
+  stockData.value.unit = editUnit.value
+  // close edit mode
+  emit('toggleEditStockBlock')
+}
 </script>
 
 <template>
   <div id="stockEdit-container" m-y-3 w-full flex items-center gap-2>
-    <div id="stockEdit-card-container" w-full flex>
+    <div w-full flex>
       <NCard :bordered="false" flex rounded-2xl p-0 shadow-xl>
-        <div h-full flex justify-between>
-          <div align-center text-6>
-            {{ stockData.quantity }} {{ stockData.unit }}
+        <div id="form-input-container" h-full flex justify-between gap-2>
+          <div flex items-center gap-2 class="flex-basis-1/3">
+            <p flex-shrink-0>
+              {{ t('stock-create.form_input.quantity') }}:
+            </p>
+            <NInputNumber v-model:value="editQuantity" />
           </div>
-          <div id="expiration-date-block" flex self-center text-5>
-            <div m-r-4 self-end text-4>
-              date d'expiration
-            </div>
+          <div flex items-center gap-2 class="flex-basis-1/3">
+            <p flex shrink-0>
+              {{ t('stock-create.form_input.unit') }}:
+            </p>
+            <NSelect v-model:value="editUnit" :options="unitOptions" />
+          </div>
+          <div flex class="flex-basis-1/3">
+            <NDatePicker v-model:formatted-value="editExpirationDateDisplayed" :format="dayFormat" type="date" />
           </div>
         </div>
       </NCard>
     </div>
     <div id="button-menu" flex gap-3>
+      <NButton circle type="error" text-red @click="cancel()">
+        <div i-material-symbols:close-rounded />
+      </NButton>
       <NButton circle type="success" text-green @click="confirm()">
         <div i-fluent:checkmark-20-regular />
       </NButton>
-      <!-- <NButton circle type="error" text-red @click="cancel()">
-        <div i-material-symbols:close-rounded />
-      </NButton> -->
     </div>
   </div>
 </template>

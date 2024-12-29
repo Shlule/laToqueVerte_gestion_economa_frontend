@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { NInput, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
-const props = defineProps<{ showCreateIngredient: boolean }>()
-const showCreateIngredient = useVModel(props, 'showCreateIngredient')
+const { showCreateIngredient } = defineModels<{ showCreateIngredient: boolean }>()
+const { unitOptions } = useCreateStockStore()
 
 function toggleShowCreateIngredient() {
   showCreateIngredient.value = !showCreateIngredient.value
@@ -21,17 +21,6 @@ function createIngredient() {
     duration: 2500,
   })
 }
-
-const unitOptions = [{
-  label: 'kg',
-  value: 'kg',
-}, {
-  label: 'g',
-  value: 'g',
-}, {
-  label: 'unit',
-  value: 'unit',
-}]
 </script>
 
 <template>

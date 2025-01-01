@@ -5,14 +5,15 @@ import type { Ingredient, Stock } from '~/types'
 
 const { ingredientData } = defineModels<{ ingredientData: Ingredient }>()
 
-// const props = defineProps<{ ingredientData: Ingredient }>()
-// const ingredientData = useVModel(props, 'ingredientData')
-
 const { t } = useI18n()
 const [showCollapse, toggleShowCollapse] = useToggle()
 const [isCreateStocks, toggleShowCreateStock] = useToggle()
 const { resetStockForm } = useCreateStockStore()
-const { data: stocksData } = getAllStocks(ingredientData.value.id)
+const { data: stocksList } = getAllStocks(ingredientData.value.id)
+
+const mustUpdateStockList = ref<boolean>(false)
+
+provide('mustUpdateStocksList', mustUpdateStockList)
 
 const showIngredientBlock = ref(true)
 
@@ -27,10 +28,10 @@ function convertUnit(quantity: number, fromUnit: string, toUnit: string): number
 }
 
 const totalQuantity = computed(() => {
-  if (!stocksData.value) {
+  if (!stocksList.value) {
     return 0
   }
-  const total = stocksData.value.reduce((sum, stock) => {
+  const total = stocksList.value.reduce((sum, stock) => {
     const currentQuantity = stock.unit === ingredientData.value.unitType
       ? stock.quantity
       : convertUnit(stock.quantity, stock.unit, ingredientData.value.unitType)
@@ -48,7 +49,7 @@ const totalPrice = computed(() => {
 })
 
 const isNoStock = computed(() => {
-  if (stocksData.value?.length === 0) {
+  if (stocksList.value?.length === 0) {
     return true
   }
   else {
@@ -60,6 +61,26 @@ function deleteIngredient() {
   showIngredientBlock.value = false
   economa_backend_api.delete(`/ingredients/${ingredientData.value.id}`)
 }
+async function updateStocksList(ingredientId: string) {
+  const { data, error, execute } = await getAllStocks(ingredientId)
+  execute().then(() => {
+    if (!error.value) {
+      stocksList.value = data.value
+    }
+    else {
+      console.error('Error fetching stocks data:', error.value)
+    }
+  })
+
+  // reset possibility to refresh data
+  mustUpdateStockList.value = false
+}
+
+watch(mustUpdateStockList, (newValue) => {
+  if (newValue === true) {
+    updateStocksList(ingredientData.value.id)
+  }
+})
 
 watch(isCreateStocks, (newX) => {
   if (newX === false) {
@@ -67,10 +88,10 @@ watch(isCreateStocks, (newX) => {
   }
 })
 function addStock(newStock: Stock) {
-  if (!stocksData.value) {
+  if (!stocksList.value) {
     return
   }
-  stocksData.value = [...stocksData.value, newStock]
+  stocksList.value = [...stocksList.value, newStock]
 }
 </script>
 
@@ -134,7 +155,7 @@ function addStock(newStock: Stock) {
         </NButton>
       </div>
       <NScrollbar max-h-17rem>
-        <StockBlock v-for="stock in stocksData" :key="stock.id" :stock-data="stock" />
+        <StockBlock v-for="stock in stocksList" :key="stock.id" :stock-data="stock" />
       </NScrollbar>
     </NCollapseTransition>
     <NModal v-model:show="isCreateStocks">

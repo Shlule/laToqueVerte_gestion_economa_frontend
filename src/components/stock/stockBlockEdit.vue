@@ -10,21 +10,13 @@ const { stockData } = defineModels<{ stockData: Stock }>()
 const { dayFormat } = useDateStore()
 const { unitOptions } = useCreateStockStore()
 const { t } = useI18n()
+const mustUpdateStocksList = inject<Ref<boolean>>('mustUpdateStocksList')
 
 // work with localStockDate because modifying stock impact real data
 const localStockData = stockData.value
 const editExpirationDateDisplayed = ref<string>(format(localStockData.expirationDate, dayFormat))
 const editQuantity = ref<number>(Number(localStockData.quantity))
 const editUnit = ref<Unit>(localStockData.unit)
-
-// Not used already
-// const editExpirationDate = computed(() => {
-//   const parsedDate = parse(editExpirationDateDisplayed.value, dayFormat, new Date())
-//   if (isValid(parsedDate) === false) {
-//     throw new Error('Invalid date format. Expected format: dd/MM/yyyy')
-//   }
-//   return formatISO(parsedDate)
-// })
 
 const editStockData = computed<Stock>(() => ({
   quantity: editQuantity.value,
@@ -41,10 +33,12 @@ function cancel() {
 function confirm() {
   // modify on backend
   editStock(editStockData.value)
-  // modify in local version
-  stockData.value.expirationDate = parse(editExpirationDateDisplayed.value, dayFormat, new Date())
-  stockData.value.quantity = editQuantity.value
-  stockData.value.unit = editUnit.value
+
+  // update stocks list
+  if (!mustUpdateStocksList) {
+    return
+  }
+  mustUpdateStocksList.value = true
   // close edit mode
   emit('toggleEditStockBlock')
 }
@@ -63,7 +57,7 @@ function confirm() {
           </div>
           <div flex items-center gap-2 class="flex-basis-1/3">
             <p flex shrink-0>
-              {{ t('stock-create.form_input.unit') }}:
+              {{ t('stock-create.form_input.unit') }}: {{ mustUpdateStocksList }}
             </p>
             <NSelect v-model:value="editUnit" :options="unitOptions" />
           </div>

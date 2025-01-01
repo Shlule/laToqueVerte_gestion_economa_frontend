@@ -15,7 +15,6 @@ declare module 'vue' {
     NCard: typeof import('naive-ui')['NCard']
     NDatePicker: typeof import('naive-ui')['NDatePicker']
     NDropdown: typeof import('naive-ui')['NDropdown']
-    NInput: typeof import('naive-ui')['NInput']
     NInputNumber: typeof import('naive-ui')['NInputNumber']
     NModal: typeof import('naive-ui')['NModal']
     NScrollbar: typeof import('naive-ui')['NScrollbar']

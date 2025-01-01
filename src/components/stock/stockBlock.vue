@@ -7,6 +7,7 @@ import economa_backend_api from '~/composables/apiService'
 const { stockData } = defineModels<{ stockData: Stock }>()
 
 const { today, dayFormat } = useDateStore()
+const { t } = useI18n()
 
 // this is for the date Displayed
 const convertedExpirationDate = computed(() => {
@@ -78,9 +79,15 @@ const backgroundExpiration = computed(() => {
           </div>
           <div id="expiration-date-block" flex self-center text-5>
             <div m-r-4 self-end text-4>
-              date d'expiration
+              {{ t('stock-block.expiration_date') }}:
             </div>
             {{ convertedExpirationDate }}
+          </div>
+          <div id="expiration-date-block" flex self-center text-5>
+            <div m-r-4 self-end text-4>
+              {{ t('stock-block.remaining_days') }}:
+            </div>
+            {{ daysRemaining }}
           </div>
         </div>
       </NCard>

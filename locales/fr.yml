@@ -40,3 +40,7 @@ stock-create:
   form_input:
     quantity: quantité
     unit: unité
+
+stock-block:
+  expiration_date: expiration
+  remaining_days: jours restants

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NCard, NCollapseTransition } from 'naive-ui'
+import { NButton, NCard, NCollapseTransition } from 'naive-ui'
 import economa_backend_api from '~/composables/apiService'
 import type { Ingredient, Stock } from '~/types'
 
@@ -12,10 +12,10 @@ const { resetStockForm } = useCreateStockStore()
 const { data: stocksList } = getAllStocks(ingredientData.value.id)
 
 const mustUpdateStockList = ref<boolean>(false)
+const isEditIngredient = ref<boolean>(false)
+const showIngredientBlock = ref(true)
 
 provide('mustUpdateStocksList', mustUpdateStockList)
-
-const showIngredientBlock = ref(true)
 
 function convertUnit(quantity: number, fromUnit: string, toUnit: string): number {
   const conversionRates = {
@@ -61,6 +61,14 @@ function deleteIngredient() {
   showIngredientBlock.value = false
   economa_backend_api.delete(`/ingredients/${ingredientData.value.id}`)
 }
+
+function toggleEditIngredient() {
+  isEditIngredient.value = !isEditIngredient.value
+  showIngredientBlock.value = !showIngredientBlock.value
+}
+
+// EDIT_STOCK[epic=edit_stock] - this part is for update info when stock is edited
+
 async function updateStocksList(ingredientId: string) {
   const { data, error, execute } = await getAllStocks(ingredientId)
   execute().then(() => {
@@ -81,6 +89,8 @@ watch(mustUpdateStockList, (newValue) => {
     updateStocksList(ingredientData.value.id)
   }
 })
+
+// !EDIT_STOCK
 
 watch(isCreateStocks, (newX) => {
   if (newX === false) {
@@ -116,7 +126,7 @@ function addStock(newStock: Stock) {
           </p>
         </div>
         <div id="button-menu" flex gap-4>
-          <NButton circle type="success" text-green @click.stop>
+          <NButton circle type="success" text-green @click.stop @click="toggleEditIngredient()">
             <div i-fluent:edit-20-filled />
           </NButton>
           <NButton circle type="error" text-red @click.stop @click="deleteIngredient()">
@@ -125,6 +135,7 @@ function addStock(newStock: Stock) {
         </div>
       </div>
     </NCard>
+    <ingredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
     <NCollapseTransition id="stockBlock-container" :show="showCollapse" flex flex-col>
       <div id="stockBlock-header" flex flex-col items-center gap-2>
         <div v-if="isNoStock" text-6>

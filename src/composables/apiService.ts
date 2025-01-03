@@ -35,6 +35,10 @@ export function getAllIngredient() {
   return useAxios<Ingredient[]>('/ingredients', { method: 'GET' }, economa_backend_api)
 }
 
+export function editIngredient(newIngredientData: Ingredient) {
+  return useAxios<Ingredient>(`/ingredients/${newIngredientData.id}`, { method: 'PUT', data: newIngredientData }, economa_backend_api)
+}
+
 export function getAllRecipe() {
   return useAxios<Recipe[]>('/recipes', { method: 'GET' }, economa_backend_api)
 }

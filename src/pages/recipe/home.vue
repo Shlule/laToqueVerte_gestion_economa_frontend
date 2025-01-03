@@ -1,9 +1,17 @@
 <script setup lang="ts">
+import RecipeHeader from '~/components/recipe/recipeHeader.vue'
+
+const ingredientStore = useIngredientStore()
 </script>
 
 <template>
-  <div id="recipe-home-global-container" flex flex-col>
-    <NButton> add Ingredient</NButton>
+  <div>
+    <div id="error-message">
+      <p v-if="ingredientStore.ingredientError">
+        Une erreur est survenue {{ ingredientStore.ingredientError }}
+      </p>
+    </div>
+    <RecipeHeader />
   </div>
 </template>
 

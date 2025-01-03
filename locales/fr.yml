@@ -8,6 +8,7 @@ button:
   add_ingredient: Nouveaux Ingredient
   sorting_mode: Trier par
   add_stock: Nouveaux Stock
+  add_recipe: Nouvelle Recette
   confirm: Confirmer
   cancel: Annuler
 
@@ -24,6 +25,14 @@ ingredient:
     alphabetical: Alphabetique
     price: Prix
     supplier: Fournisseur
+
+ingredient-block:
+  supplier: fournisseur
+  unit: unité
+  price_per_unit: prix
+  input:
+    supplier: nouveaux fournisseur
+    name: nouveaux nom
 
 ingredient-header:
   title: Ingrédient
@@ -44,3 +53,7 @@ stock-create:
 stock-block:
   expiration_date: expiration
   remaining_days: jours restants
+
+recipe-header:
+  title: Recettes
+  search_bar: rechercher une recette

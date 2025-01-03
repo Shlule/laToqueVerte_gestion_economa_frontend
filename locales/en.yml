@@ -10,6 +10,7 @@ button:
   add_stock: Add Stock
   confirm: Confirm
   cancel: Cancel
+  add_recipe: New Recipe
 intro:
   desc: Opinionated Vite Starter Template
   dynamic-route: Demo of dynamic route
@@ -24,9 +25,17 @@ ingredient:
     price: Price
     supplier: Supplier
 
+ingredient-block:
+  supplier: supplier
+  unit: unit
+  price_per_unit: price
+  input:
+    supplier: new supplier name
+    name: new ingredient name
+
 ingredient-header:
   title: Ingredient
-  search_bar: search Ingredient
+  search_bar: search an Ingredient
 
 stock-header:
   no_stock: No stock of
@@ -43,3 +52,7 @@ stock-create:
 stock-block:
   expiration_date: date
   remaining_days: remaining days
+
+recipe-header:
+  title: Recipes
+  search_bar: search a recipe

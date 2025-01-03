@@ -2,6 +2,8 @@
 import { format, parse } from 'date-fns'
 import type { Stock, Unit } from '~/types'
 
+// MYANCHOR[epic=edit_stock] all this file is important for editing stock
+
 const emit = defineEmits<{
   (event: 'toggleEditStockBlock'): void
 }>()
@@ -57,7 +59,7 @@ function confirm() {
           </div>
           <div flex items-center gap-2 class="flex-basis-1/3">
             <p flex shrink-0>
-              {{ t('stock-create.form_input.unit') }}: {{ mustUpdateStocksList }}
+              {{ t('stock-create.form_input.unit') }}:
             </p>
             <NSelect v-model:value="editUnit" :options="unitOptions" />
           </div>

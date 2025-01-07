@@ -51,4 +51,19 @@ export function getAllStocks(ingredientId: string) {
   return useAxios<Stock[]>(`/stocks/byIngredient/${ingredientId}`, { method: 'GET' }, economa_backend_api)
 }
 
+export async function getAllStocksByIngredient(ingredientId: string): Promise<Stock[] | undefined> {
+  try {
+    const response = await economa_backend_api.get<Stock[]>(`/stocks/byIngredient/${ingredientId}`)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Erreur lors de la création de l\'ingrédient:', error)
+
+      throw new Error(error.message || 'une erreur est survenue')
+    }
+    console.error('Erreur lors de la création de l\'ingrédient:', error)
+  }
+}
+
 export default economa_backend_api

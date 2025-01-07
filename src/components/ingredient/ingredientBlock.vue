@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
 import { NButton, NCard, NCollapseTransition } from 'naive-ui'
 import economa_backend_api from '~/composables/apiService'
+import { useStockStore } from '~/stores/stock'
 import type { Ingredient, Stock } from '~/types'
 
 const { ingredientData } = defineModels<{ ingredientData: Ingredient }>()
@@ -9,7 +11,13 @@ const { t } = useI18n()
 const [showCollapse, toggleShowCollapse] = useToggle()
 const [isCreateStocks, toggleShowCreateStock] = useToggle()
 const { resetStockForm } = useCreateStockStore()
-const { data: stocksList } = getAllStocks(ingredientData.value.id)
+// const { data: stocksList } = getAllStocks(ingredientData.value.id)
+
+const stockStore = useStockStore()
+
+const stocksList = computed(() => {
+  return stockStore.getStocks(ingredientData.value.id)
+})
 
 const mustUpdateStockList = ref<boolean>(false)
 const isEditIngredient = ref<boolean>(false)
@@ -25,6 +33,23 @@ function convertUnit(quantity: number, fromUnit: string, toUnit: string): number
   }
 
   return quantity * conversionRates[fromUnit][toUnit]
+}
+
+const { data: stockData } = useQuery({
+  queryKey: ['stocks', ingredientData.value.id],
+  queryFn: async () => {
+    const response = await getAllStocksByIngredient(ingredientData.value.id)
+    if (!response) {
+      return
+    }
+    stockStore.setStocks(ingredientData.value.id, response)
+    return response
+  },
+  enabled: showCollapse,
+})
+
+function showStockList() {
+  toggleShowCollapse()
 }
 
 const totalQuantity = computed(() => {
@@ -108,13 +133,13 @@ function addStock(newStock: Stock) {
 <template>
   <div grid w-full flex flex-col gap-2>
     <NCard v-if="showIngredientBlock" :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
-      <div h-full w-full flex items-center justify-between @click="toggleShowCollapse()">
+      <div h-full w-full flex items-center justify-between @click="showStockList()">
         <div flex gap-2>
           <div text-3xl>
             {{ ingredientData.name }}
           </div>
           <div self-end>
-            de "{{ ingredientData.fournisseur }}"
+            de "{{ ingredientData.fournisseur }}" {{ stockData }}
           </div>
         </div>
         <div flex gap-2>

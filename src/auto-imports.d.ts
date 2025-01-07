@@ -46,6 +46,7 @@ declare global {
   const getAllIngredient: typeof import('./composables/apiService')['getAllIngredient']
   const getAllRecipe: typeof import('./composables/apiService')['getAllRecipe']
   const getAllStocks: typeof import('./composables/apiService')['getAllStocks']
+  const getAllStocksByIngredient: typeof import('./composables/apiService')['getAllStocksByIngredient']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getIngredients: typeof import('./composables/apiService')['getIngredients']
@@ -365,6 +366,7 @@ declare module 'vue' {
     readonly getAllIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllIngredient']>
     readonly getAllRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipe']>
     readonly getAllStocks: UnwrapRef<typeof import('./composables/apiService')['getAllStocks']>
+    readonly getAllStocksByIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllStocksByIngredient']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
@@ -577,6 +579,7 @@ declare module 'vue' {
     readonly useSpeechRecognition: UnwrapRef<typeof import('@vueuse/core')['useSpeechRecognition']>
     readonly useSpeechSynthesis: UnwrapRef<typeof import('@vueuse/core')['useSpeechSynthesis']>
     readonly useStepper: UnwrapRef<typeof import('@vueuse/core')['useStepper']>
+    readonly useStockStore: UnwrapRef<typeof import('./stores/stock')['useStockStore']>
     readonly useStorage: UnwrapRef<typeof import('@vueuse/core')['useStorage']>
     readonly useStorageAsync: UnwrapRef<typeof import('@vueuse/core')['useStorageAsync']>
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>

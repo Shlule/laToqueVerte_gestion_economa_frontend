@@ -10,7 +10,7 @@ const emit = defineEmits<{
 const { stockData } = defineModels<{ stockData: Stock }>()
 
 const { dayFormat } = useDateStore()
-const { unitOptions } = useCreateStockStore()
+const { unitOptions } = useStockStore()
 const { t } = useI18n()
 const mustUpdateStocksList = inject<Ref<boolean>>('mustUpdateStocksList')
 

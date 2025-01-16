@@ -2,7 +2,7 @@
 import { NInput, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
 const { showCreateIngredient } = defineModels<{ showCreateIngredient: boolean }>()
-const { unitOptions } = useCreateStockStore()
+const { unitOptions } = useStockStore()
 
 function toggleShowCreateIngredient() {
   showCreateIngredient.value = !showCreateIngredient.value

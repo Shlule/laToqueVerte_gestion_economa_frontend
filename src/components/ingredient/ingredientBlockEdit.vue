@@ -6,7 +6,7 @@ const emit = defineEmits<{
 }>()
 const { ingredientData } = defineModels<{ ingredientData: Ingredient }>()
 
-const { unitOptions } = useCreateStockStore()
+const { unitOptions } = useStockStore()
 const { t } = useI18n()
 
 // work with localStockDate because modifying stock impact real data

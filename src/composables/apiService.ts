@@ -23,8 +23,12 @@ export async function createIngredient(newIngredient: IngredientCreation) {
   }
 }
 
+export function removeIngredient(ingredientId: string) {
+  return useAxios<void>(`/ingredients/${ingredientId}`, { method: 'DELETE' }, economa_backend_api)
+}
+
 export function createStock(newStock: StockCreation) {
-  return useAxios<Stock[]>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
+  return useAxios<Stock>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
 }
 
 export function editStock(newStockData: Stock) {
@@ -47,9 +51,9 @@ export function createRecipe() {
   return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)
 }
 
-export function getAllStocks(ingredientId: string) {
-  return useAxios<Stock[]>(`/stocks/byIngredient/${ingredientId}`, { method: 'GET' }, economa_backend_api)
-}
+// export function getAllStocks(ingredientId: string) {
+//   return useAxios<Stock[]>(`/stocks/byIngredient/${ingredientId}`, { method: 'GET' }, economa_backend_api)
+// }
 
 export async function getAllStocksByIngredient(ingredientId: string): Promise<Stock[] | undefined> {
   try {

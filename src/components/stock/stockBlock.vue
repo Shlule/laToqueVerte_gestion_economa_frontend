@@ -45,7 +45,7 @@ const backgroundExpiration = computed(() => {
   }
 
   switch (true) {
-    case daysRemaining.value > 10:
+    case daysRemaining.value >= 10:
       backgroundColor = 'bg-green'
       break
 

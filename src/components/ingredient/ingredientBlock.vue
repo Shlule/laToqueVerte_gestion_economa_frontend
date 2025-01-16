@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { NButton, NCard, NCollapseTransition } from 'naive-ui'
-import economa_backend_api from '~/composables/apiService'
 import { useStockStore } from '~/stores/stock'
-import type { Ingredient, Stock } from '~/types'
+import type { Ingredient } from '~/types'
 
-const { ingredientData } = defineModels<{ ingredientData: Ingredient }>()
+const ingredientData = defineModel<Ingredient>('ingredientData', { required: true })
 
 const { t } = useI18n()
-const [showCollapse, toggleShowCollapse] = useToggle()
+const [showStockList, toggleShowStockList] = useToggle()
 const [isCreateStocks, toggleShowCreateStock] = useToggle()
-const { resetStockForm } = useCreateStockStore()
-// const { data: stocksList } = getAllStocks(ingredientData.value.id)
+const { resetStockForm } = useStockStore()
 
 const stockStore = useStockStore()
 
@@ -19,23 +17,10 @@ const stocksList = computed(() => {
   return stockStore.getStocks(ingredientData.value.id)
 })
 
-const mustUpdateStockList = ref<boolean>(false)
 const isEditIngredient = ref<boolean>(false)
 const showIngredientBlock = ref(true)
 
-provide('mustUpdateStocksList', mustUpdateStockList)
-
-function convertUnit(quantity: number, fromUnit: string, toUnit: string): number {
-  const conversionRates = {
-    kg: { g: 1000, kg: 1 },
-    g: { g: 1, kg: 0.001 },
-    unit: { unit: 1 },
-  }
-
-  return quantity * conversionRates[fromUnit][toUnit]
-}
-
-const { data: stockData } = useQuery({
+useQuery({
   queryKey: ['stocks', ingredientData.value.id],
   queryFn: async () => {
     const response = await getAllStocksByIngredient(ingredientData.value.id)
@@ -45,12 +30,8 @@ const { data: stockData } = useQuery({
     stockStore.setStocks(ingredientData.value.id, response)
     return response
   },
-  enabled: showCollapse,
+  enabled: showStockList,
 })
-
-function showStockList() {
-  toggleShowCollapse()
-}
 
 const totalQuantity = computed(() => {
   if (!stocksList.value) {
@@ -82,64 +63,37 @@ const isNoStock = computed(() => {
   }
 })
 
-function deleteIngredient() {
-  showIngredientBlock.value = false
-  economa_backend_api.delete(`/ingredients/${ingredientData.value.id}`)
-}
-
 function toggleEditIngredient() {
   isEditIngredient.value = !isEditIngredient.value
   showIngredientBlock.value = !showIngredientBlock.value
 }
 
-// EDIT_STOCK[epic=edit_stock] - this part is for update info when stock is edited
-
-async function updateStocksList(ingredientId: string) {
-  const { data, error, execute } = await getAllStocks(ingredientId)
-  execute().then(() => {
-    if (!error.value) {
-      stocksList.value = data.value
-    }
-    else {
-      console.error('Error fetching stocks data:', error.value)
-    }
-  })
-
-  // reset possibility to refresh data
-  mustUpdateStockList.value = false
-}
-
-watch(mustUpdateStockList, (newValue) => {
-  if (newValue === true) {
-    updateStocksList(ingredientData.value.id)
+function deleteIngredient() {
+  const { error } = removeIngredient(ingredientData.value.id)
+  if (error.value) {
+    console.error(error)
   }
-})
 
-// !EDIT_STOCK
+  showIngredientBlock.value = !showIngredientBlock.value
+}
 
 watch(isCreateStocks, (newX) => {
   if (newX === false) {
     resetStockForm()
   }
 })
-function addStock(newStock: Stock) {
-  if (!stocksList.value) {
-    return
-  }
-  stocksList.value = [...stocksList.value, newStock]
-}
 </script>
 
 <template>
-  <div grid w-full flex flex-col gap-2>
-    <NCard v-if="showIngredientBlock" :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
-      <div h-full w-full flex items-center justify-between @click="showStockList()">
+  <div v-if="showIngredientBlock" grid w-full flex flex-col gap-2>
+    <NCard :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
+      <div h-full w-full flex items-center justify-between @click="toggleShowStockList()">
         <div flex gap-2>
           <div text-3xl>
             {{ ingredientData.name }}
           </div>
           <div self-end>
-            de "{{ ingredientData.fournisseur }}" {{ stockData }}
+            de "{{ ingredientData.fournisseur }}"
           </div>
         </div>
         <div flex gap-2>
@@ -161,7 +115,7 @@ function addStock(newStock: Stock) {
       </div>
     </NCard>
     <ingredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
-    <NCollapseTransition id="stockBlock-container" :show="showCollapse" flex flex-col>
+    <NCollapseTransition id="stockBlock-container" :show="showStockList" flex flex-col>
       <div id="stockBlock-header" flex flex-col items-center gap-2>
         <div v-if="isNoStock" text-6>
           {{ t('stock-header.no_stock') }} {{ ingredientData.name }}
@@ -195,7 +149,7 @@ function addStock(newStock: Stock) {
       </NScrollbar>
     </NCollapseTransition>
     <NModal v-model:show="isCreateStocks">
-      <CreateStock v-model:show-create-stock="isCreateStocks" :ingredient-id="ingredientData.id" @stock-created="addStock" />
+      <CreateStock v-model:show-create-stock="isCreateStocks" :ingredient-id="ingredientData.id" />
     </NModal>
   </div>
 </template>

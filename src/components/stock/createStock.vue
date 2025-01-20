@@ -51,7 +51,7 @@ async function createStock() {
           <p flex shrink-0>
             {{ t('stock-create.form_input.unit') }}
           </p>
-          <NSelect v-model:value="stockStore.newStockUnit" :options="stockStore.unitOptions" />
+          <NSelect v-model:value="stockStore.newStockUnit" :options="unitOptions" />
         </div>
         <div flex class="flex-basis-1/3">
           <NDatePicker v-model:formatted-value="stockStore.expirationDateDisplayed" :format="dayFormat" type="date" />

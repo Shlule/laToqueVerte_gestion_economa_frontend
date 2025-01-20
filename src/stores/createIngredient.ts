@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import { createIngredient } from '~/composables/apiService'
 import type { IngredientCreation, Unit } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
 
-export const useCreateIngredientStore = defineStore('createIngredient', () => {
+export const useCrudIngredientStore = defineStore('crudIngredient', () => {
   const newIngredientName = ref('')
   const newIngredientUnit = ref<Unit>('kg')
   const newIngredientPrice = ref<number>(0)
@@ -47,3 +47,6 @@ export const useCreateIngredientStore = defineStore('createIngredient', () => {
     addNewIngredient,
   }
 })
+
+if (import.meta.hot)
+  import.meta.hot.accept(acceptHMRUpdate(useCrudIngredientStore as any, import.meta.hot))

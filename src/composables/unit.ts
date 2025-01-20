@@ -7,3 +7,14 @@ export function convertUnit(quantity: number, fromUnit: string, toUnit: string):
 
   return quantity * conversionRates[fromUnit][toUnit]
 }
+
+export const unitOptions = [{
+  label: 'kg',
+  value: 'kg',
+}, {
+  label: 'g',
+  value: 'g',
+}, {
+  label: 'unit',
+  value: 'unit',
+}]

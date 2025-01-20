@@ -23,17 +23,6 @@ export const useStockStore = defineStore('useStockStore', () => {
   const newStockQuantity = ref<number>(0)
   const expirationDateDisplayed = ref<string>(dateStore.todayFormated)
 
-  const unitOptions = [{
-    label: 'kg',
-    value: 'kg',
-  }, {
-    label: 'g',
-    value: 'g',
-  }, {
-    label: 'unit',
-    value: 'unit',
-  }]
-
   const newStockExpirationDate = computed(() => {
     const parsedDate = parse(expirationDateDisplayed.value, dateStore.dayFormat, new Date())
     if (isValid(parsedDate) === false) {

@@ -5,7 +5,7 @@ import { useIngredientStore } from '~/stores/ingredients'
 
 const { t } = useI18n()
 const ingredientStore = useIngredientStore()
-const { resetIngredientForm } = useCreateIngredientStore()
+const { resetIngredientForm } = useIngredientStore()
 const [isCreateNewIngredient, toggleCreateNewIngredient] = useToggle()
 
 function handleSelect(key: string) {

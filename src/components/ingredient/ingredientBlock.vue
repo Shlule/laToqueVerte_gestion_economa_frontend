@@ -13,14 +13,10 @@ const { resetStockForm } = useStockStore()
 
 const stockStore = useStockStore()
 
-const stocksList = computed(() => {
-  return stockStore.getStocks(ingredientData.value.id)
-})
-
 const isEditIngredient = ref<boolean>(false)
 const showIngredientBlock = ref(true)
 
-useQuery({
+const { data: stocksList } = useQuery({
   queryKey: ['stocks', ingredientData.value.id],
   queryFn: async () => {
     const response = await getAllStocksByIngredient(ingredientData.value.id)
@@ -85,8 +81,8 @@ watch(isCreateStocks, (newX) => {
 </script>
 
 <template>
-  <div v-if="showIngredientBlock" grid w-full flex flex-col gap-2>
-    <NCard :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
+  <div grid w-full flex flex-col gap-2>
+    <NCard v-if="showIngredientBlock" :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
       <div h-full w-full flex items-center justify-between @click="toggleShowStockList()">
         <div flex gap-2>
           <div text-3xl>
@@ -114,7 +110,7 @@ watch(isCreateStocks, (newX) => {
         </div>
       </div>
     </NCard>
-    <ingredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
+    <IngredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
     <NCollapseTransition id="stockBlock-container" :show="showStockList" flex flex-col>
       <div id="stockBlock-header" flex flex-col items-center gap-2>
         <div v-if="isNoStock" text-6>

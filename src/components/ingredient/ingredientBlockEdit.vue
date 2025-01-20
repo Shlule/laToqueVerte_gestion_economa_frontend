@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import { unitOptions } from '~/composables/unit'
 import type { Ingredient, Unit } from '~/types'
 
 const emit = defineEmits<{
   (event: 'toggleEditIngredientBlock'): void
 }>()
-const { ingredientData } = defineModels<{ ingredientData: Ingredient }>()
+const ingredientData = defineModel<Ingredient>('ingredientData', { required: true })
 
-const { unitOptions } = useStockStore()
+const { updateIngredient } = useIngredientStore()
 const { t } = useI18n()
 
 // work with localStockDate because modifying stock impact real data
@@ -34,10 +35,7 @@ function confirm() {
   // modify on backend
   editIngredient(editIngredientData.value)
   // update ingredient localy
-  ingredientData.value.name = editName.value
-  ingredientData.value.fournisseur = editFournisseur.value
-  ingredientData.value.unitType = editUnitType.value
-  ingredientData.value.pricePerUnit = editPricePerUnit.value
+  updateIngredient(ingredientData.value.id, editIngredientData.value)
   // close edit mode
   emit('toggleEditIngredientBlock')
 }

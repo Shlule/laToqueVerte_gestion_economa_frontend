@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import type { Ingredient } from '~/types'
+import type { Ingredient, IngredientCreation, Unit } from '~/types'
 
 // this store is use to display all information relative to ingredient
 // request data , sorting ingredient parameter
@@ -9,6 +9,7 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
   const { data: allIngredient, error: ingredientError } = getAllIngredient()
   const { t } = useI18n()
 
+  // ANCHOR - all this part is for text display and ingredient display and sorting
   const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
   const searchBarInput = ref('')
   const isAscendantOrder = ref<boolean>(true)
@@ -78,6 +79,57 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     return sortIngredientsBy(filteredIngredientList, sortKey.value, isAscendantOrder.value)
   })
 
+  // ANCHOR - ingredient manipulation such as edit create and delete
+
+  const newIngredientName = ref('')
+  const newIngredientUnit = ref<Unit>('kg')
+  const newIngredientPrice = ref<number>(0)
+  const newIngredientFournisseur = ref('')
+
+  const ingredientStore = useIngredientStore()
+
+  const newIngredient = computed<IngredientCreation>(() => ({
+    name: newIngredientName.value,
+    unitType: newIngredientUnit.value,
+    pricePerUnit: newIngredientPrice.value,
+    fournisseur: newIngredientFournisseur.value,
+  }))
+
+  async function addNewIngredient() {
+    const ingredientData = await createIngredient(newIngredient.value)
+
+    if (!ingredientData || !ingredientStore.allIngredient) {
+      return
+    }
+    // use spread operator to keep reactivity
+    // @todo do it with push and keep reactivity
+    ingredientStore.allIngredient = [...ingredientStore.allIngredient, ingredientData.data]
+  }
+
+  function updateIngredient(id: string, updatedData: Ingredient) {
+    if (!allIngredient.value) {
+      return
+    }
+    const index = allIngredient.value.findIndex(ingredient => ingredient.id === id)
+
+    if (index === -1) {
+      console.error(`Ingredient with id ${id} not found`)
+    }
+
+    // update ingredient
+    // TODO - try to find an other method and keep reactivity
+    allIngredient.value[index] = { ...allIngredient.value[index], ...updatedData }
+    allIngredient.value = [...allIngredient.value]
+    // allIngredient.value.splice(index, 1, { ...allIngredient.value[index], ...updatedData })
+  }
+
+  function resetIngredientForm() {
+    newIngredientName.value = ''
+    newIngredientUnit.value = 'kg'
+    newIngredientPrice.value = 0
+    newIngredientFournisseur.value = ''
+  }
+
   return {
     searchBarInput,
     ingredientList,
@@ -86,6 +138,14 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     ingredientError,
     isAscendantOrder,
     allIngredient,
+    newIngredientName,
+    newIngredient,
+    newIngredientFournisseur,
+    newIngredientPrice,
+    newIngredientUnit,
+    resetIngredientForm,
+    addNewIngredient,
+    updateIngredient,
   }
 })
 

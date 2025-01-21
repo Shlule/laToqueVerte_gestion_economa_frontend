@@ -49,6 +49,7 @@ export const useStockStore = defineStore('useStockStore', () => {
       return { responseStock, error }
     }
     stockPerIngredient.value.get(ingredientId)?.push(responseStock.value)
+
     return { responseStock, error }
   }
 
@@ -65,9 +66,10 @@ export const useStockStore = defineStore('useStockStore', () => {
     setStocks,
     resetStockForm,
     newStock,
-    unitOptions,
     expirationDateDisplayed,
     newStockQuantity,
+    newStockUnit,
+    newStockExpirationDate,
     addNewStock,
     ingredientId,
   }

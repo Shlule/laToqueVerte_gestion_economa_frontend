@@ -20,6 +20,9 @@ intro:
   whats-your-name: Comment t'appelles-tu ?
 not-found: Page non trouvée
 
+loading:
+  query: en attente d'une response server
+
 ingredient:
   sort_option:
     alphabetical: Alphabetique

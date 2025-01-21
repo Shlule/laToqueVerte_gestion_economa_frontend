@@ -30,6 +30,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     StockBlock: typeof import('./components/stock/stockBlock.vue')['default']
     StockBlockEdit: typeof import('./components/stock/stockBlockEdit.vue')['default']
+    StockList: typeof import('./components/stock/stockList.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']

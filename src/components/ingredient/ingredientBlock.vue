@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import { NButton, NCard, NCollapseTransition } from 'naive-ui'
+import { NButton, NCard, NCollapseTransition, NSpin } from 'naive-ui'
 import { useStockStore } from '~/stores/stock'
 import type { Ingredient } from '~/types'
 
@@ -16,7 +16,8 @@ const stockStore = useStockStore()
 const isEditIngredient = ref<boolean>(false)
 const showIngredientBlock = ref(true)
 
-const { data: stocksList } = useQuery({
+// refresh data directly on the pinia store (the source of truth)
+const { error: stockQueryError, isLoading: stockQueryLoading } = useQuery({
   queryKey: ['stocks', ingredientData.value.id],
   queryFn: async () => {
     const response = await getAllStocksByIngredient(ingredientData.value.id)
@@ -27,6 +28,10 @@ const { data: stocksList } = useQuery({
     return response
   },
   enabled: showStockList,
+})
+
+const stocksList = computed(() => {
+  return stockStore.getStocks(ingredientData.value.id)
 })
 
 const totalQuantity = computed(() => {
@@ -110,11 +115,20 @@ watch(isCreateStocks, (newX) => {
         </div>
       </div>
     </NCard>
-    <IngredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
+    <Transition>
+      <IngredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
+    </Transition>
     <NCollapseTransition id="stockBlock-container" :show="showStockList" flex flex-col>
       <div id="stockBlock-header" flex flex-col items-center gap-2>
         <div v-if="isNoStock" text-6>
           {{ t('stock-header.no_stock') }} {{ ingredientData.name }}
+        </div>
+        <div v-else-if="stockQueryError">
+          {{ stockQueryError }}
+        </div>
+        <div v-else-if="stockQueryLoading" flex>
+          <p> {{ t('loading.query') }}</p>
+          <NSpin />
         </div>
         <div v-else w-full flex justify-between gap-2>
           <div text-9>

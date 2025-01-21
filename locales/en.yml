@@ -19,6 +19,9 @@ intro:
   whats-your-name: What's your name?
 not-found: Not found
 
+loading:
+  query: waiting for query response
+
 ingredient:
   sort_option:
     alphabetical: Alphabetical

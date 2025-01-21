@@ -42,7 +42,7 @@ function confirm() {
 </script>
 
 <template>
-  <div id="stockEdit-container" m-y-3 w-full flex items-center gap-2>
+  <div id="stockEdit-container" w-full flex items-center gap-2>
     <div w-full flex>
       <NCard :bordered="false" flex rounded-2xl p-0 shadow-xl>
         <div id="form-input-container" h-full flex justify-between gap-2>

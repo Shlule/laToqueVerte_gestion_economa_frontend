@@ -12,6 +12,10 @@ button:
   confirm: Confirmer
   cancel: Annuler
 
+recipe-option:
+  number_of_piece: nombres de parts
+  weight: poids
+
 intro:
   desc: Exemple d'application Vite
   dynamic-route: Démo de route dynamique
@@ -28,6 +32,10 @@ ingredient:
     alphabetical: Alphabetique
     price: Prix
     supplier: Fournisseur
+
+ingredient-create:
+  price_per: prix par
+  unit: unité
 
 ingredient-block:
   supplier: fournisseur

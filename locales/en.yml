@@ -19,6 +19,10 @@ intro:
   whats-your-name: What's your name?
 not-found: Not found
 
+recipe-option:
+  number_of_piece: number of pieces
+  weight: weight
+
 loading:
   query: waiting for query response
 
@@ -27,6 +31,10 @@ ingredient:
     alphabetical: Alphabetical
     price: Price
     supplier: Supplier
+
+ingredient-create:
+  price_per: price per
+  unit: unit
 
 ingredient-block:
   supplier: supplier

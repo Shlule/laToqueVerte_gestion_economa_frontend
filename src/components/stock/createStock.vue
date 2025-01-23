@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
-const { showCreateStock, ingredientId } = defineModels<{ showCreateStock: boolean, ingredientId: string }>()
+const showCreateStock = defineModel<boolean>('showCreateStock', { required: true })
+const ingredientId = defineModel<string>('ingredientId', { required: true })
 
 const stockStore = useStockStore()
 const { dayFormat } = useDateStore()
@@ -52,6 +53,7 @@ async function createStock() {
             {{ t('stock-create.form_input.unit') }}
           </p>
           <NSelect v-model:value="stockStore.newStockUnit" :options="unitOptions" />
+          {{ stockStore.newSto }}
         </div>
         <div flex class="flex-basis-1/3">
           <NDatePicker v-model:formatted-value="stockStore.expirationDateDisplayed" :format="dayFormat" type="date" />

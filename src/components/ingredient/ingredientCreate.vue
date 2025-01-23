@@ -9,6 +9,7 @@ function toggleShowCreateIngredient() {
 
 const ingredientStore = useIngredientStore()
 const notification = useNotification()
+const { t } = useI18n()
 
 function createIngredient() {
   ingredientStore.addNewIngredient()
@@ -29,13 +30,13 @@ function createIngredient() {
       <div flex gap-2>
         <div class="flex-basis-2/3" flex items-center gap-2>
           <p flex-shrink-0>
-            prix par unite
+            {{ t('ingredient-create.price_per') }} {{ ingredientStore.newIngredientUnit }}
           </p>
           <NInputNumber v-model:value="ingredientStore.newIngredientPrice" />
         </div>
         <div flex items-center gap-2 class="flex flex-basis-1/3">
           <p flex shrink-0>
-            unite
+            {{ t('ingredient-create.unit') }}
           </p>
           <NSelect v-model:value="ingredientStore.newIngredientUnit" :options="unitOptions" />
         </div>

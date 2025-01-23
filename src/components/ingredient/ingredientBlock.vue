@@ -76,6 +76,7 @@ function deleteIngredient() {
   }
 
   showIngredientBlock.value = !showIngredientBlock.value
+  toggleShowStockList()
 }
 
 watch(isCreateStocks, (newX) => {

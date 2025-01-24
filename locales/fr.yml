@@ -12,10 +12,6 @@ button:
   confirm: Confirmer
   cancel: Annuler
 
-recipe-option:
-  number_of_piece: nombres de parts
-  weight: poids
-
 intro:
   desc: Exemple d'application Vite
   dynamic-route: Démo de route dynamique
@@ -68,3 +64,22 @@ stock-block:
 recipe-header:
   title: Recettes
   search_bar: rechercher une recette
+
+recipe-option:
+  number_of_piece: nombres de parts
+  weight: poids
+
+recipe:
+  sort_option:
+    alphabetical: alphabetique
+    cost: coût
+
+recipe-tabInfo:
+  tab_name: economa
+  cost: coût
+  title:
+    cost: Coût
+    selling: revente
+
+recipe-tabIngredients:
+  tab_name: ingrédients

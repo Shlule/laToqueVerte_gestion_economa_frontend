@@ -26,9 +26,17 @@ export interface Ingredient {
 export interface Recipe {
   id: string
   name: string
-  isPossible: boolean
   cost: number
-  recipeIngredients?: RecipeIngredient[]
+  numberOfPieces: number
+  recipeIngredients: RecipeIngredient[]
+  insufficientIngredients?: InsufficientIngredient[]
+}
+
+export interface InsufficientIngredient {
+  name: string
+  ingredientId: string
+  missingQuantity: number
+  unit: Unit
 }
 
 export interface RecipeIngredient {

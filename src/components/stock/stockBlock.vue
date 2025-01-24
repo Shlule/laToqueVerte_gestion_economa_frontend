@@ -4,7 +4,7 @@ import { differenceInDays, format, startOfDay } from 'date-fns'
 import type { Stock } from '~/types'
 import economa_backend_api from '~/composables/apiService'
 
-const { stockData } = defineModels<{ stockData: Stock }>()
+const stockData = defineModel<Stock>('stockData', { required: true })
 
 const { today, dayFormat } = useDateStore()
 const { t } = useI18n()

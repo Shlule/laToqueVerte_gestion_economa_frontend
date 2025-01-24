@@ -6,7 +6,7 @@ import type { Ingredient, IngredientCreation, Unit } from '~/types'
 // the sorting of ingredient list are made here only in front end
 
 export const useIngredientStore = defineStore('useIngredientStore', () => {
-  const { data: allIngredient, error: ingredientError } = getAllIngredient()
+  const { data: allIngredient, error: ingredientQuerryError } = getAllIngredient()
   const { t } = useI18n()
 
   // ANCHOR - all this part is for text display and ingredient display and sorting
@@ -135,7 +135,7 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     ingredientList,
     sortOptions,
     sortSelected,
-    ingredientError,
+    ingredientQuerryError,
     isAscendantOrder,
     allIngredient,
     newIngredientName,

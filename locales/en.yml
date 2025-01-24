@@ -19,10 +19,6 @@ intro:
   whats-your-name: What's your name?
 not-found: Not found
 
-recipe-option:
-  number_of_piece: number of pieces
-  weight: weight
-
 loading:
   query: waiting for query response
 
@@ -67,3 +63,22 @@ stock-block:
 recipe-header:
   title: Recipes
   search_bar: search a recipe
+
+recipe-option:
+  number_of_piece: number of pieces
+  weight: weight
+
+recipe:
+  sort_option:
+    alphabetical: alphabetique
+    cost: coût
+
+recipe-tabInfo:
+  tab_name: economic
+  cost: cost
+  title:
+    cost: cost
+    selling: selling
+
+recipe-tabIngredients:
+  tab_name: ingredients

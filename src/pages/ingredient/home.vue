@@ -5,8 +5,8 @@ const ingredientStore = useIngredientStore()
 <template>
   <div>
     <div id="error-message">
-      <p v-if="ingredientStore.ingredientError">
-        Une erreur est survenue {{ ingredientStore.ingredientError }}
+      <p v-if="ingredientStore.ingredientQuerryError">
+        Une erreur est survenue {{ ingredientStore.ingredientQuerryError }}
       </p>
     </div>
     <IngredientHeader />

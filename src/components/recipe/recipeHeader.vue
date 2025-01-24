@@ -1,25 +1,17 @@
 <script setup lang="ts">
 import { NInput } from 'naive-ui'
 import RecipeCreate from './recipeCreate.vue'
-import { useIngredientStore } from '~/stores/ingredients'
 
 const { t } = useI18n()
-const ingredientStore = useIngredientStore()
-const { resetIngredientForm } = useIngredientStore()
-const [isCreateNewIngredient, toggleCreateNewIngredient] = useToggle()
+const recipeStore = useRecipeStore()
+const [isCreateNewRecipe, toggleCreateNewRecipe] = useToggle()
 
 function handleSelect(key: string) {
-  ingredientStore.sortSelected = key
+  recipeStore.sortSelected = key
 }
 
-watch(isCreateNewIngredient, (newX) => {
-  if (newX === false) {
-    resetIngredientForm()
-  }
-})
-
 function swapOrder() {
-  ingredientStore.isAscendantOrder = !ingredientStore.isAscendantOrder
+  recipeStore.isAscendantOrder = !recipeStore.isAscendantOrder
 }
 </script>
 
@@ -28,7 +20,7 @@ function swapOrder() {
     <div m-l-10 flex shrink-0 text-16>
       {{ t('recipe-header.title') }}
     </div>
-    <NInput v-model:value="ingredientStore.searchBarInput" :placeholder="t('recipe-header.search_bar')" type="text" round flex>
+    <NInput v-model:value="recipeStore.searchBarInput" :placeholder="t('recipe-header.search_bar')" type="text" round flex>
       <template #prefix>
         <div i-fluent:search-20-filled text-4 />
       </template>
@@ -38,18 +30,18 @@ function swapOrder() {
         <div i-fluent:arrow-sort-20-regular />
       </NButton>
       <div />
-      <NDropdown trigger="hover" :options="ingredientStore.sortOptions" @select="handleSelect">
+      <NDropdown trigger="hover" :options="recipeStore.sortOptions" @select="handleSelect">
         <NButton>
           {{ t('button.sorting_mode') }}
         </NButton>
       </NDropdown>
-      <NButton @click="toggleCreateNewIngredient()">
+      <NButton @click="toggleCreateNewRecipe()">
         {{ t('button.add_recipe') }}
       </NButton>
     </div>
   </div>
-  <NModal v-model:show="isCreateNewIngredient" @close="resetIngredientForm()">
-    <RecipeCreate v-model:show-create-ingredient="isCreateNewIngredient" />
+  <NModal v-model:show="isCreateNewRecipe">
+    <RecipeCreate v-model:show-create-ingredient="isCreateNewRecipe" />
   </NModal>
 </template>
 

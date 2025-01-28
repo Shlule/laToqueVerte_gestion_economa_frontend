@@ -7,11 +7,13 @@ import type { Stock, Unit } from '~/types'
 const emit = defineEmits<{
   (event: 'toggleEditStockBlock'): void
 }>()
-const { stockData } = defineModels<{ stockData: Stock }>()
+
+const stockData = defineModel<Stock>('stockData', { required: true })
+const ingredientId = defineModel<string>('ingredientId', { required: true })
 
 const { dayFormat } = useDateStore()
 const { t } = useI18n()
-const mustUpdateStocksList = inject<Ref<boolean>>('mustUpdateStocksList')
+const { editStockLocal } = useStockStore()
 
 // work with localStockDate because modifying stock impact real data
 const localStockData = stockData.value
@@ -33,13 +35,12 @@ function cancel() {
 
 function confirm() {
   // modify on backend
-  editStock(editStockData.value)
-
-  // update stocks list
-  if (!mustUpdateStocksList) {
-    return
+  const { error } = editStock(editStockData.value)
+  if (error.value) {
+    console.error(error.value)
   }
-  mustUpdateStocksList.value = true
+  // update stocks list
+  editStockLocal(ingredientId.value, stockData.value.id, editStockData.value)
   // close edit mode
   emit('toggleEditStockBlock')
 }

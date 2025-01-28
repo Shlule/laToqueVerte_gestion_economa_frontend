@@ -42,6 +42,7 @@ export interface InsufficientIngredient {
 export interface RecipeIngredient {
   id: string
   quantityNeeded: number
+  cost: number
   recipe: Recipe
   ingredient: Ingredient
   unit: Unit

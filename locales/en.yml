@@ -11,6 +11,8 @@ button:
   confirm: Confirm
   cancel: Cancel
   add_recipe: New Recipe
+  add_recipeingredient: add ingredient
+
 intro:
   desc: Opinionated Vite Starter Template
   dynamic-route: Demo of dynamic route
@@ -18,6 +20,8 @@ intro:
   aka: Also known as
   whats-your-name: What's your name?
 not-found: Not found
+
+money-symbol: $
 
 loading:
   query: waiting for query response
@@ -77,8 +81,14 @@ recipe-tabInfo:
   tab_name: economic
   cost: cost
   title:
-    cost: cost
-    selling: selling
+    cost: Cost
+    cost_per_unit: Cost for a Piece
+    selling: Selling Price
+    selling_per_unit: Selling Price for a Piece
+
+recipeIngredient-block:
+  quantity_needed: quantity
+  cost: cost
 
 recipe-tabIngredients:
   tab_name: ingredients

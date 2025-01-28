@@ -2,9 +2,9 @@
 import { NCard } from 'naive-ui'
 import { differenceInDays, format, startOfDay } from 'date-fns'
 import type { Stock } from '~/types'
-import economa_backend_api from '~/composables/apiService'
 
 const stockData = defineModel<Stock>('stockData', { required: true })
+const ingredientId = defineModel<string>('ingredientId', { required: true })
 
 const { today, dayFormat } = useDateStore()
 const { t } = useI18n()
@@ -27,7 +27,7 @@ const daysRemaining = computed(() => {
 
 function deleteStock() {
   showStockBlock.value = false
-  economa_backend_api.delete(`/stocks/${stockData.value.id}`)
+  removeStock(stockData.value.id)
 }
 function toggleEditStock() {
   showStockBlock.value = !showStockBlock.value
@@ -102,7 +102,7 @@ const backgroundExpiration = computed(() => {
       </NButton>
     </div>
   </div>
-  <StockBlockEdit v-if="showEditStockBlock" :stock-data="stockData" @toggle-edit-stock-block="toggleEditStock" />
+  <StockBlockEdit v-if="showEditStockBlock" :stock-data="stockData" :ingredient-id="ingredientId" @toggle-edit-stock-block="toggleEditStock" />
 </template>
 
 <style scoped>

@@ -17,6 +17,18 @@ export const useStockStore = defineStore('useStockStore', () => {
     stockPerIngredient.value.set(ingredientId, stocks)
   }
 
+  function editStockLocal(ingredientId: string, stockId: string, newStockData: Stock) {
+    const stockData = getStocks(ingredientId)?.find(stock => stock.id === stockId)
+    if (!stockData) {
+      return
+    }
+
+    // TODO - find an other way to get reactivity and change object entirely not just the properties
+    stockData.quantity = newStockData.quantity
+    stockData.unit = newStockData.unit
+    stockData.expirationDate = newStockData.expirationDate
+  }
+
   const dateStore = useDateStore()
   const ingredientId = ref<string>('')
   const newStockUnit = ref<Unit>('kg')
@@ -72,6 +84,7 @@ export const useStockStore = defineStore('useStockStore', () => {
     newStockExpirationDate,
     addNewStock,
     ingredientId,
+    editStockLocal,
   }
 })
 

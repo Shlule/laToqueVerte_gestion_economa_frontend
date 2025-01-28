@@ -1,5 +1,4 @@
 import type { GlobalThemeOverrides } from 'naive-ui'
-import { theme } from '@unocss/preset-mini'
 
 export const naiveThemeOverrides: GlobalThemeOverrides = {
   common: {
@@ -11,7 +10,7 @@ export const naiveThemeOverrides: GlobalThemeOverrides = {
 
   },
   Slider: {
-    fillColor: theme.colors.sky[500],
-    fillColorHover: theme.colors.sky[400],
+    // fillColor: theme.colors.sky[500],
+    // fillColorHover: theme.colors.sky[400],
   },
 }

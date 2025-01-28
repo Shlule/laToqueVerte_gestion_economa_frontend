@@ -100,7 +100,7 @@ watch(isCreateStocks, (newX) => {
         </div>
         <div flex gap-2>
           <div text-3xl>
-            {{ ingredientData.pricePerUnit }}€
+            {{ ingredientData.pricePerUnit }}{{ t('money-symbol') }}
           </div>
           <p text-lg>
             per {{ ingredientData.unitType }}
@@ -156,7 +156,7 @@ watch(isCreateStocks, (newX) => {
         </NButton>
       </div>
       <NScrollbar max-h-17rem>
-        <StockBlock v-for="stock in stocksList" :key="stock.id" :stock-data="stock" />
+        <StockBlock v-for="stock in stocksList" :key="stock.id" :stock-data="stock" :ingredient-id="ingredientData.id" />
       </NScrollbar>
     </NCollapseTransition>
     <NModal v-model:show="isCreateStocks">

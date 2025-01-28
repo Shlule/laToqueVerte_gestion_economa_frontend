@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAxios } from '@vueuse/integrations/useAxios'
-import type { Ingredient, IngredientCreation, Recipe, Stock, StockCreation } from '~/types'
+import type { Ingredient, IngredientCreation, Recipe, RecipeIngredient, Stock, StockCreation } from '~/types'
 
 const economa_backend_api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -9,6 +9,29 @@ const economa_backend_api = axios.create({
   },
   withCredentials: true,
 })
+
+export function editRecipeIngredient(newRecipeIngredientData: RecipeIngredient) {
+  return useAxios<Stock>(`/recipe-ingredients/${newRecipeIngredientData.id}`, { method: 'PUT', data: newRecipeIngredientData }, economa_backend_api)
+}
+
+export function removeRecipeIngredient(recipeIngredientId: string) {
+  return useAxios<void>(`/recipe-ingredients/${recipeIngredientId}`, { method: 'DELETE' }, economa_backend_api)
+}
+
+export async function getAllRecipeIngredientByRecipe(recipeId: string): Promise<RecipeIngredient[] | undefined> {
+  try {
+    const response = await economa_backend_api.get<RecipeIngredient[]>(`/recipe-ingredients/byRecipe/${recipeId}`)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Erreur lors de la création de l\'ingrédient:', error)
+
+      throw new Error(error.message || 'une erreur est survenue')
+    }
+    console.error('Erreur lors de la création de l\'ingrédient:', error)
+  }
+}
 
 // here useAxios does not provide response correctly
 // impossible to access value with useAxios because return undefined value
@@ -27,14 +50,6 @@ export function removeIngredient(ingredientId: string) {
   return useAxios<void>(`/ingredients/${ingredientId}`, { method: 'DELETE' }, economa_backend_api)
 }
 
-export function createStock(newStock: StockCreation) {
-  return useAxios<Stock>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
-}
-
-export function editStock(newStockData: Stock) {
-  return useAxios<Stock>(`/stocks/${newStockData.id}`, { method: 'PUT', data: newStockData }, economa_backend_api)
-}
-
 export function getAllIngredient() {
   return useAxios<Ingredient[]>('/ingredients', { method: 'GET' }, economa_backend_api)
 }
@@ -51,10 +66,24 @@ export function createRecipe() {
   return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)
 }
 
+export function createStock(newStock: StockCreation) {
+  return useAxios<Stock>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
+}
+
+export function editStock(newStockData: Stock) {
+  return useAxios<Stock>(`/stocks/${newStockData.id}`, { method: 'PUT', data: newStockData }, economa_backend_api)
+}
+
+export function removeStock(stockId: string) {
+  return useAxios<void>(`/stocks/${stockId}`, { method: 'DELETE' }, economa_backend_api)
+}
+
 // export function getAllStocks(ingredientId: string) {
 //   return useAxios<Stock[]>(`/stocks/byIngredient/${ingredientId}`, { method: 'GET' }, economa_backend_api)
 // }
 
+// ANCHOR -  use this form for the use of TanStackQuery
+// the function must throw an error
 export async function getAllStocksByIngredient(ingredientId: string): Promise<Stock[] | undefined> {
   try {
     const response = await economa_backend_api.get<Stock[]>(`/stocks/byIngredient/${ingredientId}`)

@@ -11,6 +11,9 @@ button:
   add_recipe: Nouvelle Recette
   confirm: Confirmer
   cancel: Annuler
+  add_recipeingredient: ajouter un ingredient
+
+money-symbol: €
 
 intro:
   desc: Exemple d'application Vite
@@ -75,11 +78,17 @@ recipe:
     cost: coût
 
 recipe-tabInfo:
-  tab_name: economa
+  tab_name: économat
   cost: coût
   title:
     cost: Coût
-    selling: revente
+    cost_per_unit: Coût à la part
+    selling: Prix de revente
+    selling_per_unit: Prix de revente à la part
+
+recipeIngredient-block:
+  quantity_needed: quantité
+  cost: coût
 
 recipe-tabIngredients:
   tab_name: ingrédients

@@ -2,8 +2,6 @@
 import { format, parse } from 'date-fns'
 import type { Stock, Unit } from '~/types'
 
-// MYANCHOR[epic=edit_stock] all this file is important for editing stock
-
 const emit = defineEmits<{
   (event: 'toggleEditStockBlock'): void
 }>()

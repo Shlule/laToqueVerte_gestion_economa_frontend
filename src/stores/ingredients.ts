@@ -7,6 +7,7 @@ import type { Ingredient, IngredientCreation, Unit } from '~/types'
 
 export const useIngredientStore = defineStore('useIngredientStore', () => {
   const { data: allIngredient, error: ingredientQuerryError } = getAllIngredient()
+
   const { t } = useI18n()
 
   // ANCHOR - all this part is for text display and ingredient display and sorting

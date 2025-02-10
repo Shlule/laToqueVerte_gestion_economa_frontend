@@ -18,6 +18,7 @@ export function removeRecipeIngredient(recipeIngredientId: string) {
   return useAxios<void>(`/recipe-ingredients/${recipeIngredientId}`, { method: 'DELETE' }, economa_backend_api)
 }
 
+// SECTION - get this form and don't use useAxios for using tanStackQuery
 export async function getAllRecipeIngredientByRecipe(recipeId: string): Promise<RecipeIngredient[] | undefined> {
   try {
     const response = await economa_backend_api.get<RecipeIngredient[]>(`/recipe-ingredients/byRecipe/${recipeId}`)
@@ -25,13 +26,14 @@ export async function getAllRecipeIngredientByRecipe(recipeId: string): Promise<
   }
   catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('Erreur lors de la création de l\'ingrédient:', error)
+      console.error('Error occur during ingredient creation:', error)
 
-      throw new Error(error.message || 'une erreur est survenue')
+      throw new Error(error.message || 'An error has occur')
     }
-    console.error('Erreur lors de la création de l\'ingrédient:', error)
+    console.error('Error occur during ingredient creation:', error)
   }
 }
+// !SECTION
 
 // here useAxios does not provide response correctly
 // impossible to access value with useAxios because return undefined value
@@ -41,7 +43,7 @@ export async function createIngredient(newIngredient: IngredientCreation) {
     return response
   }
   catch (error) {
-    console.error('Erreur lors de la création de l\'ingrédient:', error)
+    console.error('Error during ingredient creation', error)
     return error
   }
 }
@@ -58,9 +60,25 @@ export function editIngredient(newIngredientData: Ingredient) {
   return useAxios<Ingredient>(`/ingredients/${newIngredientData.id}`, { method: 'PUT', data: newIngredientData }, economa_backend_api)
 }
 
-export function getAllRecipe() {
-  return useAxios<Recipe[]>('/recipes', { method: 'GET' }, economa_backend_api)
+// export function getAllRecipe() {
+//   return useAxios<Recipe[]>('/recipes', { method: 'GET' }, economa_backend_api)
+// }
+
+// SECTION - use this form for tanStackQuery uses
+export async function getAllRecipe() {
+  try {
+    const response = await economa_backend_api.get<Recipe[]>('/recipes')
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('An error has occur during fetching allRecipe')
+      throw new Error(error.message || 'An error has occur during fetching allRecipe')
+    }
+    console.error('An error has occur during fetching allRecipe')
+  }
 }
+// !SECTION
 
 export function createRecipe() {
   return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)

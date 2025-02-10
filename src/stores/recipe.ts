@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/vue-query'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { Recipe, Unit } from '~/types'
 
@@ -6,7 +7,25 @@ import type { Recipe, Unit } from '~/types'
 export const useRecipeStore = defineStore('recipeStore', () => {
   const { t } = useI18n()
 
-  const { data: allRecipe, error: recipeQuerryError } = getAllRecipe()
+  const { data: allRecipeMap, error: recipeQuerryError } = useQuery({
+    queryKey: ['recipe'],
+    queryFn: async () => {
+      const response = await getAllRecipe()
+      if (!response) {
+        return
+      }
+      const allRecipeMap = new Map(response.map(recipe => [recipe.id, recipe]))
+      return allRecipeMap
+    },
+  })
+
+  // ANCHOR - transform  map into array for sorting and searching method
+  const allRecipe = computed(() => {
+    if (!allRecipeMap.value) {
+      return
+    }
+    return [...allRecipeMap.value.values()]
+  })
 
   const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
   const searchBarInput = ref('')

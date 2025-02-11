@@ -60,25 +60,29 @@ export function editIngredient(newIngredientData: Ingredient) {
   return useAxios<Ingredient>(`/ingredients/${newIngredientData.id}`, { method: 'PUT', data: newIngredientData }, economa_backend_api)
 }
 
-// export function getAllRecipe() {
-//   return useAxios<Recipe[]>('/recipes', { method: 'GET' }, economa_backend_api)
-// }
-
-// SECTION - use this form for tanStackQuery uses
-export async function getAllRecipe() {
-  try {
-    const response = await economa_backend_api.get<Recipe[]>('/recipes')
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('An error has occur during fetching allRecipe')
-      throw new Error(error.message || 'An error has occur during fetching allRecipe')
-    }
-    console.error('An error has occur during fetching allRecipe')
-  }
+export function getAllRecipe() {
+  return useAxios<Recipe[]>('/recipes', { method: 'GET' }, economa_backend_api)
 }
-// !SECTION
+
+// // SECTION - use this form for tanStackQuery uses
+// export async function getAllRecipe(): Promise<Recipe[] | undefined> {
+//   try {
+//     const response = await economa_backend_api.get<Recipe[]>('/recipes')
+//     return response.data
+//   }
+//   catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       console.error('An error has occur during fetching allRecipe')
+//       throw new Error(error.message || 'An error has occur during fetching allRecipe')
+//     }
+//     console.error('An error has occur during fetching allRecipe')
+//   }
+// }
+// // !SECTION
+
+export function getRecipe(recipeId: string) {
+  return useAxios<Recipe>(`/recipes/${recipeId}`, { method: 'GET' }, economa_backend_api)
+}
 
 export function createRecipe() {
   return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)

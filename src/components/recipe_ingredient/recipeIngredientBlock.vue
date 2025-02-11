@@ -7,8 +7,6 @@ const recipeId = defineModel<string>('recipeId', { required: true })
 
 const { t } = useI18n()
 
-// this is for the date Displayed
-
 const showRecipeIngredientBlock = ref(true)
 const showEditRecipeIngredientBlock = ref(false)
 

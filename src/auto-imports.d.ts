@@ -54,6 +54,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getIngredients: typeof import('./composables/apiService')['getIngredients']
+  const getRecipe: typeof import('./composables/apiService')['getRecipe']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -383,6 +384,7 @@ declare module 'vue' {
     readonly getAllStocksByIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllStocksByIngredient']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getRecipe: UnwrapRef<typeof import('./composables/apiService')['getRecipe']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>

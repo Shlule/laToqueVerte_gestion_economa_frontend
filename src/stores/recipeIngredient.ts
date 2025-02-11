@@ -6,6 +6,8 @@ import type { RecipeIngredient } from '~/types'
 export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
   const recipeIngredientPerRecipe = ref<Map<string, RecipeIngredient[]>>(new Map())
 
+  const { updateRecipeLocal } = useRecipeStore()
+
   function hasRecipeIngredients(recipeId: string): boolean {
     return recipeIngredientPerRecipe.value.has(recipeId)
   }
@@ -27,6 +29,9 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     // TODO - find an other way to get reactivity and change object entirely not just the properties
     recipeIngredientData.quantityNeeded = newRecipeIngredient.quantityNeeded
     recipeIngredientData.unit = newRecipeIngredient.unit
+
+    // whenever a recipeIngredient change we must update recipe Associated
+    updateRecipeLocal(recipeId)
   }
 
   return {

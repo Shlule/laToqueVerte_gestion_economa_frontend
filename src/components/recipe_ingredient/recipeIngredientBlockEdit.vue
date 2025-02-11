@@ -19,14 +19,14 @@ const editQuantity = ref<number>(Number(localRecipeIngredientData.quantityNeeded
 const editCost = computed(() => {
   const ingredientUnit = recipeIngredientData.value.ingredient.unitType
   const convertedQuantity = convertUnit(editQuantity.value, editUnit.value, ingredientUnit)
-  return recipeIngredientData.value.ingredient.pricePerUnit * convertedQuantity
+  return Number((recipeIngredientData.value.ingredient.pricePerUnit * convertedQuantity).toFixed(2))
 })
 
 function cancel() {
   emit('toggleRecipeIngredientEdit')
 }
 
-function confirm() {
+async function confirm() {
   // update recipe Ingredient data
   recipeIngredientData.value.quantityNeeded = editQuantity.value
   recipeIngredientData.value.unit = editUnit.value
@@ -36,7 +36,6 @@ function confirm() {
   if (error.value) {
     console.error(error.value)
   }
-
   editRecipeIngredientLocal(recipeId.value, recipeIngredientData.value.id, recipeIngredientData.value)
 
   emit('toggleRecipeIngredientEdit')

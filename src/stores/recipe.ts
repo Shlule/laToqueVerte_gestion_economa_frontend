@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/vue-query'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { Recipe, Unit } from '~/types'
 
@@ -7,25 +6,74 @@ import type { Recipe, Unit } from '~/types'
 export const useRecipeStore = defineStore('recipeStore', () => {
   const { t } = useI18n()
 
-  const { data: allRecipeMap, error: recipeQuerryError } = useQuery({
-    queryKey: ['recipe'],
-    queryFn: async () => {
-      const response = await getAllRecipe()
-      if (!response) {
-        return
-      }
-      const allRecipeMap = new Map(response.map(recipe => [recipe.id, recipe]))
-      return allRecipeMap
-    },
-  })
+  const { data: allRecipe, error: recipeQueryError } = getAllRecipe()
+
+  // const { data: allRecipe, error: recipeQuerryError } = useQuery({
+  //   queryKey: ['recipes'],
+  //   queryFn: async () => {
+  //     const response = await getAllRecipe()
+  //     if (!response) {
+  //       return
+  //     }
+  //     // const allRecipeMap = new Map(response.map(recipe => [recipe.id, recipe]))
+  //     return response
+  //   },
+  // })
 
   // ANCHOR - transform  map into array for sorting and searching method
-  const allRecipe = computed(() => {
-    if (!allRecipeMap.value) {
+  // const allRecipe = computed(() => {
+  //   if (!allRecipeMap.value) {
+  //     return
+  //   }
+  //   return [...allRecipeMap.value.values()]
+  // })
+
+  // function hasRecipeLocal(recipeId: string): boolean {
+  //   if (!allRecipeMap.value) {
+  //     return false
+  //   }
+  //   return allRecipeMap.value.has(recipeId)
+  // }
+
+  // function getRecipeLocal(recipeId: string): Recipe | undefined {
+  //   if (!allRecipeMap.value) {
+  //     return
+  //   }
+  //   return allRecipeMap.value.get(recipeId)
+  // }
+
+  // function setRecipeLocal(recipe: Recipe) {
+  //   if (!allRecipeMap.value) {
+  //     return
+  //   }
+  //   allRecipeMap.value.set(recipe.id, recipe)
+  // }
+
+  // this function is use to refetch and update data of a specific recipe
+  // inside allRecipeMap because allRecipeMap is our source of truth
+  async function updateRecipeLocal(recipeId: string) {
+    if (!allRecipe.value) {
       return
     }
-    return [...allRecipeMap.value.values()]
-  })
+    // request api to get new data
+    const { data: newRecipeData } = await getRecipe(recipeId)
+    if (!newRecipeData.value) {
+      return
+    }
+
+    const oldRecipeData = allRecipe.value.find(recipe => recipe.id === recipeId)
+    if (!oldRecipeData) {
+      return
+    }
+
+    // TODO - find a better solution to that
+    oldRecipeData.cost = newRecipeData.value.cost
+    oldRecipeData.recipeIngredients = newRecipeData.value.recipeIngredients
+    oldRecipeData.name = newRecipeData.value.name
+    oldRecipeData.numberOfPieces = newRecipeData.value.numberOfPieces
+    oldRecipeData.insufficientIngredients = newRecipeData.value.insufficientIngredients
+    // allRecipeMap.value.set(recipeId, newRecipeData.value)
+  }
 
   const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
   const searchBarInput = ref('')
@@ -110,13 +158,14 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     recipeOptionSelected,
     recipeUnit,
     nbOfPiece,
-    recipeQuerryError,
+    recipeQueryError,
     weight,
     sortOptions,
     recipeList,
     sortSelected,
     isAscendantOrder,
     searchBarInput,
+    updateRecipeLocal,
   }
 })
 

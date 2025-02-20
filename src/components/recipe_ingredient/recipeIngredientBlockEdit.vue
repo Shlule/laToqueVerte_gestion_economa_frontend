@@ -7,7 +7,7 @@ const recipeIngredientData = defineModel<RecipeIngredient>('recipeIngredientData
 const recipeId = defineModel<string>('recipeId', { required: true })
 
 const { t } = useI18n()
-const { editRecipeIngredientLocal } = useRecipeIngredientStore()
+const { updateRecipeIngredient } = useRecipeIngredientStore()
 
 const localRecipeIngredientData = recipeIngredientData.value
 
@@ -22,22 +22,20 @@ const editCost = computed(() => {
   return Number((recipeIngredientData.value.ingredient.pricePerUnit * convertedQuantity).toFixed(2))
 })
 
+const newRecipeIngredient = computed<RecipeIngredient>(() => ({
+  ...recipeIngredientData.value,
+  cost: editCost.value,
+  quantityNeeded: editQuantity.value,
+  unit: editUnit.value,
+}),
+)
+
 function cancel() {
   emit('toggleRecipeIngredientEdit')
 }
 
-async function confirm() {
-  // update recipe Ingredient data
-  recipeIngredientData.value.quantityNeeded = editQuantity.value
-  recipeIngredientData.value.unit = editUnit.value
-  recipeIngredientData.value.cost = editCost.value
-
-  const { error } = editRecipeIngredient(recipeIngredientData.value)
-  if (error.value) {
-    console.error(error.value)
-  }
-  editRecipeIngredientLocal(recipeId.value, recipeIngredientData.value.id, recipeIngredientData.value)
-
+function confirm() {
+  updateRecipeIngredient.mutate({ recipeIngredient: newRecipeIngredient.value, recipeId: recipeId.value })
   emit('toggleRecipeIngredientEdit')
 }
 </script>
@@ -62,6 +60,7 @@ async function confirm() {
         </div>
       </NCard>
     </div>
+    {{ newRecipeIngredient }}
     <div id="button-menu" flex gap-3>
       <NButton circle type="error" text-red @click="cancel()">
         <div i-material-symbols:close-rounded />

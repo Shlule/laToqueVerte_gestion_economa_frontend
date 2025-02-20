@@ -42,6 +42,7 @@ declare global {
   const deleteIngredient: typeof import('./composables/apiService')['deleteIngredient']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const editIngredient: typeof import('./composables/apiService')['editIngredient']
+  const editRecipe: typeof import('./composables/apiService')['editRecipe']
   const editRecipeIngredient: typeof import('./composables/apiService')['editRecipeIngredient']
   const editStock: typeof import('./composables/apiService')['editStock']
   const effectScope: typeof import('vue')['effectScope']
@@ -374,6 +375,7 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly editIngredient: UnwrapRef<typeof import('./composables/apiService')['editIngredient']>
+    readonly editRecipe: UnwrapRef<typeof import('./composables/apiService')['editRecipe']>
     readonly editRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['editRecipeIngredient']>
     readonly editStock: UnwrapRef<typeof import('./composables/apiService')['editStock']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>

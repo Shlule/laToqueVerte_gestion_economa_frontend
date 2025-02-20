@@ -10,7 +10,6 @@ const { t } = useI18n()
 const [isAddingRecipeIngredient, toggleAddingRecipeIngredient] = useToggle()
 
 const activeTab = ref<string>('cost')
-const recipeIngredientStore = useRecipeIngredientStore()
 
 // SECTION -  do thing for tan stack query only accept ref  un enabled prop
 const isIngredientTab = ref<boolean>(false)
@@ -22,21 +21,28 @@ watch(
 )
 // !SECTION
 
-const { error: recipeIngredientQuerryError, isLoading: recipeIngredientQuerryLoading } = useQuery({
+const { data: recipeIngredientList, error: recipeIngredientQuerryError, isLoading: recipeIngredientQuerryLoading } = useQuery({
   queryKey: ['recipeIngredients', recipeData.value.id],
   queryFn: async () => {
     const response = await getAllRecipeIngredientByRecipe(recipeData.value.id)
     if (!response) {
       return
     }
-    recipeIngredientStore.setRecipeIngredients(recipeData.value.id, response)
+    // recipeIngredientStore.setRecipeIngredients(recipeData.value.id, response)
     return response
   },
   enabled: isIngredientTab,
 })
 
-const recipeIngredientList = computed(() => {
-  return recipeIngredientStore.getRecipeIngredients(recipeData.value.id)
+const recipeCost = computed(() => {
+  if (!recipeIngredientList.value) {
+    return 0
+  }
+
+  const total = recipeIngredientList.value.reduce((sum, recipeIngredient) => {
+    return sum + Number(recipeIngredient.cost || 0)
+  }, 0)
+  return total
 })
 
 const isNoRecipeIngredient = computed(() => {
@@ -87,6 +93,7 @@ const isNoRecipeIngredient = computed(() => {
             <NScrollbar>
               <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientList" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" />
             </NScrollbar>
+            {{ recipeCost }}
           </div>
           <div v-if="isAddingRecipeIngredient" />
         </NTabPane>

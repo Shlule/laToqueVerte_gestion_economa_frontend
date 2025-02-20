@@ -1,9 +1,6 @@
 # Recipe Cost Logic
 
-the recipe cost try to automatily recomputed when we make some action:
-modify, add, remove, recipeIngredient of this recipe
+the recipe cost has been automaticly recomputed when we make CRUD action on RecipeIngredients
 
-we got several possibilities to do that wich implies more logic in back-end or front-end
-
-the computation of the recipe cost is on the backend side, on the recipe-Ingredient CRUD
-on the front end side is must retrieve the new result just after we make request on recipe-Ingredient
+The Backend compute the new price and update the dataBase
+On the front-end we just modify the tanStack recipes cache that update himself every 5 min by default

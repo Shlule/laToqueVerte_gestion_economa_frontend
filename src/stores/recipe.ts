@@ -1,4 +1,5 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { defineStore } from 'pinia'
 import type { Recipe, Unit } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
@@ -6,48 +7,39 @@ import type { Recipe, Unit } from '~/types'
 export const useRecipeStore = defineStore('recipeStore', () => {
   const { t } = useI18n()
 
-  const { data: allRecipe, error: recipeQueryError } = getAllRecipe()
+  const queryClient = useQueryClient()
 
-  // const { data: allRecipe, error: recipeQuerryError } = useQuery({
-  //   queryKey: ['recipes'],
-  //   queryFn: async () => {
-  //     const response = await getAllRecipe()
-  //     if (!response) {
-  //       return
-  //     }
-  //     // const allRecipeMap = new Map(response.map(recipe => [recipe.id, recipe]))
-  //     return response
-  //   },
-  // })
+  const { data: allRecipe, error: recipeQueryError } = useQuery({
+    queryKey: ['recipes'],
+    queryFn: async () => {
+      const response = await getAllRecipe()
+      return response || []
+    },
+    staleTime: 1000 * 60 * 5, // this is 5min
+  })
 
-  // ANCHOR - transform  map into array for sorting and searching method
-  // const allRecipe = computed(() => {
-  //   if (!allRecipeMap.value) {
-  //     return
-  //   }
-  //   return [...allRecipeMap.value.values()]
-  // })
+  const updateRecipeMutation = useMutation({
+    mutationFn: async (updatedRecipe: Recipe) => {
+      return editRecipe(updatedRecipe)
+    },
+    onMutate: async (updatedRecipe) => {
+      await queryClient.cancelQueries({ queryKey: ['recipes'] })
 
-  // function hasRecipeLocal(recipeId: string): boolean {
-  //   if (!allRecipeMap.value) {
-  //     return false
-  //   }
-  //   return allRecipeMap.value.has(recipeId)
-  // }
+      const previousRecipe = queryClient.getQueryData(['recipes'])
 
-  // function getRecipeLocal(recipeId: string): Recipe | undefined {
-  //   if (!allRecipeMap.value) {
-  //     return
-  //   }
-  //   return allRecipeMap.value.get(recipeId)
-  // }
+      queryClient.setQueryData(['recipes'], (oldRecipes: Recipe[]) => {
+        return oldRecipes.map(recipe =>
+          recipe.id === updatedRecipe.id ? { ...recipe, ...updatedRecipe } : recipe,
+        )
+      })
+      return { previousRecipe }
+    },
+    onError: (err, updatedRecipe, context) => {
+      console.error('Erreur', err.message)
+      queryClient.setQueryData(['recipes'], context?.previousRecipe)
+    },
 
-  // function setRecipeLocal(recipe: Recipe) {
-  //   if (!allRecipeMap.value) {
-  //     return
-  //   }
-  //   allRecipeMap.value.set(recipe.id, recipe)
-  // }
+  })
 
   // this function is use to refetch and update data of a specific recipe
   // inside allRecipeMap because allRecipeMap is our source of truth
@@ -159,6 +151,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     recipeUnit,
     nbOfPiece,
     recipeQueryError,
+    updateRecipeMutation,
     weight,
     sortOptions,
     recipeList,
@@ -168,6 +161,3 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     updateRecipeLocal,
   }
 })
-
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useRecipeStore as any, import.meta.hot))

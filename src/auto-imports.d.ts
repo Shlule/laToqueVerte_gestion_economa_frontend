@@ -271,6 +271,9 @@ declare global {
   const useScriptTag: typeof import('@vueuse/core')['useScriptTag']
   const useScroll: typeof import('@vueuse/core')['useScroll']
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
+  const useSectionManager: typeof import('./composables/useSectionManager')['useSectionManager']
+  const useSectionManagerMultiple: typeof import('./composables/useSectionManager')['useSectionManagerMultiple']
+  const useSectionMangaer: typeof import('./composables/useSectionManager')['useSectionMangaer']
   const useSeoMeta: typeof import('@vueuse/head')['useSeoMeta']
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
   const useShare: typeof import('@vueuse/core')['useShare']
@@ -598,6 +601,8 @@ declare module 'vue' {
     readonly useScriptTag: UnwrapRef<typeof import('@vueuse/core')['useScriptTag']>
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
+    readonly useSectionManager: UnwrapRef<typeof import('./composables/useSectionManager')['useSectionManager']>
+    readonly useSectionManagerMultiple: UnwrapRef<typeof import('./composables/useSectionManager')['useSectionManagerMultiple']>
     readonly useSeoMeta: UnwrapRef<typeof import('@vueuse/head')['useSeoMeta']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>

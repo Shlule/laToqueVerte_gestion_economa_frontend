@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddIngredientBlock: typeof import('./components/recipe_ingredient/addIngredientBlock.vue')['default']
     CreateStock: typeof import('./components/stock/createStock.vue')['default']
     FadeSlideTransition: typeof import('./components/transitions/FadeSlideTransition.vue')['default']
     IngredientBlock: typeof import('./components/ingredient/ingredientBlock.vue')['default']

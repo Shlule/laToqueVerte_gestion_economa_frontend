@@ -10,6 +10,7 @@ const { t } = useI18n()
 const [isAddingRecipeIngredient, toggleAddingRecipeIngredient] = useToggle()
 
 const activeTab = ref<string>('cost')
+provide('recipeId', recipeData.value.id)
 
 // SECTION -  do this for tan stack query only accept ref  for enabled prop
 const isIngredientTab = ref<boolean>(false)

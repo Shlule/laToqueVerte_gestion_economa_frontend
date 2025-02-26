@@ -3,8 +3,6 @@ import { NSpin } from 'naive-ui'
 
 const ingredientStore = useIngredientStore()
 
-const recipeId = defineModel<string>('recipeId', { required: true })
-
 const { t } = useI18n()
 </script>
 
@@ -12,7 +10,6 @@ const { t } = useI18n()
   <div>
     <NCard role="form-dialog" title="Add ingredient to Recipe">
       <IngredientHeader />
-
       <div v-if="ingredientStore.ingredientQueryError">
         {{ ingredientStore.ingredientQueryError }}
       </div>
@@ -23,8 +20,7 @@ const { t } = useI18n()
         <NSpin />
       </div>
       <div v-else grid gap-2 md:grid-cols-1 xl:grid-cols-2>
-        <IngredientDisplay v-for="ingredient in ingredientStore.ingredientList" :key="ingredient.id" :ingredient-data="ingredient" />
-        {{ recipeId }}
+        <AddIngredientBlock v-for="ingredient in ingredientStore.ingredientList" :key="ingredient.id" :ingredient-data="ingredient" />
       </div>
     </NCard>
   </div>

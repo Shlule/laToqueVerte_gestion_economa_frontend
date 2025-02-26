@@ -48,6 +48,13 @@ export interface RecipeIngredient {
   unit: Unit
 }
 
+export interface AddToRecipe {
+  recipeId: string
+  ingredientId: string
+  quantityNeeded: number
+  unit: Unit
+}
+
 export interface StockCreation {
   ingredient: string
   quantity: number

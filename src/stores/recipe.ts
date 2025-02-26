@@ -10,7 +10,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
   const queryClient = useQueryClient()
 
   const { data: allRecipe, error: recipeQueryError } = useQuery({
-    queryKey: ['recipes'],
+    queryKey: ['allRecipes'],
     queryFn: async () => {
       const response = await getAllRecipe()
       return response || []
@@ -23,11 +23,11 @@ export const useRecipeStore = defineStore('recipeStore', () => {
       return editRecipe(updatedRecipe)
     },
     onMutate: async (updatedRecipe) => {
-      await queryClient.cancelQueries({ queryKey: ['recipes'] })
+      await queryClient.cancelQueries({ queryKey: ['allRecipes'] })
 
-      const previousRecipe = queryClient.getQueryData(['recipes'])
+      const previousRecipe = queryClient.getQueryData(['allRecipes'])
 
-      queryClient.setQueryData(['recipes'], (oldRecipes: Recipe[]) => {
+      queryClient.setQueryData(['allRecipes'], (oldRecipes: Recipe[]) => {
         return oldRecipes.map(recipe =>
           recipe.id === updatedRecipe.id ? { ...recipe, ...updatedRecipe } : recipe,
         )
@@ -36,7 +36,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     },
     onError: (err, updatedRecipe, context) => {
       console.error('Erreur', err.message)
-      queryClient.setQueryData(['recipes'], context?.previousRecipe)
+      queryClient.setQueryData(['allRecipes'], context?.previousRecipe)
     },
 
   })

@@ -6,13 +6,14 @@ const recipeIngredientData = defineModel<RecipeIngredient>('recipeIngredientData
 const recipeId = defineModel<string>('recipeId', { required: true })
 
 const { t } = useI18n()
+const { removeRecipeIngredient } = useRecipeIngredientStore()
 
 const showRecipeIngredientBlock = ref(true)
 const showEditRecipeIngredientBlock = ref(false)
 
 function deleteRecipeIngredient() {
   showRecipeIngredientBlock.value = false
-  removeRecipeIngredient(recipeIngredientData.value.id)
+  removeRecipeIngredient.mutate({ recipeIngredientId: recipeIngredientData.value.id, recipeId: recipeId.value })
 }
 function toggleEditStock() {
   showRecipeIngredientBlock.value = !showRecipeIngredientBlock.value

@@ -11,7 +11,7 @@ const [isAddingRecipeIngredient, toggleAddingRecipeIngredient] = useToggle()
 
 const activeTab = ref<string>('cost')
 
-// SECTION -  do thing for tan stack query only accept ref  un enabled prop
+// SECTION -  do this for tan stack query only accept ref  for enabled prop
 const isIngredientTab = ref<boolean>(false)
 watch(
   () => activeTab.value,
@@ -21,7 +21,7 @@ watch(
 )
 // !SECTION
 
-const { data: recipeIngredientList, error: recipeIngredientQuerryError, isLoading: recipeIngredientQuerryLoading } = useQuery({
+const { data: recipeIngredientList, error: recipeIngredientQueryError, isLoading: recipeIngredientQueryLoading } = useQuery({
   queryKey: ['recipeIngredients', recipeData.value.id],
   queryFn: async () => {
     const response = await getAllRecipeIngredientByRecipe(recipeData.value.id)
@@ -32,17 +32,6 @@ const { data: recipeIngredientList, error: recipeIngredientQuerryError, isLoadin
     return response
   },
   enabled: isIngredientTab,
-})
-
-const recipeCost = computed(() => {
-  if (!recipeIngredientList.value) {
-    return 0
-  }
-
-  const total = recipeIngredientList.value.reduce((sum, recipeIngredient) => {
-    return sum + Number(recipeIngredient.cost || 0)
-  }, 0)
-  return total
 })
 
 const isNoRecipeIngredient = computed(() => {
@@ -82,10 +71,10 @@ const isNoRecipeIngredient = computed(() => {
           <div v-if="isNoRecipeIngredient" text-6>
             {{ t('stock-header.no_stock') }}
           </div>
-          <div v-else-if="recipeIngredientQuerryError">
-            {{ recipeIngredientQuerryError }}
+          <div v-else-if="recipeIngredientQueryError">
+            {{ recipeIngredientQueryError }}
           </div>
-          <div v-else-if="recipeIngredientQuerryLoading" flex>
+          <div v-else-if="recipeIngredientQueryLoading" flex>
             <p> {{ t('loading.query') }}</p>
             <NSpin />
           </div>
@@ -93,12 +82,14 @@ const isNoRecipeIngredient = computed(() => {
             <NScrollbar>
               <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientList" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" />
             </NScrollbar>
-            {{ recipeCost }}
           </div>
           <div v-if="isAddingRecipeIngredient" />
         </NTabPane>
       </NTabs>
     </NCard>
+    <NModal v-model:show="isAddingRecipeIngredient">
+      <RecipeIngredientCreate :recipe-id="recipeData.id" />
+    </NModal>
   </div>
 </template>
 

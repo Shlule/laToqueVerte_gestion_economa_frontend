@@ -7,8 +7,8 @@ const recipeStore = useRecipeStore()
 <template>
   <div>
     <div id="error-message">
-      <p v-if="recipeStore.recipeQuerryError">
-        Une erreur est survenue {{ recipeStore.recipeQuerryError }}
+      <p v-if="recipeStore.recipeQueryError">
+        Une erreur est survenue {{ recipeStore.recipeQueryError }}
       </p>
     </div>
     <RecipeHeader />

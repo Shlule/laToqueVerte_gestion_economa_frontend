@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/vue-query'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { Ingredient, IngredientCreation, Unit } from '~/types'
 
@@ -6,7 +7,16 @@ import type { Ingredient, IngredientCreation, Unit } from '~/types'
 // the sorting of ingredient list are made here only in front end
 
 export const useIngredientStore = defineStore('useIngredientStore', () => {
-  const { data: allIngredient, error: ingredientQuerryError } = getAllIngredient()
+  // const queryClient = useQueryClient()
+  // const { data: allIngredient, error: ingredientQueryError, isLoading: ingredientQueryLoading } = getAllIngredient()
+  const { data: allIngredient, error: ingredientQueryError, isLoading: ingredientQueryLoading, isSuccess: IngredientQuerySuccess } = useQuery({
+    queryKey: ['allIngredients'],
+    queryFn: async () => {
+      const response = await getAllIngredient()
+      return response || []
+    },
+    staleTime: 1000 * 60 * 5,
+  })
 
   const { t } = useI18n()
 
@@ -136,7 +146,9 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     ingredientList,
     sortOptions,
     sortSelected,
-    ingredientQuerryError,
+    ingredientQueryError,
+    ingredientQueryLoading,
+    IngredientQuerySuccess,
     isAscendantOrder,
     allIngredient,
     newIngredientName,

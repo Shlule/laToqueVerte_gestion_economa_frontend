@@ -8,9 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CreateStock: typeof import('./components/stock/createStock.vue')['default']
+    FadeSlideTransition: typeof import('./components/transitions/FadeSlideTransition.vue')['default']
     IngredientBlock: typeof import('./components/ingredient/ingredientBlock.vue')['default']
     IngredientBlockEdit: typeof import('./components/ingredient/ingredientBlockEdit.vue')['default']
     IngredientCreate: typeof import('./components/ingredient/ingredientCreate.vue')['default']
+    IngredientDisplay: typeof import('./components/ingredient/ingredientDisplay.vue')['default']
     IngredientHeader: typeof import('./components/ingredient/ingredientHeader.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
@@ -27,6 +29,7 @@ declare module 'vue' {
     RecipeHeader: typeof import('./components/recipe/recipeHeader.vue')['default']
     RecipeIngredientBlock: typeof import('./components/recipe_ingredient/recipeIngredientBlock.vue')['default']
     RecipeIngredientBlockEdit: typeof import('./components/recipe_ingredient/recipeIngredientBlockEdit.vue')['default']
+    RecipeIngredientCreate: typeof import('./components/recipe_ingredient/recipeIngredientCreate.vue')['default']
     RecipeTabInfo: typeof import('./components/recipe/tabs/recipeTabInfo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

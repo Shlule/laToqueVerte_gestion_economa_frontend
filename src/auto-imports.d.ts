@@ -20,6 +20,7 @@ declare global {
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
   const convertUnit: typeof import('./composables/unit')['convertUnit']
+  const create: typeof import('./composables/apiService')['create']
   const createApp: typeof import('vue')['createApp']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
@@ -27,6 +28,7 @@ declare global {
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createRecipe: typeof import('./composables/apiService')['createRecipe']
+  const createRecipeIngredient: typeof import('./composables/apiService')['createRecipeIngredient']
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createStock: typeof import('./composables/apiService')['createStock']
@@ -40,6 +42,7 @@ declare global {
   const defineLoader: typeof import('vue-router/auto')['defineLoader']
   const definePage: typeof import('unplugin-vue-router/runtime')['definePage']
   const deleteIngredient: typeof import('./composables/apiService')['deleteIngredient']
+  const deleteRecipeIngredient: typeof import('./composables/apiService')['deleteRecipeIngredient']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const editIngredient: typeof import('./composables/apiService')['editIngredient']
   const editRecipe: typeof import('./composables/apiService')['editRecipe']
@@ -363,6 +366,7 @@ declare module 'vue' {
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
     readonly createRecipe: UnwrapRef<typeof import('./composables/apiService')['createRecipe']>
+    readonly createRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['createRecipeIngredient']>
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createStock: UnwrapRef<typeof import('./composables/apiService')['createStock']>
@@ -373,6 +377,7 @@ declare module 'vue' {
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
+    readonly deleteRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['deleteRecipeIngredient']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly editIngredient: UnwrapRef<typeof import('./composables/apiService')['editIngredient']>
     readonly editRecipe: UnwrapRef<typeof import('./composables/apiService')['editRecipe']>
@@ -438,7 +443,6 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly removeIngredient: UnwrapRef<typeof import('./composables/apiService')['removeIngredient']>
-    readonly removeRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['removeRecipeIngredient']>
     readonly removeStock: UnwrapRef<typeof import('./composables/apiService')['removeStock']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
@@ -610,7 +614,6 @@ declare module 'vue' {
     readonly useSwipe: UnwrapRef<typeof import('@vueuse/core')['useSwipe']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTemplateRefsList: UnwrapRef<typeof import('@vueuse/core')['useTemplateRefsList']>
-    readonly useTestStore: UnwrapRef<typeof import('./stores/test')['useTestStore']>
     readonly useTextDirection: UnwrapRef<typeof import('@vueuse/core')['useTextDirection']>
     readonly useTextSelection: UnwrapRef<typeof import('@vueuse/core')['useTextSelection']>
     readonly useTextareaAutosize: UnwrapRef<typeof import('@vueuse/core')['useTextareaAutosize']>

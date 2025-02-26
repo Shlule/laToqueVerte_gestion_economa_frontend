@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAxios } from '@vueuse/integrations/useAxios'
-import type { Ingredient, IngredientCreation, Recipe, RecipeIngredient, Stock, StockCreation } from '~/types'
+import type { AddToRecipe, Ingredient, IngredientCreation, Recipe, RecipeIngredient, Stock, StockCreation } from '~/types'
 
 const economa_backend_api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -24,8 +24,32 @@ export async function editRecipeIngredient(newRecipeIngredientData: RecipeIngred
   console.error(`An error has occur during update recipe ${newRecipeIngredientData.id}`)
 }
 
-export function removeRecipeIngredient(recipeIngredientId: string) {
-  return useAxios<void>(`/recipe-ingredients/${recipeIngredientId}`, { method: 'DELETE' }, economa_backend_api)
+export async function deleteRecipeIngredient(recipeIngredientId: string) {
+  try {
+    const response = await economa_backend_api.delete<void>(`/recipe-ingredients/${recipeIngredientId}`)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during delete recipeIngredient ${recipeIngredientId}`)
+      throw new Error(error.message || ' an error has occur')
+    }
+  }
+  console.error(`An error has occur during delete recipeIngredient ${recipeIngredientId}`)
+}
+
+export async function createRecipeIngredient(newRecipeIngredient: AddToRecipe) {
+  try {
+    const response = await economa_backend_api.post<RecipeIngredient>(`/recipe-ingredients`, newRecipeIngredient)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during creating recipeIngredient `)
+      throw new Error(error.message || ' an error has occur')
+    }
+  }
+  console.error(`An error has occur during creating recipeIngredient`)
 }
 
 // SECTION - get this form and don't use useAxios for using tanStackQuery
@@ -62,9 +86,23 @@ export function removeIngredient(ingredientId: string) {
   return useAxios<void>(`/ingredients/${ingredientId}`, { method: 'DELETE' }, economa_backend_api)
 }
 
-export function getAllIngredient() {
-  return useAxios<Ingredient[]>('/ingredients', { method: 'GET' }, economa_backend_api)
+export async function getAllIngredient(): Promise<Ingredient[] | undefined> {
+  try {
+    const response = await economa_backend_api.get<Ingredient[]>('/ingredients')
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('An error has occur during fetching allRecipe')
+      throw new Error(error.message || 'An error has occur during fetching allRecipe')
+    }
+    console.error('An error has occur during fetching allRecipe')
+  }
 }
+
+// export function getAllIngredient() {
+//   return useAxios<Ingredient[]>('/ingredients', { method: 'GET' }, economa_backend_api)
+// }
 
 export function editIngredient(newIngredientData: Ingredient) {
   return useAxios<Ingredient>(`/ingredients/${newIngredientData.id}`, { method: 'PUT', data: newIngredientData }, economa_backend_api)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import { NButton, NCard, NCollapseTransition, NSpin } from 'naive-ui'
+import { NButton, NCollapseTransition, NSpin } from 'naive-ui'
 import { useStockStore } from '~/stores/stock'
 import type { Ingredient } from '~/types'
 
@@ -65,10 +65,9 @@ const isNoStock = computed(() => {
 })
 
 function toggleEditIngredient() {
-  isEditIngredient.value = !isEditIngredient.value
   showIngredientBlock.value = !showIngredientBlock.value
+  isEditIngredient.value = !isEditIngredient.value
 }
-
 function deleteIngredient() {
   const { error } = removeIngredient(ingredientData.value.id)
   if (error.value) {
@@ -76,7 +75,6 @@ function deleteIngredient() {
   }
 
   showIngredientBlock.value = !showIngredientBlock.value
-  toggleShowStockList()
 }
 
 watch(isCreateStocks, (newX) => {
@@ -87,38 +85,18 @@ watch(isCreateStocks, (newX) => {
 </script>
 
 <template>
-  <div grid w-full flex flex-col gap-2>
-    <NCard v-if="showIngredientBlock" :bordered="false" class="transition-all active:scale-102" flex cursor-pointer rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
-      <div h-full w-full flex items-center justify-between @click="toggleShowStockList()">
-        <div flex gap-2>
-          <div text-3xl>
-            {{ ingredientData.name }}
-          </div>
-          <div self-end>
-            de "{{ ingredientData.fournisseur }}"
-          </div>
-        </div>
-        <div flex gap-2>
-          <div text-3xl>
-            {{ ingredientData.pricePerUnit }}{{ t('money-symbol') }}
-          </div>
-          <p text-lg>
-            per {{ ingredientData.unitType }}
-          </p>
-        </div>
-        <div id="button-menu" flex gap-4>
-          <NButton circle type="success" text-green @click.stop @click="toggleEditIngredient()">
-            <div i-fluent:edit-20-filled />
-          </NButton>
-          <NButton circle type="error" text-red @click.stop @click="deleteIngredient()">
-            <div i-fluent:delete-24-regular />
-          </NButton>
-        </div>
-      </div>
-    </NCard>
-    <Transition>
+  <div w-full flex flex-col gap-2>
+    <IngredientDisplay v-if="showIngredientBlock" :ingredient-data="ingredientData" @click="toggleShowStockList()">
+      <NButton circle type="success" text-green @click.stop @click="toggleEditIngredient()">
+        <div i-fluent:edit-20-filled />
+      </NButton>
+      <NButton circle type="error" text-red @click.stop @click="deleteIngredient()">
+        <div i-fluent:delete-24-regular />
+      </NButton>
+    </IngredientDisplay>
+    <FadeSlideTransition>
       <IngredientBlockEdit v-if="isEditIngredient" :ingredient-data="ingredientData" @toggle-edit-ingredient-block="toggleEditIngredient" />
-    </Transition>
+    </FadeSlideTransition>
     <NCollapseTransition id="stockBlock-container" :show="showStockList" flex flex-col>
       <div id="stockBlock-header" flex flex-col items-center gap-2>
         <div v-if="isNoStock" text-6>

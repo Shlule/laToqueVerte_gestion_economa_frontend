@@ -86,7 +86,7 @@ watch(isCreateStocks, (newX) => {
 
 <template>
   <div w-full flex flex-col gap-2>
-    <IngredientDisplay :display="showIngredientBlock" :ingredient-data="ingredientData" @click="toggleShowStockList()">
+    <IngredientDisplay v-if="showIngredientBlock" :ingredient-data="ingredientData" @click="toggleShowStockList()">
       <NButton circle type="success" text-green @click.stop @click="toggleEditIngredient()">
         <div i-fluent:edit-20-filled />
       </NButton>

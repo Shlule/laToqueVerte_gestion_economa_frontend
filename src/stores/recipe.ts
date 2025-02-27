@@ -41,6 +41,13 @@ export const useRecipeStore = defineStore('recipeStore', () => {
 
   })
 
+  function getRecipeLocal(recipeId: string) {
+    if (!allRecipe.value) {
+      return
+    }
+    return allRecipe.value.find(recipe => recipe.id === recipeId)
+  }
+
   // this function is use to refetch and update data of a specific recipe
   // inside allRecipeMap because allRecipeMap is our source of truth
   async function updateRecipeLocal(recipeId: string) {
@@ -158,6 +165,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     sortSelected,
     isAscendantOrder,
     searchBarInput,
+    getRecipeLocal,
     updateRecipeLocal,
   }
 })

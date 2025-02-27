@@ -30,7 +30,7 @@ function cancel() {
 }
 
 function confirm() {
-  addRecipeIngredient.mutate(recipeIngredientToAdd.value)
+  addRecipeIngredient.mutate({ recipeIngredient: recipeIngredientToAdd.value, ingredient: ingredientData.value })
   setActiveSection('display')
   resetFormValue()
 }

@@ -602,7 +602,6 @@ declare module 'vue' {
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useSectionManager: UnwrapRef<typeof import('./composables/useSectionManager')['useSectionManager']>
-    readonly useSectionManagerMultiple: UnwrapRef<typeof import('./composables/useSectionManager')['useSectionManagerMultiple']>
     readonly useSeoMeta: UnwrapRef<typeof import('@vueuse/head')['useSeoMeta']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>

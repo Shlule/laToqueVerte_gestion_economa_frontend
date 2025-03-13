@@ -86,9 +86,12 @@ recipe-tabInfo:
     selling: Selling Price
     selling_per_unit: Selling Price for a Piece
 
+recipe-tabIngredients:
+  tab_name: ingredients
+
+recipe-tabmissing:
+  tab_name: missing
+
 recipeIngredient-block:
   quantity_needed: quantity
   cost: cost
-
-recipe-tabIngredients:
-  tab_name: ingredients

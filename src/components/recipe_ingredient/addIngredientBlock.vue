@@ -15,7 +15,7 @@ const { addRecipeIngredient } = useRecipeIngredientStore()
 const recipeIngredientToAdd = computed<AddToRecipe>(() => ({
   quantityNeeded: quantityNeeded.value,
   unit: unit.value,
-  ingredientId: ingredientData.value.id,
+  ingredient: ingredientData.value,
   recipeId,
 }))
 

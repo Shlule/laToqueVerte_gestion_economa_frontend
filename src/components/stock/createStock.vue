@@ -4,7 +4,7 @@ import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
 const showCreateStock = defineModel<boolean>('showCreateStock', { required: true })
 const ingredientId = defineModel<string>('ingredientId', { required: true })
 
-const stockStore = useStockStore()
+const { addStock, newStock } = useStockStore()
 const { dayFormat } = useDateStore()
 const notification = useNotification()
 const { t } = useI18n()
@@ -13,16 +13,16 @@ function toggleShowCreateStock() {
   showCreateStock.value = !showCreateStock.value
 }
 
-stockStore.ingredientId = ingredientId.value
+// stockStore.ingredientId = ingredientId.value
 
 async function createStock() {
-  const { error } = await stockStore.addNewStock(ingredientId.value)
+  addStock.mutate({ newStock, ingredientId: ingredientId.value })
   toggleShowCreateStock()
 
-  if (error.value) {
+  if (addStock.error) {
     notification.create({
       title: 'Erreur',
-      content: `Échec de la création du stock : ${error.value || 'Une erreur inconnue est survenue.'}`,
+      content: `Échec de la création du stock : ${addStock.error.message || 'Une erreur inconnue est survenue.'}`,
       type: 'error',
       duration: 2500,
     })
@@ -53,7 +53,6 @@ async function createStock() {
             {{ t('stock-create.form_input.unit') }}
           </p>
           <NSelect v-model:value="stockStore.newStockUnit" :options="unitOptions" />
-          {{ stockStore.newSto }}
         </div>
         <div flex class="flex-basis-1/3">
           <NDatePicker v-model:formatted-value="stockStore.expirationDateDisplayed" :format="dayFormat" type="date" />

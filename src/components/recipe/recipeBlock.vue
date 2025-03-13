@@ -80,6 +80,7 @@ const isNoRecipeIngredient = computed(() => {
             <NSpin />
           </div>
           <div v-else>
+            {{ recipeData.insufficientIngredient }}
             <NScrollbar>
               <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientList" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" />
             </NScrollbar>

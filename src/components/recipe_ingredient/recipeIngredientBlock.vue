@@ -28,6 +28,7 @@ function toggleEditStock() {
         <div h-full flex justify-between>
           <div align-center text-6>
             {{ recipeIngredientData.ingredient.name }}
+            {{ recipeIngredientData.ingredient.pricePerUnit }}
           </div>
           <div id="expiration-date-block" flex self-center text-5>
             <div m-r-4 self-end text-4>

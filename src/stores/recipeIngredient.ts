@@ -8,7 +8,7 @@ import type { AddToRecipe, Ingredient, Recipe, RecipeIngredient } from '~/types'
 
 export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
   const queryClient = useQueryClient()
-  const { getRecipeLocal } = useRecipeStore()
+  const { getRecipeCachedValue } = useRecipeStore()
 
   // this function is a helper function to update Recipes Cache
   // we using it for all CRUD action of recipeIngredients
@@ -42,6 +42,7 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
 
     // recipeId Parameter is necessary because all recipeIngredients of Recipe are fetching
     // by tanStackQuery  with querykey ['recipeIngredient',recipeId]
+    // use RecipeIngredient and not Partial for ensure to get id object
     mutationFn: async ({ recipeIngredient }: { recipeIngredient: RecipeIngredient }) => {
       if (!recipeIngredient.id) {
         throw new Error('Cannot update recipeIngredient without an ID')
@@ -62,7 +63,8 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
       }
 
       // must update  associated recipe
-      const { previousRecipes } = updateRecipeCache(queryClient, recipeId)
+      const { previousRecipes } = await updateRecipeCache(queryClient, recipeId)
+
       return { previousRecipeIngredients, previousRecipes, recipeId }
     },
     // doing rollback on error
@@ -128,7 +130,7 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
 
       // create a full RecipeIngredient object from addToRecipe
       // first retrieve the recipe
-      const recipe = getRecipeLocal(recipeIngredient.recipeId)
+      const recipe = getRecipeCachedValue(recipeIngredient.recipeId)
       // next retrieve the ingredient, it is already in the request for simplicity and
       // optimization
 

@@ -15,7 +15,8 @@ export const useRecipeStore = defineStore('recipeStore', () => {
       const response = await getAllRecipe()
       return response || []
     },
-    staleTime: 1000 * 60 * 5, // this is 5min
+    // staleTime: 1000 * 60 * 5,
+    // refetchOnWindowFocus: true,
   })
 
   const updateRecipeMutation = useMutation({
@@ -41,37 +42,11 @@ export const useRecipeStore = defineStore('recipeStore', () => {
 
   })
 
-  function getRecipeLocal(recipeId: string) {
+  function getRecipeCachedValue(recipeId: string) {
     if (!allRecipe.value) {
       return
     }
     return allRecipe.value.find(recipe => recipe.id === recipeId)
-  }
-
-  // this function is use to refetch and update data of a specific recipe
-  // inside allRecipeMap because allRecipeMap is our source of truth
-  async function updateRecipeLocal(recipeId: string) {
-    if (!allRecipe.value) {
-      return
-    }
-    // request api to get new data
-    const { data: newRecipeData } = await getRecipe(recipeId)
-    if (!newRecipeData.value) {
-      return
-    }
-
-    const oldRecipeData = allRecipe.value.find(recipe => recipe.id === recipeId)
-    if (!oldRecipeData) {
-      return
-    }
-
-    // TODO - find a better solution to that
-    oldRecipeData.cost = newRecipeData.value.cost
-    oldRecipeData.recipeIngredients = newRecipeData.value.recipeIngredients
-    oldRecipeData.name = newRecipeData.value.name
-    oldRecipeData.numberOfPieces = newRecipeData.value.numberOfPieces
-    oldRecipeData.insufficientIngredients = newRecipeData.value.insufficientIngredients
-    // allRecipeMap.value.set(recipeId, newRecipeData.value)
   }
 
   const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
@@ -141,16 +116,13 @@ export const useRecipeStore = defineStore('recipeStore', () => {
 
   const recipeUnit = ref<Unit>('kg')
   const nbOfPiece = ref<number>()
-  const weight = ref<number>()
 
   const recipeOptionSelected = ref<string>(t('recipe-option.number_of_piece'))
   const recipeOptions = computed(() => [{
     label: t('recipe-option.number_of_piece'),
     value: t('recipe-option.number_of_piece'),
-  }, {
-    label: t('recipe-option.weight'),
-    value: t('recipe-option.weight'),
-  }])
+  },
+  ])
 
   return {
     recipeOptions,
@@ -159,13 +131,11 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     nbOfPiece,
     recipeQueryError,
     updateRecipeMutation,
-    weight,
     sortOptions,
     recipeList,
     sortSelected,
     isAscendantOrder,
     searchBarInput,
-    getRecipeLocal,
-    updateRecipeLocal,
+    getRecipeCachedValue,
   }
 })

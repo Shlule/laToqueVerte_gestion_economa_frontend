@@ -29,7 +29,7 @@ export interface Recipe {
   cost: number
   numberOfPieces: number
   recipeIngredients: RecipeIngredient[]
-  insufficientIngredients?: InsufficientIngredient[]
+  insufficientIngredient?: InsufficientIngredient[]
 }
 
 export interface InsufficientIngredient {
@@ -50,7 +50,7 @@ export interface RecipeIngredient {
 
 export interface AddToRecipe {
   recipeId: string
-  ingredientId: string
+  ingredient: Ingredient
   quantityNeeded: number
   unit: Unit
 }
@@ -59,7 +59,7 @@ export interface StockCreation {
   ingredient: string
   quantity: number
   unit: Unit
-  expirationDate: string
+  expirationDate: Date
 }
 
 export interface Stock {

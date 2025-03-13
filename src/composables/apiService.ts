@@ -74,10 +74,10 @@ export async function getAllRecipeIngredientByRecipe(recipeId: string): Promise<
 export async function createIngredient(newIngredient: IngredientCreation) {
   try {
     const response = await economa_backend_api.post<Ingredient>('/ingredients', newIngredient)
-    return response
+    return response.data
   }
   catch (error) {
-    console.error('Error during ingredient creation', error)
+    console.error('An error has occur during creating ingredient ', error)
     return error
   }
 }
@@ -99,18 +99,19 @@ export async function getAllIngredient(): Promise<Ingredient[] | undefined> {
     console.error('An error has occur during fetching allRecipe')
   }
 }
-
-// export function getAllIngredient() {
-//   return useAxios<Ingredient[]>('/ingredients', { method: 'GET' }, economa_backend_api)
-// }
-
-export function editIngredient(newIngredientData: Ingredient) {
-  return useAxios<Ingredient>(`/ingredients/${newIngredientData.id}`, { method: 'PUT', data: newIngredientData }, economa_backend_api)
+export async function editIngredient(newIngredientData: Ingredient) {
+  try {
+    const response = await economa_backend_api.put<Ingredient>(`/ingredients/${newIngredientData.id}`, newIngredientData)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during editing ingredients ${newIngredientData.id}`)
+      throw new Error(error.message)
+    }
+    console.error(`An error has occur during editing ingredients ${newIngredientData.id}`)
+  };
 }
-
-// export function getAllRecipe() {
-//   return useAxios<Recipe[]>('/recipes', { method: 'GET' }, economa_backend_api)
-// }
 
 // SECTION - use this form for tanStackQuery uses
 export async function getAllRecipe(): Promise<Recipe[] | undefined> {
@@ -128,8 +129,18 @@ export async function getAllRecipe(): Promise<Recipe[] | undefined> {
 }
 // !SECTION
 
-export function getRecipe(recipeId: string) {
-  return useAxios<Recipe>(`/recipes/${recipeId}`, { method: 'GET' }, economa_backend_api)
+export async function getRecipe(recipeId: string) {
+  try {
+    const response = await economa_backend_api.get<Recipe>(`/recipes/${recipeId}`)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during fetching recipe with Id ${recipeId} `)
+      throw new Error(error.message)
+    }
+    console.error(`An error has occur during fetching recipe with Id ${recipeId} `)
+  }
 }
 
 export function createRecipe() {
@@ -147,23 +158,53 @@ export async function editRecipe(newRecipeData: Recipe) {
   }
   catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during update recipe ${newRecipeData.id}`)
+      console.error(`An error has occur during update recipe with Id ${newRecipeData.id}`)
       throw new Error(error.message || ' an error has occur')
     }
   }
-  console.error(`An error has occur during update recipe ${newRecipeData.id}`)
+  console.error(`An error has occur during update recipe with Id ${newRecipeData.id}`)
 }
 
-export function createStock(newStock: StockCreation) {
-  return useAxios<Stock>('/stocks', { method: 'POST', data: newStock }, economa_backend_api)
+export async function createStock(newStock: StockCreation) {
+  try {
+    const response = await economa_backend_api.post<Stock>('/stocks', newStock)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('An error has occur during stock creation')
+      throw new Error(error.message)
+    }
+    console.error('An error has occur during stock creation')
+  }
 }
 
-export function editStock(newStockData: Stock) {
-  return useAxios<Stock>(`/stocks/${newStockData.id}`, { method: 'PUT', data: newStockData }, economa_backend_api)
+export async function editStock(newStockData: Stock) {
+  try {
+    const response = await economa_backend_api.put<Stock>(`/stocks/${newStockData.id}`, newStockData)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during update stock with Id ${newStockData.id}`)
+      throw new Error(error.message)
+    }
+    console.error(`An error has occur during update stock with Id ${newStockData.id}`)
+  }
 }
 
-export function removeStock(stockId: string) {
-  return useAxios<void>(`/stocks/${stockId}`, { method: 'DELETE' }, economa_backend_api)
+export async function deleteStock(stockId: string) {
+  try {
+    const response = await economa_backend_api.delete<Stock>(`/stocks/${stockId}`)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during delete stock with Id ${stockId}`)
+      throw new Error(error.message)
+    }
+    console.error(`An error has occur during delete stock with Id ${stockId}`)
+  }
 }
 
 // export function getAllStocks(ingredientId: string) {

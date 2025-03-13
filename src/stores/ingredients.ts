@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/vue-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { Ingredient, IngredientCreation, Unit } from '~/types'
 
@@ -7,7 +7,7 @@ import type { Ingredient, IngredientCreation, Unit } from '~/types'
 // the sorting of ingredient list are made here only in front end
 
 export const useIngredientStore = defineStore('useIngredientStore', () => {
-  // const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
   // const { data: allIngredient, error: ingredientQueryError, isLoading: ingredientQueryLoading } = getAllIngredient()
   const { data: allIngredient, error: ingredientQueryError, isLoading: ingredientQueryLoading, isSuccess: IngredientQuerySuccess } = useQuery({
     queryKey: ['allIngredients'],
@@ -19,6 +19,13 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
   })
 
   const { t } = useI18n()
+
+  function getIngredientCachedValue(ingredientId: string) {
+    if (!allIngredient.value) {
+      return
+    }
+    return allIngredient.value.find(ingredient => ingredient.id === ingredientId)
+  }
 
   // ANCHOR - all this part is for text display and ingredient display and sorting
   const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
@@ -92,12 +99,75 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
 
   // ANCHOR - ingredient manipulation such as edit create and delete
 
+  const updateIngredient = useMutation({
+    mutationFn: async (updatedIngredient: Ingredient) => {
+      if (!updatedIngredient.id) {
+        throw new Error('cannot Update ingredient without an Id')
+      }
+      return editIngredient(updatedIngredient)
+    },
+
+    onMutate: async (updatedIngredient: Ingredient) => {
+      await queryClient.cancelQueries({ queryKey: ['allIngredients'] })
+
+      const previousIngredients = queryClient.getQueryData<Ingredient[]>(['allIngredients'])
+      queryClient.setQueryData(['allIngredients'], (oldIngredients: Ingredient[]) => {
+        return oldIngredients.map(ingredient => ingredient.id === updatedIngredient.id ? { ...ingredient, ...updatedIngredient } : ingredient)
+      })
+      return { previousIngredients }
+    },
+
+    onError: (err, updatedIngredient, context) => {
+      console.error(err.message)
+      queryClient.setQueryData(['allIngredients'], context?.previousIngredients)
+    },
+
+    onSuccess(data, updatedIngredient) {
+      queryClient.setQueryData(['allIngredients'], (oldIngredients: Ingredient[]) => {
+        return oldIngredients.map(ingredient => ingredient.id === updatedIngredient.id ? { ...ingredient, ...updatedIngredient } : ingredient)
+      })
+    },
+  })
+
+  const addIngredient = useMutation({
+    mutationFn: async (newIngredient: IngredientCreation) => {
+      return createIngredient(newIngredient)
+    },
+
+    onMutate: async (newIngredient: IngredientCreation) => {
+      await queryClient.cancelQueries({ queryKey: ['allIngredients'] })
+
+      const previousIngredients = queryClient.getQueryData<Ingredient[]>(['allIngredients'])
+
+      // create a pseudo Ingredient object
+      const tempId = String(Date.now())
+      const optimisticIngredient = { ...newIngredient, id: tempId }
+
+      if (previousIngredients) {
+        queryClient.setQueryData(['allIngredients'], [...previousIngredients, optimisticIngredient])
+      }
+      return { previousIngredients, tempId }
+    },
+
+    onError: (err, newIngredient, context) => {
+      console.error('Mutation Failed', err.message)
+      queryClient.setQueryData(['allIngredients'], context?.previousIngredients)
+    },
+
+    onSuccess: (data, newIngredient, context) => {
+      queryClient.setQueryData(['allIngredients'], (oldIngredients: Ingredient[]) => {
+        return oldIngredients.map(ingredient =>
+          ingredient.id === context.tempId ? data : ingredient,
+        )
+      })
+      queryClient.invalidateQueries({ queryKey: ['allRecipes'] })
+    },
+  })
+
   const newIngredientName = ref('')
   const newIngredientUnit = ref<Unit>('kg')
   const newIngredientPrice = ref<number>(0)
   const newIngredientFournisseur = ref('')
-
-  const ingredientStore = useIngredientStore()
 
   const newIngredient = computed<IngredientCreation>(() => ({
     name: newIngredientName.value,
@@ -106,33 +176,36 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     fournisseur: newIngredientFournisseur.value,
   }))
 
+  // async function addNewIngredient() {
+  //   const ingredientData = await createIngredient(newIngredient.value)
+
+  //   if (!ingredientData || !ingredientStore.allIngredient) {
+  //     return
+  //   }
+  //   // use spread operator to keep reactivity
+  //   // @todo do it with push and keep reactivity
+  //   ingredientStore.allIngredient = [...ingredientStore.allIngredient, ingredientData.data]
+  // }
   async function addNewIngredient() {
-    const ingredientData = await createIngredient(newIngredient.value)
-
-    if (!ingredientData || !ingredientStore.allIngredient) {
-      return
-    }
-    // use spread operator to keep reactivity
-    // @todo do it with push and keep reactivity
-    ingredientStore.allIngredient = [...ingredientStore.allIngredient, ingredientData.data]
+    addIngredient.mutate(newIngredient.value)
   }
 
-  function updateIngredient(id: string, updatedData: Ingredient) {
-    if (!allIngredient.value) {
-      return
-    }
-    const index = allIngredient.value.findIndex(ingredient => ingredient.id === id)
+  // function updateIngredient(id: string, updatedData: Ingredient) {
+  //   if (!allIngredient.value) {
+  //     return
+  //   }
+  //   const index = allIngredient.value.findIndex(ingredient => ingredient.id === id)
 
-    if (index === -1) {
-      console.error(`Ingredient with id ${id} not found`)
-    }
+  //   if (index === -1) {
+  //     console.error(`Ingredient with id ${id} not found`)
+  //   }
 
-    // update ingredient
-    // TODO - try to find an other method and keep reactivity
-    allIngredient.value[index] = { ...allIngredient.value[index], ...updatedData }
-    allIngredient.value = [...allIngredient.value]
-    // allIngredient.value.splice(index, 1, { ...allIngredient.value[index], ...updatedData })
-  }
+  //   // update ingredient
+  //   // TODO - try to find an other method and keep reactivity
+  //   allIngredient.value[index] = { ...allIngredient.value[index], ...updatedData }
+  //   allIngredient.value = [...allIngredient.value]
+  //   // allIngredient.value.splice(index, 1, { ...allIngredient.value[index], ...updatedData })
+  // }
 
   function resetIngredientForm() {
     newIngredientName.value = ''
@@ -156,9 +229,11 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     newIngredientFournisseur,
     newIngredientPrice,
     newIngredientUnit,
+    addIngredient,
     resetIngredientForm,
     addNewIngredient,
     updateIngredient,
+    getIngredientCachedValue,
   }
 })
 

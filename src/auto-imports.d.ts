@@ -43,6 +43,7 @@ declare global {
   const definePage: typeof import('unplugin-vue-router/runtime')['definePage']
   const deleteIngredient: typeof import('./composables/apiService')['deleteIngredient']
   const deleteRecipeIngredient: typeof import('./composables/apiService')['deleteRecipeIngredient']
+  const deleteStock: typeof import('./composables/apiService')['deleteStock']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const editIngredient: typeof import('./composables/apiService')['editIngredient']
   const editRecipe: typeof import('./composables/apiService')['editRecipe']
@@ -381,6 +382,7 @@ declare module 'vue' {
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly deleteRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['deleteRecipeIngredient']>
+    readonly deleteStock: UnwrapRef<typeof import('./composables/apiService')['deleteStock']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly editIngredient: UnwrapRef<typeof import('./composables/apiService')['editIngredient']>
     readonly editRecipe: UnwrapRef<typeof import('./composables/apiService')['editRecipe']>
@@ -446,7 +448,6 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly removeIngredient: UnwrapRef<typeof import('./composables/apiService')['removeIngredient']>
-    readonly removeStock: UnwrapRef<typeof import('./composables/apiService')['removeStock']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>

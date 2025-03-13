@@ -32,10 +32,7 @@ function cancel() {
 }
 
 function confirm() {
-  // modify on backend
-  editIngredient(editIngredientData.value)
-  // update ingredient localy
-  updateIngredient(ingredientData.value.id, editIngredientData.value)
+  updateIngredient.mutate(editIngredientData.value)
   // close edit mode
   emit('toggleEditIngredientBlock')
 }

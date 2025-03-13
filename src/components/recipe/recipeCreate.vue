@@ -3,10 +3,6 @@ import { NButton } from 'naive-ui'
 
 const { t } = useI18n()
 const recipeStore = useRecipeStore()
-
-const isWeightRecipeOption = computed (() => {
-  return recipeStore.recipeOptionSelected === t('recipe-option.weight')
-})
 </script>
 
 <template>
@@ -18,11 +14,7 @@ const isWeightRecipeOption = computed (() => {
       </div>
       <div flex items-center gap-4>
         <NSelect v-model:value="recipeStore.recipeOptionSelected" :options="recipeStore.recipeOptions" />
-        <div v-if="isWeightRecipeOption" flex gap-2>
-          <NInputNumber v-model:value="recipeStore.weight" />
-          <NSelect v-model:value="recipeStore.recipeUnit" :options="unitOptions" />
-        </div>
-        <div v-else flex>
+        <div flex>
           <NInputNumber v-model:value="recipeStore.nbOfPiece" />
         </div>
       </div>

@@ -22,6 +22,7 @@ const editCost = computed(() => {
   return Number((recipeIngredientData.value.ingredient.pricePerUnit * convertedQuantity).toFixed(2))
 })
 
+// ANCHOR - use plain objet for keeping objet id for sure
 const newRecipeIngredient = computed<RecipeIngredient>(() => ({
   ...recipeIngredientData.value,
   cost: editCost.value,
@@ -60,7 +61,6 @@ function confirm() {
         </div>
       </NCard>
     </div>
-    {{ newRecipeIngredient }}
     <div id="button-menu" flex gap-3>
       <NButton circle type="error" text-red @click="cancel()">
         <div i-material-symbols:close-rounded />

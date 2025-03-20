@@ -1,8 +1,8 @@
 import type { QueryClient } from '@tanstack/vue-query'
+import type { AddToRecipe, Ingredient, Recipe, RecipeIngredient } from '~/types'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { defineStore } from 'pinia'
 import { deleteRecipeIngredient } from '~/composables/apiService'
-import type { AddToRecipe, Ingredient, Recipe, RecipeIngredient } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
 
@@ -80,6 +80,7 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     // refetch new Database, data
     onSettled: (_, __, { recipeId }) => {
       queryClient.invalidateQueries({ queryKey: ['recipeIngredients', recipeId] })
+      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', recipeId] })
     },
   })
 
@@ -113,6 +114,7 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     // refetch new Database, data
     onSettled: (_, __, { recipeId }) => {
       queryClient.invalidateQueries({ queryKey: ['recipeIngredients', recipeId] })
+      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', recipeId] })
     },
   })
 
@@ -174,13 +176,31 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
 
     onSettled: (_, __, context) => {
       queryClient.invalidateQueries({ queryKey: ['recipeIngredients', context.recipeIngredient.recipeId] })
+      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', context.recipeIngredient.recipeId] })
     },
   })
 
-  return {
+  const recipeIngredientListToAdd = ref<AddToRecipe[]>([])
 
+  function addRecipeIngredientToList(addToRecipe: AddToRecipe) {
+    recipeIngredientListToAdd.value.push(addToRecipe)
+  }
+
+  function deleteRecipeIngredientToList(index: number) {
+    recipeIngredientListToAdd.value.splice(index)
+  }
+
+  function resetRecipeIngredientToAdd() {
+    recipeIngredientListToAdd.value = []
+  }
+
+  return {
+    recipeIngredientListToAdd,
+    addRecipeIngredient,
     updateRecipeIngredient,
     removeRecipeIngredient,
-    addRecipeIngredient,
+    addRecipeIngredientToList,
+    deleteRecipeIngredientToList,
+    resetRecipeIngredientToAdd,
   }
 })

@@ -1,6 +1,6 @@
+import type { Ingredient, IngredientCreation, Unit } from '~/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import type { Ingredient, IngredientCreation, Unit } from '~/types'
 
 // this store is use to display all information relative to ingredient
 // request data , sorting ingredient parameter
@@ -176,36 +176,9 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     fournisseur: newIngredientFournisseur.value,
   }))
 
-  // async function addNewIngredient() {
-  //   const ingredientData = await createIngredient(newIngredient.value)
-
-  //   if (!ingredientData || !ingredientStore.allIngredient) {
-  //     return
-  //   }
-  //   // use spread operator to keep reactivity
-  //   // @todo do it with push and keep reactivity
-  //   ingredientStore.allIngredient = [...ingredientStore.allIngredient, ingredientData.data]
-  // }
   async function addNewIngredient() {
     addIngredient.mutate(newIngredient.value)
   }
-
-  // function updateIngredient(id: string, updatedData: Ingredient) {
-  //   if (!allIngredient.value) {
-  //     return
-  //   }
-  //   const index = allIngredient.value.findIndex(ingredient => ingredient.id === id)
-
-  //   if (index === -1) {
-  //     console.error(`Ingredient with id ${id} not found`)
-  //   }
-
-  //   // update ingredient
-  //   // TODO - try to find an other method and keep reactivity
-  //   allIngredient.value[index] = { ...allIngredient.value[index], ...updatedData }
-  //   allIngredient.value = [...allIngredient.value]
-  //   // allIngredient.value.splice(index, 1, { ...allIngredient.value[index], ...updatedData })
-  // }
 
   function resetIngredientForm() {
     newIngredientName.value = ''

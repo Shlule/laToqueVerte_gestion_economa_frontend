@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { format, parse } from 'date-fns'
 import type { Stock, Unit } from '~/types'
+import { format, parse } from 'date-fns'
 
 const emit = defineEmits<{
   (event: 'toggleEditStockBlock'): void
@@ -11,7 +11,7 @@ const ingredientId = defineModel<string>('ingredientId', { required: true })
 
 const { dayFormat } = useDateStore()
 const { t } = useI18n()
-const { editStockLocal } = useStockStore()
+const { updateStock } = useStockStore()
 
 // work with localStockDate because modifying stock impact real data
 const localStockData = stockData.value
@@ -32,13 +32,7 @@ function cancel() {
 }
 
 function confirm() {
-  // modify on backend
-  const { error } = editStock(editStockData.value)
-  if (error.value) {
-    console.error(error.value)
-  }
-  // update stocks list
-  editStockLocal(ingredientId.value, stockData.value.id, editStockData.value)
+  updateStock.mutate({ newStock: editStockData.value, ingredientId: ingredientId.value })
   // close edit mode
   emit('toggleEditStockBlock')
 }

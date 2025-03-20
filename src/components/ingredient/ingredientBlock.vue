@@ -1,37 +1,27 @@
 <script setup lang="ts">
+import type { Ingredient } from '~/types'
 import { useQuery } from '@tanstack/vue-query'
 import { NButton, NCollapseTransition, NSpin } from 'naive-ui'
-import { useStockStore } from '~/stores/stock'
-import type { Ingredient } from '~/types'
 
 const ingredientData = defineModel<Ingredient>('ingredientData', { required: true })
 
 const { t } = useI18n()
 const [showStockList, toggleShowStockList] = useToggle()
 const [isCreateStocks, toggleShowCreateStock] = useToggle()
-const { resetStockForm } = useStockStore()
-
-const stockStore = useStockStore()
 
 const isEditIngredient = ref<boolean>(false)
 const showIngredientBlock = ref(true)
 
-// refresh data directly on the pinia store (the source of truth)
-const { error: stockQueryError, isLoading: stockQueryLoading } = useQuery({
+const { data: stocksList, error: stockQueryError, isLoading: stockQueryLoading } = useQuery({
   queryKey: ['stocks', ingredientData.value.id],
   queryFn: async () => {
     const response = await getAllStocksByIngredient(ingredientData.value.id)
     if (!response) {
       return
     }
-    stockStore.setStocks(ingredientData.value.id, response)
     return response
   },
   enabled: showStockList,
-})
-
-const stocksList = computed(() => {
-  return stockStore.getStocks(ingredientData.value.id)
 })
 
 const totalQuantity = computed(() => {
@@ -76,12 +66,6 @@ function deleteIngredient() {
 
   showIngredientBlock.value = !showIngredientBlock.value
 }
-
-watch(isCreateStocks, (newX) => {
-  if (newX === false) {
-    resetStockForm()
-  }
-})
 </script>
 
 <template>

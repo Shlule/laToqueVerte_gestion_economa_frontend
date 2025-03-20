@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import RecipeIngredientBlockEdit from './recipeIngredientBlockEdit.vue'
 import type { RecipeIngredient } from '~/types'
+import RecipeIngredientBlockEdit from './recipeIngredientBlockEdit.vue'
 
 const recipeIngredientData = defineModel<RecipeIngredient>('recipeIngredientData', { required: true })
 const recipeId = defineModel<string>('recipeId', { required: true })
@@ -28,7 +28,6 @@ function toggleEditStock() {
         <div h-full flex justify-between>
           <div align-center text-6>
             {{ recipeIngredientData.ingredient.name }}
-            {{ recipeIngredientData.ingredient.pricePerUnit }}
           </div>
           <div id="expiration-date-block" flex self-center text-5>
             <div m-r-4 self-end text-4>

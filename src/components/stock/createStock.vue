@@ -1,13 +1,36 @@
 <script setup lang="ts">
+import type { StockCreation, Unit } from '~/types'
+import { formatISO, isValid, parse } from 'date-fns'
 import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
 const showCreateStock = defineModel<boolean>('showCreateStock', { required: true })
 const ingredientId = defineModel<string>('ingredientId', { required: true })
 
-const { addStock, newStock } = useStockStore()
+const { addStock } = useStockStore()
 const { dayFormat } = useDateStore()
 const notification = useNotification()
 const { t } = useI18n()
+
+const dateStore = useDateStore()
+const newStockUnit = ref<Unit>('kg')
+const newStockQuantity = ref<number>(0)
+const expirationDateDisplayed = ref<string>(dateStore.todayFormated)
+
+const newStockExpirationDate = computed(() => {
+  const parsedDate = parse(expirationDateDisplayed.value, dateStore.dayFormat, new Date())
+  if (isValid(parsedDate) === false) {
+    throw new Error('Invalid date format. Expected format: dd/MM/yyyy')
+  }
+  return formatISO(parsedDate)
+})
+
+const newStock = computed<StockCreation>(() => ({
+  ingredient: ingredientId.value,
+  unit: newStockUnit.value,
+  quantity: newStockQuantity.value,
+  // this value must be in ISO format
+  expirationDate: newStockExpirationDate.value,
+}))
 
 function toggleShowCreateStock() {
   showCreateStock.value = !showCreateStock.value
@@ -16,7 +39,7 @@ function toggleShowCreateStock() {
 // stockStore.ingredientId = ingredientId.value
 
 async function createStock() {
-  addStock.mutate({ newStock, ingredientId: ingredientId.value })
+  addStock.mutate({ newStock: newStock.value, ingredientId: ingredientId.value })
   toggleShowCreateStock()
 
   if (addStock.error) {
@@ -46,16 +69,16 @@ async function createStock() {
           <p flex-shrink-0>
             {{ t('stock-create.form_input.quantity') }}
           </p>
-          <NInputNumber v-model:value="stockStore.newStockQuantity" />
+          <NInputNumber v-model:value="newStockQuantity" />
         </div>
         <div flex items-center gap-2 class="flex-basis-1/3">
           <p flex shrink-0>
             {{ t('stock-create.form_input.unit') }}
           </p>
-          <NSelect v-model:value="stockStore.newStockUnit" :options="unitOptions" />
+          <NSelect v-model:value="newStockUnit" :options="unitOptions" />
         </div>
         <div flex class="flex-basis-1/3">
-          <NDatePicker v-model:formatted-value="stockStore.expirationDateDisplayed" :format="dayFormat" type="date" />
+          <NDatePicker v-model:formatted-value="expirationDateDisplayed" :format="dayFormat" type="date" />
         </div>
       </div>
     </div>

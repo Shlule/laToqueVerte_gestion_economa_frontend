@@ -1,6 +1,6 @@
+import type { Recipe } from '~/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { defineStore } from 'pinia'
-import type { Recipe, Unit } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
 
@@ -23,7 +23,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     mutationFn: async (updatedRecipe: Recipe) => {
       return editRecipe(updatedRecipe)
     },
-    onMutate: async (updatedRecipe) => {
+    onMutate: async (updatedRecipe: Recipe) => {
       await queryClient.cancelQueries({ queryKey: ['allRecipes'] })
 
       const previousRecipe = queryClient.getQueryData(['allRecipes'])
@@ -114,21 +114,16 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     return sortRecipesBy(filteredIngredientList, sortKey.value, isAscendantOrder.value)
   })
 
-  const recipeUnit = ref<Unit>('kg')
-  const nbOfPiece = ref<number>()
-
-  const recipeOptionSelected = ref<string>(t('recipe-option.number_of_piece'))
   const recipeOptions = computed(() => [{
     label: t('recipe-option.number_of_piece'),
     value: t('recipe-option.number_of_piece'),
-  },
-  ])
+  }, {
+    label: t('recipe-option.weight'),
+    value: t('recipe-option.weight'),
+  }])
 
   return {
     recipeOptions,
-    recipeOptionSelected,
-    recipeUnit,
-    nbOfPiece,
     recipeQueryError,
     updateRecipeMutation,
     sortOptions,

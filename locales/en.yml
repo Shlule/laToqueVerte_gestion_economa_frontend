@@ -68,6 +68,13 @@ recipe-header:
   title: Recipes
   search_bar: search a recipe
 
+addRecipeIngredient:
+  title: Ingredient to Add
+
+insufficientIngredient:
+  no_insufficient: you get all ingredient for this recipe
+  title:
+
 recipe-option:
   number_of_piece: number of pieces
   weight: weight

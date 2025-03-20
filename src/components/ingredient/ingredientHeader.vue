@@ -4,18 +4,11 @@ import { useIngredientStore } from '~/stores/ingredients'
 
 const { t } = useI18n()
 const ingredientStore = useIngredientStore()
-const { resetIngredientForm } = useIngredientStore()
 const [isCreateNewIngredient, toggleCreateNewIngredient] = useToggle()
 
 function handleSelect(key: string) {
   ingredientStore.sortSelected = key
 }
-
-watch(isCreateNewIngredient, (newX) => {
-  if (newX === false) {
-    resetIngredientForm()
-  }
-})
 
 function swapOrder() {
   ingredientStore.isAscendantOrder = !ingredientStore.isAscendantOrder
@@ -36,7 +29,6 @@ function swapOrder() {
       <NButton circle @click="swapOrder()">
         <div i-fluent:arrow-sort-20-regular />
       </NButton>
-      <div />
       <NDropdown trigger="hover" :options="ingredientStore.sortOptions" @select="handleSelect">
         <NButton>
           {{ t('button.sorting_mode') }}
@@ -47,7 +39,7 @@ function swapOrder() {
       </NButton>
     </div>
   </div>
-  <NModal v-model:show="isCreateNewIngredient" @close="resetIngredientForm()">
+  <NModal v-model:show="isCreateNewIngredient" @after-leave="ingredientStore.resetIngredientForm()">
     <IngredientCreate v-model:show-create-ingredient="isCreateNewIngredient" />
   </NModal>
 </template>

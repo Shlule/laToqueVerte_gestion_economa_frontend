@@ -1,6 +1,6 @@
-import axios from 'axios'
+import type { AddToRecipe, Ingredient, IngredientCreation, InsufficientIngredient, Recipe, RecipeIngredient, Stock, StockCreation } from '~/types'
 import { useAxios } from '@vueuse/integrations/useAxios'
-import type { AddToRecipe, Ingredient, IngredientCreation, Recipe, RecipeIngredient, Stock, StockCreation } from '~/types'
+import axios from 'axios'
 
 const economa_backend_api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -163,6 +163,20 @@ export async function editRecipe(newRecipeData: Recipe) {
     }
   }
   console.error(`An error has occur during update recipe with Id ${newRecipeData.id}`)
+}
+
+export async function getInsufficientIngredients(recipeId: string) {
+  try {
+    const response = await economa_backend_api.get<InsufficientIngredient[]>(`/recipes/${recipeId}/insufficientIngredients`)
+    return response.data
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`An error has occur during fetching insufficientIngredient of recipe of id ${recipeId}`)
+      throw new Error(error.message)
+    }
+    console.error(`An error has occur during fetching insufficientIngredient of recipe of id ${recipeId}`)
+  }
 }
 
 export async function createStock(newStock: StockCreation) {

@@ -10,7 +10,7 @@ const quantityNeeded = ref(0)
 const unit = ref<Unit>('kg')
 const recipeId = inject('recipeId')
 
-const { addRecipeIngredient } = useRecipeIngredientStore()
+const recipeIngredientStore = useRecipeIngredientStore()
 
 const recipeIngredientToAdd = computed<AddToRecipe>(() => ({
   quantityNeeded: quantityNeeded.value,
@@ -30,7 +30,8 @@ function cancel() {
 }
 
 function confirm() {
-  addRecipeIngredient.mutate({ recipeIngredient: recipeIngredientToAdd.value, ingredient: ingredientData.value })
+  recipeIngredientStore.addRecipeIngredientToList(recipeIngredientToAdd.value)
+  // recipeIngredientStore.addRecipeIngredient.mutate({ recipeIngredient: recipeIngredientToAdd.value, ingredient: ingredientData.value })
   setActiveSection('display')
   resetFormValue()
 }

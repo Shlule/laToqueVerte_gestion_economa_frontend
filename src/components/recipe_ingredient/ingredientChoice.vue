@@ -8,7 +8,7 @@ const { t } = useI18n()
 
 const quantityNeeded = ref(0)
 const unit = ref<Unit>('kg')
-const recipeId = inject('recipeId')
+const recipeId = inject<string>('recipeId') as string
 
 const recipeIngredientStore = useRecipeIngredientStore()
 
@@ -17,6 +17,7 @@ const recipeIngredientToAdd = computed<AddToRecipe>(() => ({
   unit: unit.value,
   ingredient: ingredientData.value,
   recipeId,
+
 }))
 
 function resetFormValue() {

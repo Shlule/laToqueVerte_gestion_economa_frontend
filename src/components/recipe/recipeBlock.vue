@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Recipe } from '~/types'
 import { useQuery } from '@tanstack/vue-query'
-import { NSpin, NTabPane, NTabs } from 'naive-ui'
-import { getInsufficientIngredients } from '~/composables/apiService'
+import { NTabPane, NTabs } from 'naive-ui'
+import { getAllSubRecipeByRecipe, getInsufficientIngredients, getInsufficientSubRecipes } from '~/composables/apiService'
 import RecipeIngredientBlock from '../recipe_ingredient/recipeIngredientBlock.vue'
 
 const recipeData = defineModel<Recipe>('recipeData', { required: true })
 
 const { t } = useI18n()
-const [isAddingRecipeIngredient, toggleAddingRecipeIngredient] = useToggle()
+const [isAddingSomething, toggleAddingSomething] = useToggle()
 
 const { resetRecipeIngredientToAdd } = useRecipeIngredientStore()
 
@@ -25,7 +25,20 @@ watch(
 )
 // !SECTION
 
-const { data: recipeIngredientList, error: recipeIngredientQueryError, isLoading: recipeIngredientQueryLoading } = useQuery({
+// const { data: recipeIngredientList, error: recipeIngredientQueryError, isLoading: recipeIngredientQueryLoading } = useQuery({
+//   queryKey: ['recipeIngredients', recipeData.value.id],
+//   queryFn: async () => {
+//     const response = await getAllRecipeIngredientByRecipe(recipeData.value.id)
+//     if (!response) {
+//       return
+//     }
+//     // recipeIngredientStore.setRecipeIngredients(recipeData.value.id, response)
+//     return response
+//   },
+//   enabled: isIngredientTab,
+// })
+
+const recipeIngredientQuery = useQuery({
   queryKey: ['recipeIngredients', recipeData.value.id],
   queryFn: async () => {
     const response = await getAllRecipeIngredientByRecipe(recipeData.value.id)
@@ -38,7 +51,20 @@ const { data: recipeIngredientList, error: recipeIngredientQueryError, isLoading
   enabled: isIngredientTab,
 })
 
-const { data: insufficientIngredients, error: insufficientIngredientQueryError, isLoading: insufficientIngredientQueryLoading } = useQuery({
+const subRecipeQuery = useQuery({
+  queryKey: ['subRecipes', recipeData.value.id],
+  queryFn: async () => {
+    const response = await getAllSubRecipeByRecipe(recipeData.value.id)
+    if (!response) {
+      return
+    }
+    // recipeIngredientStore.setRecipeIngredients(recipeData.value.id, response)
+    return response
+  },
+  enabled: isIngredientTab,
+})
+
+const insufficientRecipeIngredientQuery = useQuery({
   queryKey: ['insufficientIngredients', recipeData.value.id],
   queryFn: async () => {
     const response = await getInsufficientIngredients(recipeData.value.id)
@@ -50,22 +76,16 @@ const { data: insufficientIngredients, error: insufficientIngredientQueryError, 
   enabled: isIngredientTab,
 })
 
-const isNoRecipeIngredient = computed(() => {
-  if (recipeIngredientList.value?.length === 0) {
-    return true
-  }
-  else {
-    return false
-  }
-})
-
-const isNoInsufficientIngredients = computed(() => {
-  if (insufficientIngredients.value?.length === 0) {
-    return true
-  }
-  else {
-    return false
-  }
+const insufficientSubRecipeQuery = useQuery({
+  queryKey: ['SubRecipes', recipeData.value.id],
+  queryFn: async () => {
+    const response = await getInsufficientSubRecipes(recipeData.value.id)
+    if (!response) {
+      return
+    }
+    return response
+  },
+  enabled: isIngredientTab,
 })
 </script>
 
@@ -81,7 +101,7 @@ const isNoInsufficientIngredients = computed(() => {
         <div flex gap-2>
           <p i-fluent:person-24-filled self-end />
           <p text-3xl>
-            {{ recipeData.numberOfPieces }}
+            {{ recipeData.quantity }}
           </p>
         </div>
       </div>
@@ -90,47 +110,28 @@ const isNoInsufficientIngredients = computed(() => {
           <RecipeTabInfo :recipe-data="recipeData" />
         </NTabPane>
         <NTabPane name="ingredients" :tab="t('recipe-tabIngredients.tab_name')">
-          <div id="insufficientIngredients-container">
-            <div v-if="isNoInsufficientIngredients" text-6>
-              {{ t('insufficientIngredient.no_insufficient') }}
-            </div>
-            <div v-else-if="insufficientIngredientQueryError">
-              {{ insufficientIngredientQueryError.message }}
-            </div>
-            <div v-else-if="insufficientIngredientQueryLoading" flex>
-              <p> {{ t('loading.query') }}</p>
-              <NSpin />
-            </div>
-            <div v-else>
-              <NScrollbar max-h-16rem>
-                <InsufficientIngredientBlock v-for="insufficientIngredient in insufficientIngredients" :key="insufficientIngredient.name" :insufficient-ingredient-data="insufficientIngredient" />
-              </NScrollbar>
-            </div>
-          </div>
+          <HandleDisplay :query="insufficientRecipeIngredientQuery">
+            <NScrollbar max-h-16rem>
+              <InsufficientIngredientBlock v-for="insufficientIngredient in insufficientRecipeIngredientQuery.data.value" :key="insufficientIngredient.name" :insufficient-ingredient-data="insufficientIngredient" />
+              <InsufficientSubRecipeBlock v-for="insufficientSubRecipe in insufficientSubRecipeQuery.data.value" :key="insufficientSubRecipe.name" :insufficient-sub-recipe-data="insufficientSubRecipe" />
+            </NScrollbar>
+          </HandleDisplay>
           <div id="RecipeIngredient-container">
-            <NButton round @click="toggleAddingRecipeIngredient()">
+            <NButton round @click="toggleAddingSomething()">
               {{ t('button.add_recipeingredient') }}
             </NButton>
-            <div v-if="isNoRecipeIngredient" text-6>
-              {{ t('stock-header.no_stock') }}
-            </div>
-            <div v-else-if="recipeIngredientQueryError">
-              {{ recipeIngredientQueryError.message }}
-            </div>
-            <div v-else-if="recipeIngredientQueryLoading" flex>
-              <p> {{ t('loading.query') }}</p>
-              <NSpin />
-            </div>
-            <div v-else>
+
+            <HandleDisplay :query="recipeIngredientQuery">
               <NScrollbar max-h-16rem>
-                <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientList" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" />
+                <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientQuery.data.value" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" />
+                <SubRecipeBlock v-for="subRecipe in subRecipeQuery.data.value" :key="subRecipe.id" :recipe-ingredient-data="subRecipe" :recipe-id="recipeData.id" />
               </NScrollbar>
-            </div>
+            </HandleDisplay>
           </div>
         </NTabPane>
       </NTabs>
-      <NModal v-model:show="isAddingRecipeIngredient" @after-leave="resetRecipeIngredientToAdd()">
-        <RecipeIngredientCreate />
+      <NModal v-model:show="isAddingSomething" @after-leave="resetRecipeIngredientToAdd()">
+        <AddingIngredientOrSubRecipe @toggle-adding-something-to-recipe="toggleAddingSomething()" />
       </NModal>
     </NCard>
   </div>

@@ -1,11 +1,19 @@
-export function convertUnit(quantity: number, fromUnit: string, toUnit: string): number {
-  const conversionRates = {
-    kg: { g: 1000, kg: 1 },
-    g: { g: 1, kg: 0.001 },
-    unit: { unit: 1 },
+import type { Unit } from '~/types'
+
+export function convertUnit(quantity: number, fromUnit: Unit, toUnit: Unit): number {
+  const conversionRates: Record<Unit, Record<Unit, number>> = {
+    kg: { g: 1000, kg: 1, unit: Number.NaN },
+    g: { g: 1, kg: 0.001, unit: Number.NaN },
+    unit: { unit: 1, kg: Number.NaN, g: Number.NaN },
   }
 
-  return quantity * conversionRates[fromUnit][toUnit]
+  // Vérifie si la conversion est possible
+  const conversionRate = conversionRates[fromUnit]?.[toUnit]
+  if (Number.isNaN(conversionRate)) {
+    throw new TypeError(`Invalid conversion from "${fromUnit}" to "${toUnit}"`)
+  }
+
+  return quantity * conversionRate
 }
 
 export const unitOptions = [{

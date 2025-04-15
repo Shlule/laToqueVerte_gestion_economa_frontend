@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Unit } from '~/types'
 import { NButton } from 'naive-ui'
 
 const { t } = useI18n()

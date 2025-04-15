@@ -9,6 +9,7 @@ declare global {
   const CreateIngredient: typeof import('./composables/apiService')['CreateIngredient']
   const CreateIngredientBackend: typeof import('./composables/apiService')['CreateIngredientBackend']
   const EffectScope: typeof import('vue')['EffectScope']
+  const apiRequest: typeof import('./composables/apiService')['apiRequest']
   const apiService: typeof import('./composables/apiService')['default']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
@@ -33,6 +34,7 @@ declare global {
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createStock: typeof import('./composables/apiService')['createStock']
+  const createSubRecipe: typeof import('./composables/apiService')['createSubRecipe']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
   const customRef: typeof import('vue')['customRef']
@@ -45,11 +47,13 @@ declare global {
   const deleteIngredient: typeof import('./composables/apiService')['deleteIngredient']
   const deleteRecipeIngredient: typeof import('./composables/apiService')['deleteRecipeIngredient']
   const deleteStock: typeof import('./composables/apiService')['deleteStock']
+  const deleteSubRecipe: typeof import('./composables/apiService')['deleteSubRecipe']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const editIngredient: typeof import('./composables/apiService')['editIngredient']
   const editRecipe: typeof import('./composables/apiService')['editRecipe']
   const editRecipeIngredient: typeof import('./composables/apiService')['editRecipeIngredient']
   const editStock: typeof import('./composables/apiService')['editStock']
+  const editSubRecipe: typeof import('./composables/apiService')['editSubRecipe']
   const effectScope: typeof import('vue')['effectScope']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const getAllIngredient: typeof import('./composables/apiService')['getAllIngredient']
@@ -57,10 +61,12 @@ declare global {
   const getAllRecipeIngredientByRecipe: typeof import('./composables/apiService')['getAllRecipeIngredientByRecipe']
   const getAllStocks: typeof import('./composables/apiService')['getAllStocks']
   const getAllStocksByIngredient: typeof import('./composables/apiService')['getAllStocksByIngredient']
+  const getAllSubRecipeByRecipe: typeof import('./composables/apiService')['getAllSubRecipeByRecipe']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getIngredients: typeof import('./composables/apiService')['getIngredients']
   const getInsufficientIngredients: typeof import('./composables/apiService')['getInsufficientIngredients']
+  const getInsufficientSubRecipes: typeof import('./composables/apiService')['getInsufficientSubRecipes']
   const getRecipe: typeof import('./composables/apiService')['getRecipe']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
@@ -143,6 +149,7 @@ declare global {
   const unref: typeof import('vue')['unref']
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
+  const updateRecipeCache: typeof import('./composables/cacheManipulation')['updateRecipeCache']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
   const useArrayDifference: typeof import('@vueuse/core')['useArrayDifference']
@@ -293,6 +300,7 @@ declare global {
   const useStorage: typeof import('@vueuse/core')['useStorage']
   const useStorageAsync: typeof import('@vueuse/core')['useStorageAsync']
   const useStyleTag: typeof import('@vueuse/core')['useStyleTag']
+  const useSubRecipeStore: typeof import('./stores/subRecipe')['useSubRecipeStore']
   const useSupported: typeof import('@vueuse/core')['useSupported']
   const useSwipe: typeof import('@vueuse/core')['useSwipe']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
@@ -359,6 +367,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly apiRequest: UnwrapRef<typeof import('./composables/apiService')['apiRequest']>
     readonly apiService: UnwrapRef<typeof import('./composables/apiService')['default']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -382,6 +391,7 @@ declare module 'vue' {
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createStock: UnwrapRef<typeof import('./composables/apiService')['createStock']>
+    readonly createSubRecipe: UnwrapRef<typeof import('./composables/apiService')['createSubRecipe']>
     readonly createTemplatePromise: UnwrapRef<typeof import('@vueuse/core')['createTemplatePromise']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
@@ -391,20 +401,24 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly deleteRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['deleteRecipeIngredient']>
     readonly deleteStock: UnwrapRef<typeof import('./composables/apiService')['deleteStock']>
+    readonly deleteSubRecipe: UnwrapRef<typeof import('./composables/apiService')['deleteSubRecipe']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly editIngredient: UnwrapRef<typeof import('./composables/apiService')['editIngredient']>
     readonly editRecipe: UnwrapRef<typeof import('./composables/apiService')['editRecipe']>
     readonly editRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['editRecipeIngredient']>
     readonly editStock: UnwrapRef<typeof import('./composables/apiService')['editStock']>
+    readonly editSubRecipe: UnwrapRef<typeof import('./composables/apiService')['editSubRecipe']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly getAllIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllIngredient']>
     readonly getAllRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipe']>
     readonly getAllRecipeIngredientByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipeIngredientByRecipe']>
     readonly getAllStocksByIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllStocksByIngredient']>
+    readonly getAllSubRecipeByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllSubRecipeByRecipe']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getInsufficientIngredients: UnwrapRef<typeof import('./composables/apiService')['getInsufficientIngredients']>
+    readonly getInsufficientSubRecipes: UnwrapRef<typeof import('./composables/apiService')['getInsufficientSubRecipes']>
     readonly getRecipe: UnwrapRef<typeof import('./composables/apiService')['getRecipe']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
@@ -485,6 +499,7 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
+    readonly updateRecipeCache: UnwrapRef<typeof import('./composables/cacheManipulation')['updateRecipeCache']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>
@@ -628,6 +643,7 @@ declare module 'vue' {
     readonly useStorage: UnwrapRef<typeof import('@vueuse/core')['useStorage']>
     readonly useStorageAsync: UnwrapRef<typeof import('@vueuse/core')['useStorageAsync']>
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
+    readonly useSubRecipeStore: UnwrapRef<typeof import('./stores/subRecipe')['useSubRecipeStore']>
     readonly useSupported: UnwrapRef<typeof import('@vueuse/core')['useSupported']>
     readonly useSwipe: UnwrapRef<typeof import('@vueuse/core')['useSwipe']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>

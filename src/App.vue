@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NConfigProvider, NNotificationProvider, darkTheme } from 'naive-ui'
+import { darkTheme, NConfigProvider, NNotificationProvider } from 'naive-ui'
 import { naiveThemeOverrides } from './styles/naiveThemeOverrides'
 // https://github.com/vueuse/head
 // you can use this to manipulate the document head in any components,

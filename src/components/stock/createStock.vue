@@ -16,7 +16,7 @@ const newStockUnit = ref<Unit>('kg')
 const newStockQuantity = ref<number>(0)
 const expirationDateDisplayed = ref<string>(dateStore.todayFormated)
 
-const newStockExpirationDate = computed(() => {
+const newStockExpirationDate = computed<string>(() => {
   const parsedDate = parse(expirationDateDisplayed.value, dateStore.dayFormat, new Date())
   if (isValid(parsedDate) === false) {
     throw new Error('Invalid date format. Expected format: dd/MM/yyyy')

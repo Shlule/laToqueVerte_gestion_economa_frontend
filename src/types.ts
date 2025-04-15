@@ -27,14 +27,24 @@ export interface Recipe {
   id: string
   name: string
   cost: number
-  numberOfPieces: number
+  quantity: number
+  unitType: Unit
   recipeIngredients: RecipeIngredient[]
   insufficientIngredient?: InsufficientIngredient[]
+  subRecipes?: SubRecipe[]
+  insufficientSubRecipe: InsufficientSubRecipe[]
 }
 
 export interface InsufficientIngredient {
   name: string
   ingredientId: string
+  missingQuantity: number
+  unit: Unit
+}
+
+export interface InsufficientSubRecipe {
+  name: string
+  childRecipeId: string
   missingQuantity: number
   unit: Unit
 }
@@ -48,9 +58,25 @@ export interface RecipeIngredient {
   unit: Unit
 }
 
+export interface SubRecipe {
+  id: string
+  quantityNeeded: number
+  cost: number
+  unit: Unit
+  parentRecipe: Recipe
+  childRecipe: Recipe
+}
+
 export interface AddToRecipe {
   recipeId: string
   ingredient: Ingredient
+  quantityNeeded: number
+  unit: Unit
+}
+
+export interface AddSubRecipe {
+  parentRecipeId: string
+  childRecipe: Recipe
   quantityNeeded: number
   unit: Unit
 }
@@ -59,7 +85,7 @@ export interface StockCreation {
   ingredient: string
   quantity: number
   unit: Unit
-  expirationDate: Date
+  expirationDate: string
 }
 
 export interface Stock {

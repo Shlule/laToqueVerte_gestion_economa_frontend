@@ -9,7 +9,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
 
   const queryClient = useQueryClient()
 
-  const { data: allRecipe, error: recipeQueryError } = useQuery({
+  const { data: allRecipe, error: recipeQueryError, isLoading: recipeQueryLoading } = useQuery({
     queryKey: ['allRecipes'],
     queryFn: async () => {
       const response = await getAllRecipe()
@@ -131,6 +131,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     sortSelected,
     isAscendantOrder,
     searchBarInput,
+    recipeQueryLoading,
     getRecipeCachedValue,
   }
 })

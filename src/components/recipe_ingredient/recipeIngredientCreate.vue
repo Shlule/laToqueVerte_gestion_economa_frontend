@@ -8,7 +8,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <NCard role="form-dialog" title="Add ingredient to Recipe" w-75vw>
+  <div>
     <IngredientHeader />
     <NSplit id="recipeIngredient-create-container" direction="horizontal" :max="0.7" :min="0.6" :default-size="0.7">
       <template #1>
@@ -39,16 +39,7 @@ const { t } = useI18n()
         </div>
       </template>
     </NSplit>
-
-    <div id="button-container" m-t-4 flex justify-end gap-2>
-      <NButton type="success" flex text-green>
-        {{ t('button.confirm') }}
-      </NButton>
-      <NButton>
-        {{ t('button.cancel') }}
-      </NButton>
-    </div>
-  </NCard>
+  </div>
 </template>
 
 <style scoped>

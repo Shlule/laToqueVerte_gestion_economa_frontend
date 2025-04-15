@@ -1,8 +1,8 @@
-import type { QueryClient } from '@tanstack/vue-query'
-import type { AddToRecipe, Ingredient, Recipe, RecipeIngredient } from '~/types'
+import type { AddToRecipe, RecipeIngredient } from '~/types'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { defineStore } from 'pinia'
 import { deleteRecipeIngredient } from '~/composables/apiService'
+import { updateRecipeCache } from '~/composables/cacheManipulation'
 
 // this store is responsible to get information relative to ingredient creation
 
@@ -10,38 +10,10 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
   const queryClient = useQueryClient()
   const { getRecipeCachedValue } = useRecipeStore()
 
-  // this function is a helper function to update Recipes Cache
-  // we using it for all CRUD action of recipeIngredients
-  function updateRecipeCache(queryClient: QueryClient, recipeId: string) {
-    queryClient.cancelQueries({ queryKey: ['allRecipes'] })
-
-    // get the value of recipeIngredients to update the recipe
-    const updatedRecipeIngredients = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeId])
-    const previousRecipes = queryClient.getQueryData<Recipe[]>(['allRecipes'])
-
-    if (previousRecipes) {
-      queryClient.setQueryData(['allRecipes'], previousRecipes.map(recipe =>
-        recipe.id === recipeId
-          ? {
-              ...recipe,
-              recipeIngredients: updatedRecipeIngredients,
-              cost: Number.parseFloat(
-                (updatedRecipeIngredients?.reduce((total, ri) => total + Number(ri.cost), 0) ?? recipe.cost).toFixed(2),
-              ),
-            }
-          : recipe,
-      ))
-    }
-    // return previous value  for rollback if needed
-    return { previousRecipes }
-  }
-
-  // this function is for updating RecipeIngredients, and the Recipe Associated to that RecipeIngredient
-  // because RecipeCost is associated to the quantity , unit and cost of a RecipeIngredient
+  // this function is for updating recipeIngredients and the associated parentRecipe
+  // for updating the cost field of ParentRecipe
   const updateRecipeIngredient = useMutation({
 
-    // recipeId Parameter is necessary because all recipeIngredients of Recipe are fetching
-    // by tanStackQuery  with querykey ['recipeIngredient',recipeId]
     // use RecipeIngredient and not Partial for ensure to get id object
     mutationFn: async ({ recipeIngredient }: { recipeIngredient: RecipeIngredient }) => {
       if (!recipeIngredient.id) {
@@ -50,6 +22,8 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
       return editRecipeIngredient(recipeIngredient)
     },
 
+    // recipeId Parameter is necessary because all recipeIngredients of Recipe are fetching
+    // by tanStackQuery  with querykey ['recipeIngredient',recipeId]
     onMutate: async ({ recipeIngredient, recipeId }: { recipeIngredient: RecipeIngredient, recipeId: string }) => {
       // work on recipeIngredient update
       await queryClient.cancelQueries({ queryKey: ['recipeIngredients', recipeId] })
@@ -57,6 +31,7 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
       const previousRecipeIngredients = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeId])
 
       if (previousRecipeIngredients) {
+        // filter the corresponding recipeIngredient inside the cache
         queryClient.setQueryData(['recipeIngredients', recipeId], previousRecipeIngredients.map(ri =>
           ri.id === recipeIngredient.id ? { ...ri, ...recipeIngredient } : ri,
         ))
@@ -118,50 +93,55 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     },
   })
 
-  const addRecipeIngredient = useMutation({
-    mutationFn: async ({ recipeIngredient }: { recipeIngredient: AddToRecipe }) => {
-      return createRecipeIngredient(recipeIngredient)
+  const addRecipeIngredients = useMutation({
+    mutationFn: async ({ recipeIngredientList }: { recipeIngredientList: AddToRecipe[] }) => {
+      return createRecipeIngredient(recipeIngredientList)
     },
 
-    onMutate: async ({ recipeIngredient, ingredient }: { recipeIngredient: AddToRecipe, ingredient: Ingredient }) => {
-      await queryClient.cancelQueries({ queryKey: ['recipeIngredients', recipeIngredient.recipeId] })
+    onMutate: async ({ recipeIngredientList }: { recipeIngredientList: AddToRecipe[] }) => {
+      // we assume that all addToRecipe object must be add to the same recipe
+      const recipeId = recipeIngredientList[0].recipeId
+      await queryClient.cancelQueries({ queryKey: ['recipeIngredients', recipeId] })
 
       // update recipeIngredientList , of the recipeIngredients query key
       // adding a new recipeIngredient
-      const previousRecipeIngredientList = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeIngredient.recipeId])
+      const previousRecipeIngredientList = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeId])
 
       // create a full RecipeIngredient object from addToRecipe
       // first retrieve the recipe
-      const recipe = getRecipeCachedValue(recipeIngredient.recipeId)
+      const recipe = getRecipeCachedValue(recipeId)
       // next retrieve the ingredient, it is already in the request for simplicity and
       // optimization
 
-      // finish to calculate cost
-
-      const ingredientUnit = ingredient.unitType
-      const convertedQuantity = convertUnit(recipeIngredient.quantityNeeded, recipeIngredient.unit, ingredientUnit)
-      const cost = Number((ingredient.pricePerUnit * convertedQuantity).toFixed(2))
-
       if (!recipe) {
-        throw new Error(`impossible to retrieve Recipe with this id ${recipeIngredient.recipeId}`)
+        throw new Error(`impossible to retrieve Recipe with this id ${recipeId}`)
       }
-      const newRecipeIngredient: RecipeIngredient = {
-        recipe,
-        ingredient,
-        cost,
-        unit: recipeIngredient.unit,
-        quantityNeeded: recipeIngredient.quantityNeeded,
-        id: String(Date.now()),
+      const newRecipeIngredientList: RecipeIngredient[] = recipeIngredientList.map((recipeIngredient) => {
+        // we do this to calculate the cost for each recipeIngredient we must create
+        const ingredient = recipeIngredient.ingredient
+        const ingredientUnit = ingredient.unitType
+        const convertedQuantity = convertUnit(recipeIngredient.quantityNeeded, recipeIngredient.unit, ingredientUnit)
+        const cost = Number((ingredient.pricePerUnit * convertedQuantity).toFixed(2))
 
-      }
+        // finaly create th RecipeIngredient Object
+        return {
+          recipe,
+          ingredient,
+          cost,
+          unit: recipeIngredient.unit,
+          quantityNeeded: recipeIngredient.quantityNeeded,
+          id: String(Date.now()), // On génère un ID temporaire pour l'optimistic update
+        }
+      })
 
+      // update manualy the cache
       if (previousRecipeIngredientList) {
-        queryClient.setQueryData(['recipeIngredients', recipeIngredient.recipeId], [...previousRecipeIngredientList, newRecipeIngredient])
+        queryClient.setQueryData(['recipeIngredients', recipeId], [...previousRecipeIngredientList, ...newRecipeIngredientList])
       }
 
       // update the concerned Recipe
-      const { previousRecipes } = updateRecipeCache(queryClient, recipeIngredient.recipeId)
-      return { previousRecipeIngredientList, previousRecipes, recipeId: recipeIngredient.recipeId }
+      const { previousRecipes } = updateRecipeCache(queryClient, recipeId)
+      return { previousRecipeIngredientList, previousRecipes, recipeId }
     },
 
     onError: (err, recipeIngredient, context) => {
@@ -175,8 +155,8 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     },
 
     onSettled: (_, __, context) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', context.recipeIngredient.recipeId] })
-      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', context.recipeIngredient.recipeId] })
+      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', context.recipeIngredientList[0].recipeId] })
+      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', context.recipeIngredientList[0].recipeId] })
     },
   })
 
@@ -194,11 +174,15 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     recipeIngredientListToAdd.value = []
   }
 
+  function addRecipeIngredientBackend() {
+    addRecipeIngredients.mutate({ recipeIngredientList: recipeIngredientListToAdd.value })
+  }
+
   return {
     recipeIngredientListToAdd,
-    addRecipeIngredient,
     updateRecipeIngredient,
     removeRecipeIngredient,
+    addRecipeIngredientBackend,
     addRecipeIngredientToList,
     deleteRecipeIngredientToList,
     resetRecipeIngredientToAdd,

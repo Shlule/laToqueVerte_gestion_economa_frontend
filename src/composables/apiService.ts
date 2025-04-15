@@ -1,4 +1,5 @@
-import type { AddToRecipe, Ingredient, IngredientCreation, InsufficientIngredient, Recipe, RecipeIngredient, Stock, StockCreation } from '~/types'
+import type { AxiosRequestConfig } from 'axios'
+import type { AddSubRecipe, AddToRecipe, Ingredient, IngredientCreation, InsufficientIngredient, InsufficientSubRecipe, Recipe, RecipeIngredient, Stock, StockCreation, SubRecipe } from '~/types'
 import { useAxios } from '@vueuse/integrations/useAxios'
 import axios from 'axios'
 
@@ -38,18 +39,18 @@ export async function deleteRecipeIngredient(recipeIngredientId: string) {
   console.error(`An error has occur during delete recipeIngredient ${recipeIngredientId}`)
 }
 
-export async function createRecipeIngredient(newRecipeIngredient: AddToRecipe) {
+export async function createRecipeIngredient(newRecipeIngredientList: AddToRecipe[]) {
   try {
-    const response = await economa_backend_api.post<RecipeIngredient>(`/recipe-ingredients`, newRecipeIngredient)
+    const response = await economa_backend_api.post<RecipeIngredient[]>(`/recipe-ingredients`, newRecipeIngredientList)
     return response.data
   }
   catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during creating recipeIngredient `)
+      console.error(`An error has occur during creating recipeIngredients `)
       throw new Error(error.message || ' an error has occur')
     }
   }
-  console.error(`An error has occur during creating recipeIngredient`)
+  console.error(`An error has occur during creating recipeIngredients`)
 }
 
 // SECTION - get this form and don't use useAxios for using tanStackQuery
@@ -181,7 +182,7 @@ export async function getInsufficientIngredients(recipeId: string) {
 
 export async function createStock(newStock: StockCreation) {
   try {
-    const response = await economa_backend_api.post<Stock>('/stocks', newStock)
+    const response = await economa_backend_api.post<Stock>('/supplier-stocks', newStock)
     return response.data
   }
   catch (error) {
@@ -195,7 +196,7 @@ export async function createStock(newStock: StockCreation) {
 
 export async function editStock(newStockData: Stock) {
   try {
-    const response = await economa_backend_api.put<Stock>(`/stocks/${newStockData.id}`, newStockData)
+    const response = await economa_backend_api.put<Stock>(`/supplier-stocks/${newStockData.id}`, newStockData)
     return response.data
   }
   catch (error) {
@@ -209,7 +210,7 @@ export async function editStock(newStockData: Stock) {
 
 export async function deleteStock(stockId: string) {
   try {
-    const response = await economa_backend_api.delete<Stock>(`/stocks/${stockId}`)
+    const response = await economa_backend_api.delete<Stock>(`/supplier-stocks/${stockId}`)
     return response.data
   }
   catch (error) {
@@ -221,25 +222,98 @@ export async function deleteStock(stockId: string) {
   }
 }
 
-// export function getAllStocks(ingredientId: string) {
-//   return useAxios<Stock[]>(`/stocks/byIngredient/${ingredientId}`, { method: 'GET' }, economa_backend_api)
-// }
-
 // ANCHOR -  use this form for the use of TanStackQuery
 // the function must throw an error
 export async function getAllStocksByIngredient(ingredientId: string): Promise<Stock[] | undefined> {
   try {
-    const response = await economa_backend_api.get<Stock[]>(`/stocks/byIngredient/${ingredientId}`)
+    const response = await economa_backend_api.get<Stock[]>(`/supplier-stocks/byIngredient/${ingredientId}`)
     return response.data
   }
   catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('Erreur lors de la création de l\'ingrédient:', error)
+      console.error(`Error during fetching all stocks with ingredient with ID ${ingredientId}:`, error)
 
       throw new Error(error.message || 'une erreur est survenue')
     }
-    console.error('Erreur lors de la création de l\'ingrédient:', error)
+    console.error(`Error during fetching all stocks with ingredient with ID ${ingredientId}:`, error)
   }
+}
+
+// testing new Form of creating Api with more Generic class
+
+type HttpMethod = 'get' | 'post' | 'put' | 'delete'
+
+interface ApiRequestParams<TData, TResponse> {
+  method: HttpMethod
+  url: string
+  data?: TData
+  errorContext?: string
+  config?: AxiosRequestConfig<TResponse>
+
+}
+
+export async function apiRequest<TData, TResponse>(
+  params: ApiRequestParams<TData, TResponse>,
+): Promise<TResponse | undefined> {
+  const { method, url, data, errorContext, config } = params
+
+  try {
+    const response = await economa_backend_api.request<TResponse>({
+      method,
+      url,
+      data,
+      ...config,
+    })
+    return response.data
+  }
+  catch (error) {
+    const msg = `An error occurred${errorContext ? ` during ${errorContext}` : ''}`
+    if (axios.isAxiosError(error))
+      throw new Error(error.message || msg)
+    throw new Error(msg)
+  }
+}
+
+export async function editSubRecipe(newSubRecipe: SubRecipe): Promise<SubRecipe | undefined> {
+  return apiRequest<SubRecipe, SubRecipe>({
+    method: 'put',
+    url: `/sub-recipes/${newSubRecipe.id}`,
+    data: newSubRecipe,
+    errorContext: `editing SubRecipe with ID ${newSubRecipe.id}`,
+  })
+}
+
+export async function deleteSubRecipe(subRecipeId: string): Promise<void> {
+  return apiRequest<undefined, void>({
+    method: 'delete',
+    url: `/sub-recipes/${subRecipeId}`,
+    errorContext: `deleting subRecipe ${subRecipeId}`,
+  })
+}
+
+export async function createSubRecipe(newSubRecipeList: AddSubRecipe[]): Promise<SubRecipe[] | undefined> {
+  return apiRequest<AddSubRecipe[], SubRecipe[]>({
+    method: 'post',
+    url: `/sub-recipes`,
+    data: newSubRecipeList,
+    errorContext: ` adding SubRecipe `,
+  })
+}
+
+export async function getAllSubRecipeByRecipe(recipeId: string): Promise<SubRecipe[] | undefined> {
+  return apiRequest<string, SubRecipe[]>({
+    method: 'get',
+    url: `/sub-recipes/byParentRecipe/${recipeId}`,
+    errorContext: `to get all subRecipe of Recipe with id ${recipeId}`,
+  })
+}
+
+export async function getInsufficientSubRecipes(recipeId: string): Promise<InsufficientSubRecipe[] | undefined> {
+  return apiRequest<string, InsufficientSubRecipe[]>({
+    method: 'get',
+    url: `/recipes/${recipeId}/insufficientSubRecipes`,
+    errorContext: `to get all subRecipe of Recipe with id ${recipeId}`,
+  })
 }
 
 export default economa_backend_api

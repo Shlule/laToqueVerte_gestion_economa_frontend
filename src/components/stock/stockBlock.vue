@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { NCard } from 'naive-ui'
-import { differenceInDays, format, startOfDay } from 'date-fns'
 import type { Stock } from '~/types'
+import { differenceInDays, format, startOfDay } from 'date-fns'
+import { NCard } from 'naive-ui'
 
 const stockData = defineModel<Stock>('stockData', { required: true })
 const ingredientId = defineModel<string>('ingredientId', { required: true })

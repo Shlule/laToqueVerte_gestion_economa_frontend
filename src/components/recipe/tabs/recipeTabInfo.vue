@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { NSlider } from 'naive-ui'
 import type { Recipe } from '~/types'
+import { NSlider } from 'naive-ui'
 
 const { recipeData } = defineProps<{ recipeData: Recipe }>()
 const { t } = useI18n()
 
 const pricePerPiece = computed(() => {
-  return (recipeData.cost / recipeData.numberOfPieces).toFixed(2)
+  return (recipeData.cost / recipeData.quantity).toFixed(2)
 })
 
 // TODO - Permit to change the equation to compute the selling price

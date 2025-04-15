@@ -1,6 +1,6 @@
+import type { IngredientCreation, Unit } from '~/types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { createIngredient } from '~/composables/apiService'
-import type { IngredientCreation, Unit } from '~/types'
 
 // this store is responsible to get information relative to ingredient creation
 

@@ -68,8 +68,8 @@ recipe-header:
   title: Recipes
   search_bar: search a recipe
 
-addRecipeIngredient:
-  title: Ingredient to Add
+addComponent:
+  title: component to Add
 
 insufficientIngredient:
   no_insufficient: you get all ingredient for this recipe

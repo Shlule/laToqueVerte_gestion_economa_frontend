@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Stock, Unit } from '~/types'
+import type { SupplierStock, Unit } from '~/types'
 import { format, parse } from 'date-fns'
 
 const emit = defineEmits<{
   (event: 'toggleEditStockBlock'): void
 }>()
 
-const stockData = defineModel<Stock>('stockData', { required: true })
+const stockData = defineModel<SupplierStock>('stockData', { required: true })
 const ingredientId = defineModel<string>('ingredientId', { required: true })
 
 const { dayFormat } = useDateStore()
@@ -19,7 +19,7 @@ const editExpirationDateDisplayed = ref<string>(format(localStockData.expiration
 const editQuantity = ref<number>(Number(localStockData.quantity))
 const editUnit = ref<Unit>(localStockData.unit)
 
-const editStockData = computed<Stock>(() => ({
+const editStockData = computed<SupplierStock>(() => ({
   quantity: editQuantity.value,
   unit: editUnit.value,
   expirationDate: parse(editExpirationDateDisplayed.value, dayFormat, new Date()),

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { unitOptions } from '~/composables/unit'
 import type { Ingredient, Unit } from '~/types'
+import { unitOptions } from '~/composables/unit'
 
 const emit = defineEmits<{
   (event: 'toggleEditIngredientBlock'): void
@@ -25,7 +25,7 @@ const editIngredientData = computed<Ingredient>(() => ({
   fournisseur: editFournisseur.value,
   unitType: editUnitType.value,
   RecipeIngredients: ingredientData.value.RecipeIngredients,
-  stock: ingredientData.value.stock,
+  stocks: ingredientData.value.stocks,
 }))
 function cancel() {
   emit('toggleEditIngredientBlock')

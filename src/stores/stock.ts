@@ -1,5 +1,6 @@
-import type { Stock, StockCreation } from '~/types'
+import type { SupplierStock, SupplierStockCreation } from '~/types'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { parseISO } from 'date-fns'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useStockStore = defineStore('useStockStore', () => {
@@ -9,17 +10,17 @@ export const useStockStore = defineStore('useStockStore', () => {
 
   // use Stock and not Partial<Stock> to ensure to get id object
   const updateStock = useMutation({
-    mutationFn: async ({ newStock }: { newStock: Stock }) => {
+    mutationFn: async ({ newStock }: { newStock: SupplierStock }) => {
       if (!newStock.id) {
         throw new Error('Cannor update stock without an id')
       }
       return editStock(newStock)
     },
 
-    onMutate: async ({ newStock, ingredientId }: { newStock: Stock, ingredientId: string }) => {
+    onMutate: async ({ newStock, ingredientId }: { newStock: SupplierStock, ingredientId: string }) => {
       await queryClient.cancelQueries({ queryKey: ['stocks', ingredientId] })
 
-      const previousStocks = queryClient.getQueryData<Stock[]>(['stocks', ingredientId])
+      const previousStocks = queryClient.getQueryData<SupplierStock[]>(['stocks', ingredientId])
 
       if (previousStocks) {
         queryClient.setQueryData(['stocks', ingredientId], previousStocks.map(stock =>
@@ -52,7 +53,7 @@ export const useStockStore = defineStore('useStockStore', () => {
 
     onMutate: async ({ stockId, ingredientId }: { stockId: string, ingredientId: string }) => {
       await queryClient.cancelQueries({ queryKey: ['stocks', ingredientId] })
-      const previousStocks = queryClient.getQueryData<Stock[]>(['stocks', ingredientId])
+      const previousStocks = queryClient.getQueryData<SupplierStock[]>(['stocks', ingredientId])
 
       if (previousStocks) {
         queryClient.setQueryData(['stocks', ingredientId], previousStocks.filter(stock => stock.id !== stockId))
@@ -75,21 +76,23 @@ export const useStockStore = defineStore('useStockStore', () => {
   })
 
   const addStock = useMutation({
-    mutationFn: async ({ newStock }: { newStock: StockCreation }) => {
+    mutationFn: async ({ newStock }: { newStock: SupplierStockCreation }) => {
       return createStock(newStock)
     },
 
-    onMutate: async ({ newStock, ingredientId }: { newStock: StockCreation, ingredientId: string }) => {
+    onMutate: async ({ newStock, ingredientId }: { newStock: SupplierStockCreation, ingredientId: string }) => {
       await queryClient.cancelQueries({ queryKey: ['stocks', ingredientId] })
 
-      const previousStocks = queryClient.getQueryData<Stock[]>(['stocks', ingredientId])
+      const previousStocks = queryClient.getQueryData<SupplierStock[]>(['stocks', ingredientId])
       const ingredient = getIngredientCachedValue(ingredientId)
 
       if (!ingredient) {
         throw new Error(`Impossible to retrieve Ingredient with this Id ${ingredientId}`)
       }
-      const newStockobject: Stock = {
+
+      const newStockobject: SupplierStock = {
         ...newStock,
+        expirationDate: parseISO(newStock.expirationDate),
         ingredient,
         id: String(Date.now()),
       }

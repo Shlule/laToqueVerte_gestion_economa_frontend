@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddingIngredientOrSubRecipe: typeof import('./components/recipe/addingIngredientOrSubRecipe.vue')['default']
+    ComponentToAdd: typeof import('./components/smart/componentToAdd.vue')['default']
     CreateStock: typeof import('./components/stock/createStock.vue')['default']
     FadeSlideTransition: typeof import('./components/transitions/FadeSlideTransition.vue')['default']
     HandleDisplay: typeof import('./components/smart/handleDisplay.vue')['default']
@@ -35,6 +36,7 @@ declare module 'vue' {
     NSplit: typeof import('naive-ui')['NSplit']
     README: typeof import('./components/README.md')['default']
     RecipeBlock: typeof import('./components/recipe/recipeBlock.vue')['default']
+    RecipeComponentBlock: typeof import('./components/recipe_component/recipeComponentBlock.vue')['default']
     RecipeCreate: typeof import('./components/recipe/recipeCreate.vue')['default']
     RecipeHeader: typeof import('./components/recipe/recipeHeader.vue')['default']
     RecipeIngredientBlock: typeof import('./components/recipe_ingredient/recipeIngredientBlock.vue')['default']
@@ -52,6 +54,7 @@ declare module 'vue' {
     SubRecipeChoice: typeof import('./components/sub_recipe/subRecipeChoice.vue')['default']
     SubRecipeCreate: typeof import('./components/sub_recipe/subRecipeCreate.vue')['default']
     SubRecipeToAdd: typeof import('./components/sub_recipe/subRecipeToAdd.vue')['default']
+    SubRecipeToAddEdit: typeof import('./components/sub_recipe/subRecipeToAddEdit.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']

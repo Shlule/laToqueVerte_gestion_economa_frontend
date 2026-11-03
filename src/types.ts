@@ -19,7 +19,7 @@ export interface Ingredient {
   fournisseur: string
   unitType: Unit
   RecipeIngredients: RecipeIngredient[]
-  stock: Stock
+  stocks: SupplierStock[]
 
 }
 
@@ -33,6 +33,7 @@ export interface Recipe {
   insufficientIngredient?: InsufficientIngredient[]
   subRecipes?: SubRecipe[]
   insufficientSubRecipe: InsufficientSubRecipe[]
+  stocks: CraftedStock[]
 }
 
 export interface InsufficientIngredient {
@@ -81,17 +82,33 @@ export interface AddSubRecipe {
   unit: Unit
 }
 
-export interface StockCreation {
+export interface SupplierStockCreation {
   ingredient: string
   quantity: number
   unit: Unit
   expirationDate: string
 }
 
-export interface Stock {
+export interface SupplierStock {
   id: string
   ingredient: Ingredient
   quantity: number
   unit: Unit
   expirationDate: Date
+}
+
+export interface CraftedStockCreation {
+  recipe: string
+  quantity: number
+  unit: Unit
+  creationDate: string
+
+}
+
+export interface CraftedStock {
+  id: string
+  recipe: Recipe
+  quantity: number
+  unit: Unit
+  creationDate: Date
 }

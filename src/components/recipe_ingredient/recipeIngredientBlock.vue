@@ -15,7 +15,7 @@ function deleteRecipeIngredient() {
   showRecipeIngredientBlock.value = false
   removeRecipeIngredient.mutate({ recipeIngredientId: recipeIngredientData.value.id, recipeId: recipeId.value })
 }
-function toggleEditStock() {
+function toggleEdit() {
   showRecipeIngredientBlock.value = !showRecipeIngredientBlock.value
   showEditRecipeIngredientBlock.value = !showEditRecipeIngredientBlock.value
 }
@@ -45,7 +45,7 @@ function toggleEditStock() {
       </NCard>
     </div>
     <div id="button-menu" flex gap-3>
-      <NButton type="success" circle text-green @click="toggleEditStock()">
+      <NButton type="success" circle text-green @click="toggleEdit()">
         <div i-fluent:edit-20-regular />
       </NButton>
       <NButton circle type="error" text-red @click="deleteRecipeIngredient()">
@@ -53,7 +53,7 @@ function toggleEditStock() {
       </NButton>
     </div>
   </div>
-  <RecipeIngredientBlockEdit v-if="showEditRecipeIngredientBlock" :recipe-ingredient-data="recipeIngredientData" :recipe-id="recipeId" @toggle-recipe-ingredient-edit="toggleEditStock" />
+  <RecipeIngredientBlockEdit v-if="showEditRecipeIngredientBlock" :recipe-ingredient-data="recipeIngredientData" :recipe-id="recipeId" @toggle-recipe-ingredient-edit="toggleEdit" />
 </template>
 
 <style scoped>

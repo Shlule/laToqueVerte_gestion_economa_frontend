@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { AddToRecipe, Unit } from '~/types'
+import type { AddSubRecipe, AddToRecipe, Unit } from '~/types'
 
 const emit = defineEmits<{ (event: 'toggleEditMode'): void }>()
-const recipeIngredientToAddData = defineModel<AddToRecipe>('recipeIngredientToAddData', { required: true })
+const recipeIngredientToAddData = defineModel<AddToRecipe | AddSubRecipe>('recipeIngredientToAddData', { required: true })
 const { t } = useI18n()
 
 const editUnit = ref<Unit>('kg')

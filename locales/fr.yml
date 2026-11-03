@@ -54,8 +54,8 @@ stock-header:
   total_price: prix
   total_quantity: quantité
 
-addRecipeIngredient:
-  title: Ingredients à ajouter
+addComponent:
+  title: composant à ajouter
 
 insufficientIngredient:
   no_insufficient: vous possedez tous les ingredients pour realiser cette recette

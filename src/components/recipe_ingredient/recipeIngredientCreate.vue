@@ -32,7 +32,7 @@ const { t } = useI18n()
         <div id="ingredient-list" p-2>
           <div id="addRecipeIngredient-header">
             <h1 text-6>
-              {{ t('addRecipeIngredient.title') }}
+              {{ t('addComponent.title') }}
             </h1>
           </div>
           <RecipeIngredientToAdd v-for="(ingredientToAdd, index) in recipeIngredientListToAdd" :key="index" :ingredient-to-add-data="ingredientToAdd" :index="index" />

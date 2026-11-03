@@ -1,5 +1,5 @@
 import type { AxiosRequestConfig } from 'axios'
-import type { AddSubRecipe, AddToRecipe, Ingredient, IngredientCreation, InsufficientIngredient, InsufficientSubRecipe, Recipe, RecipeIngredient, Stock, StockCreation, SubRecipe } from '~/types'
+import type { AddSubRecipe, AddToRecipe, Ingredient, IngredientCreation, InsufficientIngredient, InsufficientSubRecipe, Recipe, RecipeIngredient, SubRecipe, SupplierStock, SupplierStockCreation } from '~/types'
 import { useAxios } from '@vueuse/integrations/useAxios'
 import axios from 'axios'
 
@@ -180,9 +180,9 @@ export async function getInsufficientIngredients(recipeId: string) {
   }
 }
 
-export async function createStock(newStock: StockCreation) {
+export async function createStock(newStock: SupplierStockCreation) {
   try {
-    const response = await economa_backend_api.post<Stock>('/supplier-stocks', newStock)
+    const response = await economa_backend_api.post<SupplierStock>('/supplier-stocks', newStock)
     return response.data
   }
   catch (error) {
@@ -194,9 +194,9 @@ export async function createStock(newStock: StockCreation) {
   }
 }
 
-export async function editStock(newStockData: Stock) {
+export async function editStock(newStockData: SupplierStock) {
   try {
-    const response = await economa_backend_api.put<Stock>(`/supplier-stocks/${newStockData.id}`, newStockData)
+    const response = await economa_backend_api.put<SupplierStock>(`/supplier-stocks/${newStockData.id}`, newStockData)
     return response.data
   }
   catch (error) {
@@ -210,7 +210,7 @@ export async function editStock(newStockData: Stock) {
 
 export async function deleteStock(stockId: string) {
   try {
-    const response = await economa_backend_api.delete<Stock>(`/supplier-stocks/${stockId}`)
+    const response = await economa_backend_api.delete<SupplierStock>(`/supplier-stocks/${stockId}`)
     return response.data
   }
   catch (error) {
@@ -224,9 +224,9 @@ export async function deleteStock(stockId: string) {
 
 // ANCHOR -  use this form for the use of TanStackQuery
 // the function must throw an error
-export async function getAllStocksByIngredient(ingredientId: string): Promise<Stock[] | undefined> {
+export async function getAllStocksByIngredient(ingredientId: string): Promise<SupplierStock[] | undefined> {
   try {
-    const response = await economa_backend_api.get<Stock[]>(`/supplier-stocks/byIngredient/${ingredientId}`)
+    const response = await economa_backend_api.get<SupplierStock[]>(`/supplier-stocks/byIngredient/${ingredientId}`)
     return response.data
   }
   catch (error) {

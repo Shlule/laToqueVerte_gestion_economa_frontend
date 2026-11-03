@@ -48,6 +48,7 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
 
     onSettled: (_, __, { recipeId }) => {
       queryclient.invalidateQueries({ queryKey: ['subRecipes', recipeId] })
+      queryclient.invalidateQueries({ queryKey: ['insufficientSubRecipes', recipeId] })
     },
 
   })
@@ -83,6 +84,7 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
 
     onSettled: (_, __, { recipeId }) => {
       queryclient.invalidateQueries({ queryKey: ['subRecipes', recipeId] })
+      queryclient.invalidateQueries({ queryKey: ['insufficientSubRecipes', recipeId] })
     },
 
   })
@@ -142,6 +144,7 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
 
     onSettled: (_, __, ___, context) => {
       queryclient.invalidateQueries({ queryKey: ['subRecipes', context?.recipeId] })
+      queryclient.invalidateQueries({ queryKey: ['insufficientSubRecipes', context?.recipeId] })
     },
   })
 

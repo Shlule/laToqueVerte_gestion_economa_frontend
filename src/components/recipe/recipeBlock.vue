@@ -11,6 +11,12 @@ const { t } = useI18n()
 const [isAddingSomething, toggleAddingSomething] = useToggle()
 
 const { resetRecipeIngredientToAdd } = useRecipeIngredientStore()
+const { resetSubRecipeToAdd } = useSubRecipeStore()
+
+function resetComponentsToAdd() {
+  resetRecipeIngredientToAdd()
+  resetSubRecipeToAdd()
+}
 
 const activeTab = ref<string>('cost')
 provide('recipeId', recipeData.value.id)
@@ -77,7 +83,7 @@ const insufficientRecipeIngredientQuery = useQuery({
 })
 
 const insufficientSubRecipeQuery = useQuery({
-  queryKey: ['SubRecipes', recipeData.value.id],
+  queryKey: ['insufficientSubRecipes', recipeData.value.id],
   queryFn: async () => {
     const response = await getInsufficientSubRecipes(recipeData.value.id)
     if (!response) {
@@ -109,6 +115,7 @@ const insufficientSubRecipeQuery = useQuery({
         <NTabPane name="cost" :tab="t('recipe-tabInfo.tab_name')">
           <RecipeTabInfo :recipe-data="recipeData" />
         </NTabPane>
+
         <NTabPane name="ingredients" :tab="t('recipe-tabIngredients.tab_name')">
           <HandleDisplay :query="insufficientRecipeIngredientQuery">
             <NScrollbar max-h-16rem>
@@ -129,8 +136,10 @@ const insufficientSubRecipeQuery = useQuery({
             </HandleDisplay>
           </div>
         </NTabPane>
+
+        <NTabPane name="stocks" />
       </NTabs>
-      <NModal v-model:show="isAddingSomething" @after-leave="resetRecipeIngredientToAdd()">
+      <NModal v-model:show="isAddingSomething" @after-leave="resetComponentsToAdd()">
         <AddingIngredientOrSubRecipe @toggle-adding-something-to-recipe="toggleAddingSomething()" />
       </NModal>
     </NCard>

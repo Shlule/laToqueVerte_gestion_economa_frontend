@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StockCreation, Unit } from '~/types'
+import type { SupplierStockCreation, Unit } from '~/types'
 import { formatISO, isValid, parse } from 'date-fns'
 import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
@@ -24,7 +24,7 @@ const newStockExpirationDate = computed<string>(() => {
   return formatISO(parsedDate)
 })
 
-const newStock = computed<StockCreation>(() => ({
+const newStock = computed<SupplierStockCreation>(() => ({
   ingredient: ingredientId.value,
   unit: newStockUnit.value,
   quantity: newStockQuantity.value,

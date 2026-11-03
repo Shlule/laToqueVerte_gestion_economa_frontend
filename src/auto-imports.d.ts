@@ -60,6 +60,7 @@ declare global {
   const getAllRecipeIngredientByRecipe: typeof import('./composables/apiService').getAllRecipeIngredientByRecipe
   const getAllStocksByIngredient: typeof import('./composables/apiService').getAllStocksByIngredient
   const getAllSubRecipeByRecipe: typeof import('./composables/apiService').getAllSubRecipeByRecipe
+  const getCsrfToken: typeof import('./composables/apiService').getCsrfToken
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
@@ -121,6 +122,7 @@ declare global {
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const removeIngredient: typeof import('./composables/apiService').removeIngredient
   const resolveComponent: typeof import('vue').resolveComponent
+  const setUnauthorizedHandler: typeof import('./composables/apiService').setUnauthorizedHandler
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
@@ -162,6 +164,7 @@ declare global {
   const useAsyncQueue: typeof import('@vueuse/core').useAsyncQueue
   const useAsyncState: typeof import('@vueuse/core').useAsyncState
   const useAttrs: typeof import('vue').useAttrs
+  const useAuthStore: typeof import('./stores/auth').useAuthStore
   const useBase64: typeof import('@vueuse/core').useBase64
   const useBattery: typeof import('@vueuse/core').useBattery
   const useBluetooth: typeof import('@vueuse/core').useBluetooth
@@ -349,6 +352,9 @@ declare global {
   // @ts-ignore
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { AuthUser } from './stores/auth'
+  import('./stores/auth')
 }
 
 // for vue template auto import
@@ -408,6 +414,7 @@ declare module 'vue' {
     readonly getAllRecipeIngredientByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipeIngredientByRecipe']>
     readonly getAllStocksByIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllStocksByIngredient']>
     readonly getAllSubRecipeByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllSubRecipeByRecipe']>
+    readonly getCsrfToken: UnwrapRef<typeof import('./composables/apiService')['getCsrfToken']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
@@ -469,6 +476,7 @@ declare module 'vue' {
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly removeIngredient: UnwrapRef<typeof import('./composables/apiService')['removeIngredient']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly setUnauthorizedHandler: UnwrapRef<typeof import('./composables/apiService')['setUnauthorizedHandler']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
@@ -510,6 +518,7 @@ declare module 'vue' {
     readonly useAsyncQueue: UnwrapRef<typeof import('@vueuse/core')['useAsyncQueue']>
     readonly useAsyncState: UnwrapRef<typeof import('@vueuse/core')['useAsyncState']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useAuthStore: UnwrapRef<typeof import('./stores/auth')['useAuthStore']>
     readonly useBase64: UnwrapRef<typeof import('@vueuse/core')['useBase64']>
     readonly useBattery: UnwrapRef<typeof import('@vueuse/core')['useBattery']>
     readonly useBluetooth: UnwrapRef<typeof import('@vueuse/core')['useBluetooth']>

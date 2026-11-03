@@ -2,6 +2,13 @@
 import { availableLocales, loadLanguageAsync } from '~/modules/i18n'
 
 const { t, locale } = useI18n()
+const auth = useAuthStore()
+const router = useRouter()
+
+async function logout() {
+  await auth.logout()
+  router.push('/login')
+}
 
 async function toggleLocales() {
   const newLocale = availableLocales[(availableLocales.indexOf(locale.value) + 1) % availableLocales.length]
@@ -24,6 +31,9 @@ async function toggleLocales() {
       </button>
       <button icon-btn :title="t('button.toggle_langs')" @click="toggleLocales()">
         <div i-carbon-language />
+      </button>
+      <button v-if="auth.user" icon-btn :title="`${t('auth.logout')} (${auth.user.email})`" @click="logout()">
+        <div i-carbon-logout />
       </button>
     </div>
   </nav>

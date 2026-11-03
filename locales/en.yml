@@ -102,3 +102,15 @@ recipe-tabmissing:
 recipeIngredient-block:
   quantity_needed: quantity
   cost: cost
+
+auth:
+  login_title: Sign in
+  signup_title: Create an account
+  email: Email address
+  password: Password
+  login: Sign in
+  signup: Create my account
+  logout: Sign out
+  to_signup: No account yet? Create one
+  to_login: Already have an account? Sign in
+  error_generic: Unable to sign in, check your credentials.

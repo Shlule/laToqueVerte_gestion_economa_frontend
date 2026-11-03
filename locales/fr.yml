@@ -102,3 +102,15 @@ recipe-tabmissing:
 recipeIngredient-block:
   quantity_needed: quantité
   cost: coût
+
+auth:
+  login_title: Connexion
+  signup_title: Créer un compte
+  email: Adresse e-mail
+  password: Mot de passe
+  login: Se connecter
+  signup: Créer mon compte
+  logout: Se déconnecter
+  to_signup: Pas encore de compte ? En créer un
+  to_login: Déjà un compte ? Se connecter
+  error_generic: Connexion impossible, vérifie tes identifiants.

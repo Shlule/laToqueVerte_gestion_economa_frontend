@@ -67,6 +67,15 @@ export default defineConfig({
     VueDevTools(),
   ],
 
+  // En dev, le front et Django partagent la même origine via ce proxy :
+  // pas de CORS, et les cookies de session / CSRF fonctionnent directement.
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8000',
+      '/_allauth': 'http://localhost:8000',
+    },
+  },
+
   test: {
     include: ['test/**/*.test.ts'],
     environment: 'happy-dom',

@@ -17,12 +17,37 @@ import { FetchError, ofetch } from 'ofetch'
 // Point d'entrée unique vers l'API REST.
 // Pour changer de backend il suffit de modifier VITE_API_URL (voir .env.example)
 // et, si besoin, les chemins ci-dessous.
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
+
+/** Jeton CSRF posé par Django dans le cookie `csrftoken`. */
+export function getCsrfToken(): string | undefined {
+  if (typeof document === 'undefined')
+    return
+  return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1]
+}
+
+/** Appelé quand l'API répond 401/403 (session expirée) : défini par le module d'auth. */
+let onUnauthorized: (() => void) | undefined
+export function setUnauthorizedHandler(handler: () => void) {
+  onUnauthorized = handler
+}
 
 export const api = ofetch.create({
   baseURL: API_BASE_URL,
   credentials: 'include',
   headers: { Accept: 'application/json' },
+  onRequest({ options }) {
+    const method = (options.method ?? 'GET').toUpperCase()
+    const token = getCsrfToken()
+    if (!SAFE_METHODS.has(method) && token)
+      options.headers.set('X-CSRFToken', token)
+  },
+  onResponseError({ response }) {
+    if (response.status === 401 || response.status === 403)
+      onUnauthorized?.()
+  },
 })
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'

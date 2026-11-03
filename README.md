@@ -33,4 +33,4 @@ pnpm dev                  # http://localhost:3333
 ## API
 
 Tous les appels REST passent par `src/composables/apiService.ts` (client `ofetch`).
-L'URL de base vient de `VITE_API_URL`. Pour brancher un autre backend, c'est le seul fichier à adapter.
+L'URL de base vient de `VITE_API_URL` (`/api` par défaut, relayé vers Django `localhost:8000` par le proxy Vite). Pour brancher un autre backend, c'est le seul fichier à adapter.

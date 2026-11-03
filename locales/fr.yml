@@ -114,3 +114,47 @@ auth:
   to_signup: Pas encore de compte ? En créer un
   to_login: Déjà un compte ? Se connecter
   error_generic: Connexion impossible, vérifie tes identifiants.
+
+mfa:
+  title: Sécurité
+  intro: Choisis comment protéger ton compte avec une double authentification.
+  enabled: Activée
+  setup: Configurer
+  activate: Activer
+  disable: Désactiver
+  remove: Supprimer
+  last_used: Dernière utilisation
+  or: ou
+  code: Code de vérification
+  verify: Vérifier
+  login_title: Vérification en deux étapes
+  login_help: Saisis le code de ton application d'authentification, un code de secours, ou utilise ta clé de sécurité.
+  use_key: Utiliser une clé de sécurité
+  passkey_login: Se connecter avec une passkey
+  totp_title: Application d'authentification
+  totp_help: Un code à 6 chiffres généré par Google Authenticator, Aegis, 1Password, Bitwarden…
+  totp_scan: Scanne ce QR code avec ton application (ou saisis la clé ci-dessous), puis entre le code affiché.
+  totp_enabled: Application d'authentification activée
+  keys_title: Clés de sécurité et passkeys
+  keys_help: Une clé physique (YubiKey…) ou une passkey (Windows Hello, Touch ID, téléphone). Une passkey permet aussi de se connecter sans mot de passe.
+  keys_unsupported: Ce navigateur ne gère pas les clés de sécurité.
+  key_name: Nom de la clé (ex. YubiKey bureau)
+  key_default_name: Clé de sécurité
+  passwordless: Passkey (connexion sans mot de passe)
+  add_key: Ajouter une clé
+  key_added: Clé ajoutée
+  recovery_title: Codes de secours
+  recovery_help: Codes à usage unique pour te connecter si tu perds ton téléphone ou ta clé. Garde-les en lieu sûr.
+  recovery_left: '{left} codes restants sur {total}'
+  recovery_needs_mfa: Disponibles dès qu'une application ou une clé est activée.
+  show_codes: Afficher les codes
+  regenerate_codes: Générer de nouveaux codes
+  reauth_title: Confirme ton mot de passe
+  reauth_help: Par sécurité, retape ton mot de passe pour modifier ta double authentification.
+  email_unverified_title: Adresse e-mail non vérifiée
+  email_unverified: La double authentification demande une adresse e-mail vérifiée.
+  resend_email: Renvoyer l'e-mail
+  email_sent: E-mail de vérification envoyé
+  verify_email_title: Vérification de l'adresse e-mail
+  verify_email_ok: Ton adresse e-mail est vérifiée.
+  verify_email_error: Lien invalide ou expiré.

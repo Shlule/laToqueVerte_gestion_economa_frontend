@@ -45,6 +45,13 @@ declare module 'vue-router/auto-routes' {
       { all: ParamValue<false> },
       | never
     >,
+    '/account/verify-email/[key]': RouteRecordInfo<
+      '/account/verify-email/[key]',
+      '/account/verify-email/:key',
+      { key: ParamValue<true> },
+      { key: ParamValue<false> },
+      | never
+    >,
     '/ingredient/home': RouteRecordInfo<
       '/ingredient/home',
       '/ingredient/home',
@@ -62,6 +69,13 @@ declare module 'vue-router/auto-routes' {
     '/recipe/home': RouteRecordInfo<
       '/recipe/home',
       '/recipe/home',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/security': RouteRecordInfo<
+      '/security',
+      '/security',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -95,6 +109,14 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | 'all'
     }
+    'src/pages/account/verify-email/[key].vue': {
+      routes:
+        | '/account/verify-email/[key]'
+      views:
+        | never
+      pathParamNames:
+        | 'key'
+    }
     'src/pages/ingredient/home.vue': {
       routes:
         | '/ingredient/home'
@@ -114,6 +136,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/recipe/home.vue': {
       routes:
         | '/recipe/home'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/security.vue': {
+      routes:
+        | '/security'
       views:
         | never
       pathParamNames:

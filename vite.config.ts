@@ -15,7 +15,8 @@ import VueRouter from 'vue-router/vite'
 export default defineConfig({
   resolve: {
     alias: {
-      '~/': fileURLToPath(new URL('./src/', import.meta.url)),
+      // chemin en slashes « / » pour fonctionner aussi sous Windows
+      '~/': `${fileURLToPath(new URL('./src', import.meta.url)).replace(/\\/g, '/')}/`,
     },
   },
 
@@ -71,8 +72,10 @@ export default defineConfig({
   // pas de CORS, et les cookies de session / CSRF fonctionnent directement.
   server: {
     proxy: {
-      '/api': 'http://localhost:8000',
-      '/_allauth': 'http://localhost:8000',
+      // changeOrigin: false garde l'en-tête Host « localhost:3333 », nécessaire
+      // pour les clés de sécurité (WebAuthn) qui sont liées au domaine du navigateur
+      '/api': { target: 'http://127.0.0.1:8000', changeOrigin: false },
+      '/_allauth': { target: 'http://127.0.0.1:8000', changeOrigin: false },
     },
   },
 

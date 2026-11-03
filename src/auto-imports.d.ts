@@ -9,7 +9,11 @@
 export {}
 declare global {
   const API_BASE_URL: typeof import('./composables/apiService').API_BASE_URL
+  const AllauthError: typeof import('./composables/allauth').AllauthError
   const EffectScope: typeof import('vue').EffectScope
+  const ReauthenticationRequired: typeof import('./composables/allauth').ReauthenticationRequired
+  const allauth: typeof import('./composables/allauth').allauth
+  const allauthRaw: typeof import('./composables/allauth').allauthRaw
   const api: typeof import('./composables/apiService').api
   const apiRequest: typeof import('./composables/apiService').apiRequest
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
@@ -23,6 +27,7 @@ declare global {
   const controlledRef: typeof import('@vueuse/core').controlledRef
   const convertUnit: typeof import('./composables/unit').convertUnit
   const createApp: typeof import('vue').createApp
+  const createCredential: typeof import('./composables/allauth').createCredential
   const createDisposableDirective: typeof import('@vueuse/core').createDisposableDirective
   const createEventHook: typeof import('@vueuse/core').createEventHook
   const createGlobalState: typeof import('@vueuse/core').createGlobalState
@@ -60,6 +65,7 @@ declare global {
   const getAllRecipeIngredientByRecipe: typeof import('./composables/apiService').getAllRecipeIngredientByRecipe
   const getAllStocksByIngredient: typeof import('./composables/apiService').getAllStocksByIngredient
   const getAllSubRecipeByRecipe: typeof import('./composables/apiService').getAllSubRecipeByRecipe
+  const getCredential: typeof import('./composables/allauth').getCredential
   const getCsrfToken: typeof import('./composables/apiService').getCsrfToken
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
@@ -345,6 +351,7 @@ declare global {
   const watchThrottled: typeof import('@vueuse/core').watchThrottled
   const watchTriggerable: typeof import('@vueuse/core').watchTriggerable
   const watchWithFilter: typeof import('@vueuse/core').watchWithFilter
+  const webauthnSupported: typeof import('./composables/allauth').webauthnSupported
   const whenever: typeof import('@vueuse/core').whenever
 }
 // for type re-export
@@ -353,8 +360,8 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { AuthUser } from './stores/auth'
-  import('./stores/auth')
+  export type { ReauthenticationRequired, AllauthError, AuthUser, AuthFlow, AllauthResponse, Authenticator } from './composables/allauth'
+  import('./composables/allauth')
 }
 
 // for vue template auto import
@@ -363,7 +370,11 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly API_BASE_URL: UnwrapRef<typeof import('./composables/apiService')['API_BASE_URL']>
+    readonly AllauthError: UnwrapRef<typeof import('./composables/allauth')['AllauthError']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly ReauthenticationRequired: UnwrapRef<typeof import('./composables/allauth')['ReauthenticationRequired']>
+    readonly allauth: UnwrapRef<typeof import('./composables/allauth')['allauth']>
+    readonly allauthRaw: UnwrapRef<typeof import('./composables/allauth')['allauthRaw']>
     readonly api: UnwrapRef<typeof import('./composables/apiService')['api']>
     readonly apiRequest: UnwrapRef<typeof import('./composables/apiService')['apiRequest']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
@@ -377,6 +388,7 @@ declare module 'vue' {
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
     readonly convertUnit: UnwrapRef<typeof import('./composables/unit')['convertUnit']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
+    readonly createCredential: UnwrapRef<typeof import('./composables/allauth')['createCredential']>
     readonly createDisposableDirective: UnwrapRef<typeof import('@vueuse/core')['createDisposableDirective']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
@@ -414,6 +426,7 @@ declare module 'vue' {
     readonly getAllRecipeIngredientByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipeIngredientByRecipe']>
     readonly getAllStocksByIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllStocksByIngredient']>
     readonly getAllSubRecipeByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllSubRecipeByRecipe']>
+    readonly getCredential: UnwrapRef<typeof import('./composables/allauth')['getCredential']>
     readonly getCsrfToken: UnwrapRef<typeof import('./composables/apiService')['getCsrfToken']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -699,6 +712,7 @@ declare module 'vue' {
     readonly watchThrottled: UnwrapRef<typeof import('@vueuse/core')['watchThrottled']>
     readonly watchTriggerable: UnwrapRef<typeof import('@vueuse/core')['watchTriggerable']>
     readonly watchWithFilter: UnwrapRef<typeof import('@vueuse/core')['watchWithFilter']>
+    readonly webauthnSupported: UnwrapRef<typeof import('./composables/allauth')['webauthnSupported']>
     readonly whenever: UnwrapRef<typeof import('@vueuse/core')['whenever']>
   }
 }

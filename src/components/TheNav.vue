@@ -32,6 +32,9 @@ async function toggleLocales() {
       <button icon-btn :title="t('button.toggle_langs')" @click="toggleLocales()">
         <div i-carbon-language />
       </button>
+      <RouterLink v-if="auth.user" icon-btn to="/security" :title="t('mfa.title')">
+        <div i-carbon-security />
+      </RouterLink>
       <button v-if="auth.user" icon-btn :title="`${t('auth.logout')} (${auth.user.email})`" @click="logout()">
         <div i-carbon-logout />
       </button>

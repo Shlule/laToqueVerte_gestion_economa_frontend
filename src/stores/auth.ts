@@ -1,46 +1,26 @@
-import { ofetch } from 'ofetch'
+import type { AllauthResponse, AuthFlow, AuthUser } from '~/composables/allauth'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { allauthRaw, getCredential } from '~/composables/allauth'
 import { getCsrfToken } from '~/composables/apiService'
 
-// Authentification via django-allauth en mode « headless » (API JSON, session navigateur).
-// Doc des endpoints : https://docs.allauth.org/en/latest/headless/openapi-specification/
-const AUTH_BASE_URL = import.meta.env.VITE_AUTH_URL ?? '/_allauth/browser/v1'
-
-export interface AuthUser {
-  id: number
-  email: string
-  display: string
-}
-
-interface AllauthResponse {
-  status: number
-  data?: { user?: AuthUser }
-  meta?: { is_authenticated?: boolean }
-  errors?: { message: string, param?: string }[]
-}
-
-const allauth = ofetch.create({
-  baseURL: AUTH_BASE_URL,
-  credentials: 'include',
-  // allauth répond 401 quand on n'est pas connecté : ce n'est pas une erreur pour nous
-  ignoreResponseError: true,
-  onRequest({ options }) {
-    const token = getCsrfToken()
-    if (token)
-      options.headers.set('X-CSRFToken', token)
-  },
-})
-
+// Session utilisateur via django-allauth (headless).
+// Une connexion peut se faire en deux étapes : mot de passe, puis second facteur (MFA).
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<AuthUser | null>(null)
   const checked = ref(false)
+  /** Étape en attente après le mot de passe, ex. { id: 'mfa_authenticate', types: ['totp', 'webauthn'] } */
+  const pendingFlow = ref<AuthFlow | null>(null)
   const isAuthenticated = computed(() => !!user.value)
 
   function applyResponse(res: AllauthResponse) {
-    user.value = res.status === 200 && res.meta?.is_authenticated
+    checked.value = true
+    const authenticated = res.status === 200 && res.meta?.is_authenticated
+    user.value = authenticated
       ? res.data?.user ?? null
       : null
-    checked.value = true
+    pendingFlow.value = !authenticated
+      ? (res.data?.flows as AuthFlow[] | undefined)?.find(f => f.is_pending) ?? null
+      : null
     if (res.status === 400 && res.errors?.length)
       throw new Error(res.errors.map(e => e.message).join(' '))
     if (res.status >= 500)
@@ -48,10 +28,15 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value
   }
 
+  async function ensureCsrf() {
+    if (!getCsrfToken())
+      await fetchSession()
+  }
+
   /** Récupère la session courante (pose aussi le cookie CSRF). */
   async function fetchSession() {
     try {
-      return applyResponse(await allauth<AllauthResponse>('/auth/session'))
+      return applyResponse(await allauthRaw('/auth/session'))
     }
     catch {
       checked.value = true
@@ -61,36 +46,93 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(email: string, password: string) {
-    if (!getCsrfToken())
-      await fetchSession()
-    return applyResponse(await allauth<AllauthResponse>('/auth/login', {
+    await ensureCsrf()
+    return applyResponse(await allauthRaw('/auth/login', {
       method: 'POST',
       body: { email, password },
     }))
   }
 
   async function signup(email: string, password: string) {
-    if (!getCsrfToken())
-      await fetchSession()
-    return applyResponse(await allauth<AllauthResponse>('/auth/signup', {
+    await ensureCsrf()
+    return applyResponse(await allauthRaw('/auth/signup', {
       method: 'POST',
       body: { email, password },
     }))
   }
 
+  /** Second facteur : code de l'application ou code de secours. */
+  async function authenticateWithCode(code: string) {
+    return applyResponse(await allauthRaw('/auth/2fa/authenticate', {
+      method: 'POST',
+      body: { code },
+    }))
+  }
+
+  /** Second facteur : clé de sécurité / passkey. */
+  async function authenticateWithKey() {
+    const options = await allauthRaw('/auth/webauthn/authenticate')
+    const credential = await getCredential(options.data.request_options)
+    return applyResponse(await allauthRaw('/auth/webauthn/authenticate', {
+      method: 'POST',
+      body: { credential },
+    }))
+  }
+
+  /** Connexion directe avec une passkey, sans mot de passe. */
+  async function loginWithPasskey() {
+    await ensureCsrf()
+    const options = await allauthRaw('/auth/webauthn/login')
+    const credential = await getCredential(options.data.request_options)
+    return applyResponse(await allauthRaw('/auth/webauthn/login', {
+      method: 'POST',
+      body: { credential },
+    }))
+  }
+
+  /** Confirme le mot de passe avant une action sensible (gestion de la MFA). */
+  async function reauthenticate(password: string) {
+    const res = await allauthRaw('/auth/reauthenticate', {
+      method: 'POST',
+      body: { password },
+    })
+    if (res.status !== 200)
+      throw new Error(res.errors?.map(e => e.message).join(' ') || 'Mot de passe incorrect.')
+  }
+
+  async function verifyEmail(key: string) {
+    await ensureCsrf()
+    return applyResponse(await allauthRaw('/auth/email/verify', {
+      method: 'POST',
+      body: { key },
+    }))
+  }
+
   async function logout() {
-    await allauth('/auth/session', { method: 'DELETE' })
+    await allauthRaw('/auth/session', { method: 'DELETE' })
     user.value = null
+    pendingFlow.value = null
+  }
+
+  function cancelPendingFlow() {
+    pendingFlow.value = null
   }
 
   return {
     user,
     checked,
+    pendingFlow,
     isAuthenticated,
     fetchSession,
     login,
     signup,
+    authenticateWithCode,
+    authenticateWithKey,
+    loginWithPasskey,
+    reauthenticate,
+    verifyEmail,
     logout,
+    cancelPendingFlow,
   }
 })
 

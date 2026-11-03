@@ -10,7 +10,7 @@ export const useStockStore = defineStore('useStockStore', () => {
 
   // use Stock and not Partial<Stock> to ensure to get id object
   const updateStock = useMutation({
-    mutationFn: async ({ newStock }: { newStock: SupplierStock }) => {
+    mutationFn: async ({ newStock }: { newStock: SupplierStock, ingredientId: string }) => {
       if (!newStock.id) {
         throw new Error('Cannor update stock without an id')
       }
@@ -18,13 +18,20 @@ export const useStockStore = defineStore('useStockStore', () => {
     },
 
     onMutate: async ({ newStock, ingredientId }: { newStock: SupplierStock, ingredientId: string }) => {
-      await queryClient.cancelQueries({ queryKey: ['stocks', ingredientId] })
+      await queryClient.cancelQueries({
+        queryKey: ['stocks', ingredientId],
+      })
 
       const previousStocks = queryClient.getQueryData<SupplierStock[]>(['stocks', ingredientId])
 
       if (previousStocks) {
         queryClient.setQueryData(['stocks', ingredientId], previousStocks.map(stock =>
-          stock.id === newStock.id ? { ...stock, ...newStock } : stock,
+          stock.id === newStock.id
+            ? {
+                ...stock,
+                ...newStock,
+              }
+            : stock,
         ))
       }
 
@@ -41,18 +48,22 @@ export const useStockStore = defineStore('useStockStore', () => {
     },
 
     onSettled: (_, __, { ingredientId }) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', ingredientId] })
+      queryClient.invalidateQueries({
+        queryKey: ['recipeIngredients', ingredientId],
+      })
     },
 
   })
 
   const removeStock = useMutation({
-    mutationFn: async ({ stockId }: { stockId: string }) => {
+    mutationFn: async ({ stockId }: { stockId: string, ingredientId: string }) => {
       return deleteStock(stockId)
     },
 
     onMutate: async ({ stockId, ingredientId }: { stockId: string, ingredientId: string }) => {
-      await queryClient.cancelQueries({ queryKey: ['stocks', ingredientId] })
+      await queryClient.cancelQueries({
+        queryKey: ['stocks', ingredientId],
+      })
       const previousStocks = queryClient.getQueryData<SupplierStock[]>(['stocks', ingredientId])
 
       if (previousStocks) {
@@ -71,17 +82,21 @@ export const useStockStore = defineStore('useStockStore', () => {
 
     // refetch new Database, data
     onSettled: (_, __, { ingredientId }) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', ingredientId] })
+      queryClient.invalidateQueries({
+        queryKey: ['recipeIngredients', ingredientId],
+      })
     },
   })
 
   const addStock = useMutation({
-    mutationFn: async ({ newStock }: { newStock: SupplierStockCreation }) => {
+    mutationFn: async ({ newStock }: { newStock: SupplierStockCreation, ingredientId: string }) => {
       return createStock(newStock)
     },
 
     onMutate: async ({ newStock, ingredientId }: { newStock: SupplierStockCreation, ingredientId: string }) => {
-      await queryClient.cancelQueries({ queryKey: ['stocks', ingredientId] })
+      await queryClient.cancelQueries({
+        queryKey: ['stocks', ingredientId],
+      })
 
       const previousStocks = queryClient.getQueryData<SupplierStock[]>(['stocks', ingredientId])
       const ingredient = getIngredientCachedValue(ingredientId)
@@ -112,7 +127,9 @@ export const useStockStore = defineStore('useStockStore', () => {
     },
 
     onSettled: (_, __, context) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', context.ingredientId] })
+      queryClient.invalidateQueries({
+        queryKey: ['recipeIngredients', context.ingredientId],
+      })
     },
   })
 

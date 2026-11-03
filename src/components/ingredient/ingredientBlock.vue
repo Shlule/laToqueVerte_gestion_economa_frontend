@@ -6,6 +6,7 @@ import { NButton, NCollapseTransition, NSpin } from 'naive-ui'
 const ingredientData = defineModel<Ingredient>('ingredientData', { required: true })
 
 const { t } = useI18n()
+const ingredientStore = useIngredientStore()
 const [showStockList, toggleShowStockList] = useToggle()
 const [isCreateStocks, toggleShowCreateStock] = useToggle()
 
@@ -59,11 +60,7 @@ function toggleEditIngredient() {
   isEditIngredient.value = !isEditIngredient.value
 }
 function deleteIngredient() {
-  const { error } = removeIngredient(ingredientData.value.id)
-  if (error.value) {
-    console.error(error)
-  }
-
+  ingredientStore.deleteIngredient.mutate(ingredientData.value.id)
   showIngredientBlock.value = !showIngredientBlock.value
 }
 </script>

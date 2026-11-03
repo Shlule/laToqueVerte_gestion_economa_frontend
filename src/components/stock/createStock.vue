@@ -39,25 +39,21 @@ function toggleShowCreateStock() {
 // stockStore.ingredientId = ingredientId.value
 
 async function createStock() {
-  addStock.mutate({ newStock: newStock.value, ingredientId: ingredientId.value })
   toggleShowCreateStock()
-
-  if (addStock.error) {
-    notification.create({
-      title: 'Erreur',
-      content: `Échec de la création du stock : ${addStock.error.message || 'Une erreur inconnue est survenue.'}`,
-      type: 'error',
-      duration: 2500,
-    })
-  }
-  else {
-    notification.create({
-      title: 'Reussite',
-      content: ' la creation du Stock est un succes',
+  addStock.mutate({ newStock: newStock.value, ingredientId: ingredientId.value }, {
+    onSuccess: () => notification.create({
+      title: 'Réussite',
+      content: 'La création du stock est un succès',
       type: 'success',
       duration: 2500,
-    })
-  }
+    }),
+    onError: error => notification.create({
+      title: 'Erreur',
+      content: `Échec de la création du stock : ${error.message || 'Une erreur inconnue est survenue.'}`,
+      type: 'error',
+      duration: 2500,
+    }),
+  })
 }
 </script>
 

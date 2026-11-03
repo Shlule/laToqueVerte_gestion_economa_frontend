@@ -3,15 +3,18 @@ import {
   presetAttributify,
   presetIcons,
   presetTypography,
-  presetUno,
   presetWebFonts,
+  presetWind3,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
 
 export default defineConfig({
   rules: [
-    ['ml-90p', { 'margin-left': '90%' }],
+    [
+      'ml-90p',
+      { 'margin-left': '90%' },
+    ],
   ],
   shortcuts: [
     ['btn', 'px-4 py-1 rounded inline-block bg-teal-700 text-white cursor-pointer !outline-none hover:bg-teal-800 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50'],
@@ -20,15 +23,10 @@ export default defineConfig({
     ['ncard-dark', 'hover:bg-zinc-8'],
   ],
   presets: [
-    presetUno(),
+    presetWind3(),
     presetAttributify(),
     presetIcons({
       prefix: 'i-',
-      collections: {
-        carbon: () => import('@iconify-json/carbon/icons.json').then(i => i.default),
-        fluent: () => import('@iconify-json/fluent/icons.json').then(i => i.default),
-      },
-      cdn: 'https://esm.sh/',
       scale: 1.2,
       extraProperties: {
         display: 'inline-block',

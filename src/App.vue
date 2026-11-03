@@ -1,22 +1,13 @@
 <script setup lang="ts">
 import { darkTheme, NConfigProvider, NNotificationProvider } from 'naive-ui'
 import { naiveThemeOverrides } from './styles/naiveThemeOverrides'
-// https://github.com/vueuse/head
-// you can use this to manipulate the document head in any components,
-// they will be rendered correctly in the html results with vite-ssg
-const isDark = useDark()
 
-const currentTheme = computed(() => {
-  return isDark.value ? darkTheme : undefined
-})
+const currentTheme = computed(() => isDark.value ? darkTheme : undefined)
 
 useHead({
-  title: 'laToqueVerteGestion',
+  title: 'La Toque Verte – Gestion',
   meta: [
-    {
-      name: 'description',
-      content: 'Opinionated Vite Starter Template',
-    },
+    { name: 'description', content: 'Gestion des recettes, ingrédients et stocks de la pâtisserie' },
     {
       name: 'theme-color',
       content: () => isDark.value ? '#00aba9' : '#ffffff',
@@ -33,9 +24,9 @@ useHead({
 </script>
 
 <template>
-  <NNotificationProvider>
-    <NConfigProvider :theme-overrides="naiveThemeOverrides" :theme="currentTheme" h-100dvh>
+  <NConfigProvider :theme-overrides="naiveThemeOverrides" :theme="currentTheme" h-100dvh>
+    <NNotificationProvider>
       <RouterView />
-    </NConfigProvider>
-  </NNotificationProvider>
+    </NNotificationProvider>
+  </NConfigProvider>
 </template>

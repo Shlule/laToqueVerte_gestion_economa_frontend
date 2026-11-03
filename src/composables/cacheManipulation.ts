@@ -5,7 +5,9 @@ import type { Recipe, RecipeIngredient } from '~/types'
 
 // we using it for all CRUD action of recipeIngredients
 export function updateRecipeCache(queryClient: QueryClient, recipeId: string) {
-  queryClient.cancelQueries({ queryKey: ['allRecipes'] })
+  queryClient.cancelQueries({
+    queryKey: ['allRecipes'],
+  })
 
   // get the value of recipeIngredients to update the recipe
   const updatedRecipeIngredients = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeId])

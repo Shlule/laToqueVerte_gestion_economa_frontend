@@ -1,25 +1,30 @@
 import type { UserModule } from './types'
+import { createHead } from '@unhead/vue/client'
 import { setupLayouts } from 'virtual:generated-layouts'
-
-import { ViteSSG } from 'vite-ssg'
-import { routes } from 'vue-router/auto-routes'
+import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import { handleHotUpdate, routes } from 'vue-router/auto-routes'
 import App from './App.vue'
 
 import '@unocss/reset/tailwind.css'
 import './styles/main.css'
 import 'uno.css'
 
-// https://github.com/antfu/vite-ssg
-export const createApp = ViteSSG(
-  App,
-  {
-    routes: setupLayouts(routes),
-    base: import.meta.env.BASE_URL,
-  },
-  (ctx) => {
-    // install all modules under `modules/`
-    Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true }))
-      .forEach(i => i.install?.(ctx))
-    // ctx.app.use(Previewer)
-  },
-)
+const app = createApp(App)
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: setupLayouts(routes),
+})
+
+if (import.meta.hot)
+  handleHotUpdate(router)
+
+app.use(router)
+app.use(createHead())
+
+// installe tous les modules de `src/modules/` (pinia, i18n, tanstack query…)
+Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true }))
+  .forEach(i => i.install?.({ app, router }))
+
+app.mount('#app')

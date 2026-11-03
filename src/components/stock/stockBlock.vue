@@ -12,7 +12,9 @@ const { t } = useI18n()
 // this is for the date Displayed
 const convertedExpirationDate = computed(() => {
   const expirationDate = stockData.value.expirationDate
-  return expirationDate ? format(expirationDate, dayFormat) : null
+  return expirationDate
+    ? format(expirationDate, dayFormat)
+    : null
 })
 
 const showStockBlock = ref(true)
@@ -25,9 +27,11 @@ const daysRemaining = computed(() => {
   return differenceInDays(expirationDate, today)
 })
 
+const { removeStock } = useStockStore()
+
 function deleteStock() {
   showStockBlock.value = false
-  removeStock(stockData.value.id)
+  removeStock.mutate({ stockId: stockData.value.id, ingredientId: ingredientId.value })
 }
 function toggleEditStock() {
   showStockBlock.value = !showStockBlock.value

@@ -15,7 +15,7 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
   const updateRecipeIngredient = useMutation({
 
     // use RecipeIngredient and not Partial for ensure to get id object
-    mutationFn: async ({ recipeIngredient }: { recipeIngredient: RecipeIngredient }) => {
+    mutationFn: async ({ recipeIngredient }: { recipeIngredient: RecipeIngredient, recipeId: string }) => {
       if (!recipeIngredient.id) {
         throw new Error('Cannot update recipeIngredient without an ID')
       }
@@ -26,14 +26,21 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     // by tanStackQuery  with querykey ['recipeIngredient',recipeId]
     onMutate: async ({ recipeIngredient, recipeId }: { recipeIngredient: RecipeIngredient, recipeId: string }) => {
       // work on recipeIngredient update
-      await queryClient.cancelQueries({ queryKey: ['recipeIngredients', recipeId] })
+      await queryClient.cancelQueries({
+        queryKey: ['recipeIngredients', recipeId],
+      })
 
       const previousRecipeIngredients = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeId])
 
       if (previousRecipeIngredients) {
         // filter the corresponding recipeIngredient inside the cache
         queryClient.setQueryData(['recipeIngredients', recipeId], previousRecipeIngredients.map(ri =>
-          ri.id === recipeIngredient.id ? { ...ri, ...recipeIngredient } : ri,
+          ri.id === recipeIngredient.id
+            ? {
+                ...ri,
+                ...recipeIngredient,
+              }
+            : ri,
         ))
       }
 
@@ -54,18 +61,24 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     },
     // refetch new Database, data
     onSettled: (_, __, { recipeId }) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', recipeId] })
-      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', recipeId] })
+      queryClient.invalidateQueries({
+        queryKey: ['recipeIngredients', recipeId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['insufficientIngredients', recipeId],
+      })
     },
   })
 
   const removeRecipeIngredient = useMutation({
-    mutationFn: async ({ recipeIngredientId }: { recipeIngredientId: string }) => {
+    mutationFn: async ({ recipeIngredientId }: { recipeIngredientId: string, recipeId: string }) => {
       return deleteRecipeIngredient(recipeIngredientId)
     },
     onMutate: async ({ recipeIngredientId, recipeId }: { recipeIngredientId: string, recipeId: string }) => {
       // delete the recipeIngredient in recipeIngredientlist
-      await queryClient.cancelQueries({ queryKey: ['recipeIngredients', recipeId] })
+      await queryClient.cancelQueries({
+        queryKey: ['recipeIngredients', recipeId],
+      })
       const previousRecipeIngredientList = queryClient.getQueryData<RecipeIngredient[]>(['recipeIngredients', recipeId])
 
       if (previousRecipeIngredientList) {
@@ -88,8 +101,12 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     },
     // refetch new Database, data
     onSettled: (_, __, { recipeId }) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', recipeId] })
-      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', recipeId] })
+      queryClient.invalidateQueries({
+        queryKey: ['recipeIngredients', recipeId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['insufficientIngredients', recipeId],
+      })
     },
   })
 
@@ -101,7 +118,9 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     onMutate: async ({ recipeIngredientList }: { recipeIngredientList: AddToRecipe[] }) => {
       // we assume that all addToRecipe object must be add to the same recipe
       const recipeId = recipeIngredientList[0].recipeId
-      await queryClient.cancelQueries({ queryKey: ['recipeIngredients', recipeId] })
+      await queryClient.cancelQueries({
+        queryKey: ['recipeIngredients', recipeId],
+      })
 
       // update recipeIngredientList , of the recipeIngredients query key
       // adding a new recipeIngredient
@@ -136,7 +155,10 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
 
       // update manualy the cache
       if (previousRecipeIngredientList) {
-        queryClient.setQueryData(['recipeIngredients', recipeId], [...previousRecipeIngredientList, ...newRecipeIngredientList])
+        queryClient.setQueryData(['recipeIngredients', recipeId], [
+          ...previousRecipeIngredientList,
+          ...newRecipeIngredientList,
+        ])
       }
 
       // update the concerned Recipe
@@ -155,8 +177,12 @@ export const useRecipeIngredientStore = defineStore('RecipeIngredient', () => {
     },
 
     onSettled: (_, __, context) => {
-      queryClient.invalidateQueries({ queryKey: ['recipeIngredients', context.recipeIngredientList[0].recipeId] })
-      queryClient.invalidateQueries({ queryKey: ['insufficientIngredients', context.recipeIngredientList[0].recipeId] })
+      queryClient.invalidateQueries({
+        queryKey: ['recipeIngredients', context.recipeIngredientList[0].recipeId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['insufficientIngredients', context.recipeIngredientList[0].recipeId],
+      })
     },
   })
 

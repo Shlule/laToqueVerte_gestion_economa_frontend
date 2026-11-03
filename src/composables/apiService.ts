@@ -1,319 +1,200 @@
-import type { AxiosRequestConfig } from 'axios'
-import type { AddSubRecipe, AddToRecipe, Ingredient, IngredientCreation, InsufficientIngredient, InsufficientSubRecipe, Recipe, RecipeIngredient, SubRecipe, SupplierStock, SupplierStockCreation } from '~/types'
-import { useAxios } from '@vueuse/integrations/useAxios'
-import axios from 'axios'
+import type { FetchOptions } from 'ofetch'
+import type {
+  AddSubRecipe,
+  AddToRecipe,
+  Ingredient,
+  IngredientCreation,
+  InsufficientIngredient,
+  InsufficientSubRecipe,
+  Recipe,
+  RecipeIngredient,
+  SubRecipe,
+  SupplierStock,
+  SupplierStockCreation,
+} from '~/types'
+import { FetchError, ofetch } from 'ofetch'
 
-const economa_backend_api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true,
+// Point d'entrée unique vers l'API REST.
+// Pour changer de backend il suffit de modifier VITE_API_URL (voir .env.example)
+// et, si besoin, les chemins ci-dessous.
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
+
+export const api = ofetch.create({
+  baseURL: API_BASE_URL,
+  credentials: 'include',
+  headers: { Accept: 'application/json' },
 })
 
-export async function editRecipeIngredient(newRecipeIngredientData: RecipeIngredient) {
-  try {
-    const response = await economa_backend_api.put<RecipeIngredient>(`/recipe-ingredients/${newRecipeIngredientData.id}`, newRecipeIngredientData)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during update recipeIngredient ${newRecipeIngredientData.id}`)
-      throw new Error(error.message || ' an error has occur')
-    }
-  }
-  console.error(`An error has occur during update recipe ${newRecipeIngredientData.id}`)
-}
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
-export async function deleteRecipeIngredient(recipeIngredientId: string) {
-  try {
-    const response = await economa_backend_api.delete<void>(`/recipe-ingredients/${recipeIngredientId}`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during delete recipeIngredient ${recipeIngredientId}`)
-      throw new Error(error.message || ' an error has occur')
-    }
-  }
-  console.error(`An error has occur during delete recipeIngredient ${recipeIngredientId}`)
-}
-
-export async function createRecipeIngredient(newRecipeIngredientList: AddToRecipe[]) {
-  try {
-    const response = await economa_backend_api.post<RecipeIngredient[]>(`/recipe-ingredients`, newRecipeIngredientList)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during creating recipeIngredients `)
-      throw new Error(error.message || ' an error has occur')
-    }
-  }
-  console.error(`An error has occur during creating recipeIngredients`)
-}
-
-// SECTION - get this form and don't use useAxios for using tanStackQuery
-export async function getAllRecipeIngredientByRecipe(recipeId: string): Promise<RecipeIngredient[] | undefined> {
-  try {
-    const response = await economa_backend_api.get<RecipeIngredient[]>(`/recipe-ingredients/byRecipe/${recipeId}`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('Error occur during ingredient fetching:', error)
-
-      throw new Error(error.message || 'An error has occur')
-    }
-    console.error('Error occur during ingredient fetching:', error)
-  }
-}
-// !SECTION
-
-// here useAxios does not provide response correctly
-// impossible to access value with useAxios because return undefined value
-export async function createIngredient(newIngredient: IngredientCreation) {
-  try {
-    const response = await economa_backend_api.post<Ingredient>('/ingredients', newIngredient)
-    return response.data
-  }
-  catch (error) {
-    console.error('An error has occur during creating ingredient ', error)
-    return error
-  }
-}
-
-export function removeIngredient(ingredientId: string) {
-  return useAxios<void>(`/ingredients/${ingredientId}`, { method: 'DELETE' }, economa_backend_api)
-}
-
-export async function getAllIngredient(): Promise<Ingredient[] | undefined> {
-  try {
-    const response = await economa_backend_api.get<Ingredient[]>('/ingredients')
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('An error has occur during fetching allRecipe')
-      throw new Error(error.message || 'An error has occur during fetching allRecipe')
-    }
-    console.error('An error has occur during fetching allRecipe')
-  }
-}
-export async function editIngredient(newIngredientData: Ingredient) {
-  try {
-    const response = await economa_backend_api.put<Ingredient>(`/ingredients/${newIngredientData.id}`, newIngredientData)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during editing ingredients ${newIngredientData.id}`)
-      throw new Error(error.message)
-    }
-    console.error(`An error has occur during editing ingredients ${newIngredientData.id}`)
-  };
-}
-
-// SECTION - use this form for tanStackQuery uses
-export async function getAllRecipe(): Promise<Recipe[] | undefined> {
-  try {
-    const response = await economa_backend_api.get<Recipe[]>('/recipes')
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('An error has occur during fetching allRecipe')
-      throw new Error(error.message || 'An error has occur during fetching allRecipe')
-    }
-    console.error('An error has occur during fetching allRecipe')
-  }
-}
-// !SECTION
-
-export async function getRecipe(recipeId: string) {
-  try {
-    const response = await economa_backend_api.get<Recipe>(`/recipes/${recipeId}`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during fetching recipe with Id ${recipeId} `)
-      throw new Error(error.message)
-    }
-    console.error(`An error has occur during fetching recipe with Id ${recipeId} `)
-  }
-}
-
-export function createRecipe() {
-  return useAxios<Recipe>('/recipes', { method: 'POST' }, economa_backend_api)
-}
-
-// export function editRecipe(newRecipeData: Recipe) {
-//   return useAxios<Recipe>(`/recipes/${newRecipeData.id}`, { method: 'PUT', data: newRecipeData }, economa_backend_api)
-// }
-
-export async function editRecipe(newRecipeData: Recipe) {
-  try {
-    const response = await economa_backend_api.put<Recipe>(`/recipes/${newRecipeData.id}`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during update recipe with Id ${newRecipeData.id}`)
-      throw new Error(error.message || ' an error has occur')
-    }
-  }
-  console.error(`An error has occur during update recipe with Id ${newRecipeData.id}`)
-}
-
-export async function getInsufficientIngredients(recipeId: string) {
-  try {
-    const response = await economa_backend_api.get<InsufficientIngredient[]>(`/recipes/${recipeId}/insufficientIngredients`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during fetching insufficientIngredient of recipe of id ${recipeId}`)
-      throw new Error(error.message)
-    }
-    console.error(`An error has occur during fetching insufficientIngredient of recipe of id ${recipeId}`)
-  }
-}
-
-export async function createStock(newStock: SupplierStockCreation) {
-  try {
-    const response = await economa_backend_api.post<SupplierStock>('/supplier-stocks', newStock)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('An error has occur during stock creation')
-      throw new Error(error.message)
-    }
-    console.error('An error has occur during stock creation')
-  }
-}
-
-export async function editStock(newStockData: SupplierStock) {
-  try {
-    const response = await economa_backend_api.put<SupplierStock>(`/supplier-stocks/${newStockData.id}`, newStockData)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during update stock with Id ${newStockData.id}`)
-      throw new Error(error.message)
-    }
-    console.error(`An error has occur during update stock with Id ${newStockData.id}`)
-  }
-}
-
-export async function deleteStock(stockId: string) {
-  try {
-    const response = await economa_backend_api.delete<SupplierStock>(`/supplier-stocks/${stockId}`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`An error has occur during delete stock with Id ${stockId}`)
-      throw new Error(error.message)
-    }
-    console.error(`An error has occur during delete stock with Id ${stockId}`)
-  }
-}
-
-// ANCHOR -  use this form for the use of TanStackQuery
-// the function must throw an error
-export async function getAllStocksByIngredient(ingredientId: string): Promise<SupplierStock[] | undefined> {
-  try {
-    const response = await economa_backend_api.get<SupplierStock[]>(`/supplier-stocks/byIngredient/${ingredientId}`)
-    return response.data
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`Error during fetching all stocks with ingredient with ID ${ingredientId}:`, error)
-
-      throw new Error(error.message || 'une erreur est survenue')
-    }
-    console.error(`Error during fetching all stocks with ingredient with ID ${ingredientId}:`, error)
-  }
-}
-
-// testing new Form of creating Api with more Generic class
-
-type HttpMethod = 'get' | 'post' | 'put' | 'delete'
-
-interface ApiRequestParams<TData, TResponse> {
-  method: HttpMethod
+interface ApiRequestParams<TData> {
+  method?: HttpMethod
   url: string
   data?: TData
   errorContext?: string
-  config?: AxiosRequestConfig<TResponse>
-
+  options?: Omit<FetchOptions<'json'>, 'method' | 'body'>
 }
 
-export async function apiRequest<TData, TResponse>(
-  params: ApiRequestParams<TData, TResponse>,
-): Promise<TResponse | undefined> {
-  const { method, url, data, errorContext, config } = params
-
+/**
+ * Requête générique : renvoie le corps JSON et lève une `Error` lisible en cas d'échec
+ * (indispensable pour que TanStack Query passe en état `error`).
+ */
+export async function apiRequest<TResponse, TData = unknown>(params: ApiRequestParams<TData>): Promise<TResponse> {
+  const { method = 'GET', url, data, errorContext, options } = params
   try {
-    const response = await economa_backend_api.request<TResponse>({
-      method,
-      url,
-      data,
-      ...config,
-    })
-    return response.data
+    return await api<TResponse>(url, { ...options, method, body: data as BodyInit | Record<string, any> | undefined })
   }
   catch (error) {
-    const msg = `An error occurred${errorContext ? ` during ${errorContext}` : ''}`
-    if (axios.isAxiosError(error))
-      throw new Error(error.message || msg)
-    throw new Error(msg)
+    const context = errorContext
+      ? ` (${errorContext})`
+      : ''
+    const message = error instanceof FetchError
+      ? `${error.statusCode ?? 'réseau'} : ${error.data?.message ?? error.message}`
+      : String(error)
+    console.error(`Erreur API${context}`, error)
+    throw new Error(`Une erreur est survenue${context} – ${message}`)
   }
 }
 
-export async function editSubRecipe(newSubRecipe: SubRecipe): Promise<SubRecipe | undefined> {
-  return apiRequest<SubRecipe, SubRecipe>({
-    method: 'put',
-    url: `/sub-recipes/${newSubRecipe.id}`,
-    data: newSubRecipe,
-    errorContext: `editing SubRecipe with ID ${newSubRecipe.id}`,
+// ANCHOR - Ingrédients
+export function getAllIngredient() {
+  return apiRequest<Ingredient[]>({ url: '/ingredients', errorContext: 'récupération des ingrédients' })
+}
+
+export function createIngredient(newIngredient: IngredientCreation) {
+  return apiRequest<Ingredient>({
+    method: 'POST',
+    url: '/ingredients',
+    data: newIngredient,
+    errorContext: 'création de l\'ingrédient',
   })
 }
 
-export async function deleteSubRecipe(subRecipeId: string): Promise<void> {
-  return apiRequest<undefined, void>({
-    method: 'delete',
-    url: `/sub-recipes/${subRecipeId}`,
-    errorContext: `deleting subRecipe ${subRecipeId}`,
+export function editIngredient(ingredient: Ingredient) {
+  return apiRequest<Ingredient>({
+    method: 'PUT',
+    url: `/ingredients/${ingredient.id}`,
+    data: ingredient,
+    errorContext: `modification de l'ingrédient ${ingredient.id}`,
   })
 }
 
-export async function createSubRecipe(newSubRecipeList: AddSubRecipe[]): Promise<SubRecipe[] | undefined> {
-  return apiRequest<AddSubRecipe[], SubRecipe[]>({
-    method: 'post',
-    url: `/sub-recipes`,
-    data: newSubRecipeList,
-    errorContext: ` adding SubRecipe `,
+export function removeIngredient(ingredientId: string) {
+  return apiRequest<void>({ method: 'DELETE', url: `/ingredients/${ingredientId}`, errorContext: `suppression de l'ingrédient ${ingredientId}` })
+}
+
+// ANCHOR - Recettes
+export function getAllRecipe() {
+  return apiRequest<Recipe[]>({ url: '/recipes', errorContext: 'récupération des recettes' })
+}
+
+export function getRecipe(recipeId: string) {
+  return apiRequest<Recipe>({ url: `/recipes/${recipeId}`, errorContext: `récupération de la recette ${recipeId}` })
+}
+
+export function createRecipe(newRecipe: Partial<Recipe>) {
+  return apiRequest<Recipe>({
+    method: 'POST',
+    url: '/recipes',
+    data: newRecipe,
+    errorContext: 'création de la recette',
   })
 }
 
-export async function getAllSubRecipeByRecipe(recipeId: string): Promise<SubRecipe[] | undefined> {
-  return apiRequest<string, SubRecipe[]>({
-    method: 'get',
-    url: `/sub-recipes/byParentRecipe/${recipeId}`,
-    errorContext: `to get all subRecipe of Recipe with id ${recipeId}`,
+export function editRecipe(recipe: Recipe) {
+  return apiRequest<Recipe>({
+    method: 'PUT',
+    url: `/recipes/${recipe.id}`,
+    data: recipe,
+    errorContext: `modification de la recette ${recipe.id}`,
   })
 }
 
-export async function getInsufficientSubRecipes(recipeId: string): Promise<InsufficientSubRecipe[] | undefined> {
-  return apiRequest<string, InsufficientSubRecipe[]>({
-    method: 'get',
-    url: `/recipes/${recipeId}/insufficientSubRecipes`,
-    errorContext: `to get all subRecipe of Recipe with id ${recipeId}`,
+export function getInsufficientIngredients(recipeId: string) {
+  return apiRequest<InsufficientIngredient[]>({ url: `/recipes/${recipeId}/insufficientIngredients`, errorContext: `ingrédients manquants de la recette ${recipeId}` })
+}
+
+export function getInsufficientSubRecipes(recipeId: string) {
+  return apiRequest<InsufficientSubRecipe[]>({ url: `/recipes/${recipeId}/insufficientSubRecipes`, errorContext: `sous-recettes manquantes de la recette ${recipeId}` })
+}
+
+// ANCHOR - Ingrédients d'une recette
+export function getAllRecipeIngredientByRecipe(recipeId: string) {
+  return apiRequest<RecipeIngredient[]>({ url: `/recipe-ingredients/byRecipe/${recipeId}`, errorContext: `ingrédients de la recette ${recipeId}` })
+}
+
+export function createRecipeIngredient(list: AddToRecipe[]) {
+  return apiRequest<RecipeIngredient[]>({
+    method: 'POST',
+    url: '/recipe-ingredients',
+    data: list,
+    errorContext: 'ajout d\'ingrédients à la recette',
   })
 }
 
-export default economa_backend_api
+export function editRecipeIngredient(recipeIngredient: RecipeIngredient) {
+  return apiRequest<RecipeIngredient>({
+    method: 'PUT',
+    url: `/recipe-ingredients/${recipeIngredient.id}`,
+    data: recipeIngredient,
+    errorContext: `modification de l'ingrédient de recette ${recipeIngredient.id}`,
+  })
+}
+
+export function deleteRecipeIngredient(recipeIngredientId: string) {
+  return apiRequest<void>({ method: 'DELETE', url: `/recipe-ingredients/${recipeIngredientId}`, errorContext: `suppression de l'ingrédient de recette ${recipeIngredientId}` })
+}
+
+// ANCHOR - Sous-recettes
+export function getAllSubRecipeByRecipe(recipeId: string) {
+  return apiRequest<SubRecipe[]>({ url: `/sub-recipes/byParentRecipe/${recipeId}`, errorContext: `sous-recettes de la recette ${recipeId}` })
+}
+
+export function createSubRecipe(list: AddSubRecipe[]) {
+  return apiRequest<SubRecipe[]>({
+    method: 'POST',
+    url: '/sub-recipes',
+    data: list,
+    errorContext: 'ajout de sous-recettes',
+  })
+}
+
+export function editSubRecipe(subRecipe: SubRecipe) {
+  return apiRequest<SubRecipe>({
+    method: 'PUT',
+    url: `/sub-recipes/${subRecipe.id}`,
+    data: subRecipe,
+    errorContext: `modification de la sous-recette ${subRecipe.id}`,
+  })
+}
+
+export function deleteSubRecipe(subRecipeId: string) {
+  return apiRequest<void>({ method: 'DELETE', url: `/sub-recipes/${subRecipeId}`, errorContext: `suppression de la sous-recette ${subRecipeId}` })
+}
+
+// ANCHOR - Stocks fournisseur
+export function getAllStocksByIngredient(ingredientId: string) {
+  return apiRequest<SupplierStock[]>({ url: `/supplier-stocks/byIngredient/${ingredientId}`, errorContext: `stocks de l'ingrédient ${ingredientId}` })
+}
+
+export function createStock(newStock: SupplierStockCreation) {
+  return apiRequest<SupplierStock>({
+    method: 'POST',
+    url: '/supplier-stocks',
+    data: newStock,
+    errorContext: 'création du stock',
+  })
+}
+
+export function editStock(stock: SupplierStock) {
+  return apiRequest<SupplierStock>({
+    method: 'PUT',
+    url: `/supplier-stocks/${stock.id}`,
+    data: stock,
+    errorContext: `modification du stock ${stock.id}`,
+  })
+}
+
+export function deleteStock(stockId: string) {
+  return apiRequest<void>({ method: 'DELETE', url: `/supplier-stocks/${stockId}`, errorContext: `suppression du stock ${stockId}` })
+}

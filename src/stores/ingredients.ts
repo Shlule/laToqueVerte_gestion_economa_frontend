@@ -33,16 +33,20 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
   const isAscendantOrder = ref<boolean>(true)
 
   // use computed to keep reactivity on I18n
-  const sortOptions = computed(() => [{
-    label: t('ingredient.sort_option.alphabetical'),
-    key: t('ingredient.sort_option.alphabetical'),
-  }, {
-    label: t('ingredient.sort_option.price'),
-    key: t('ingredient.sort_option.price'),
-  }, {
-    label: t('ingredient.sort_option.supplier'),
-    key: t('ingredient.sort_option.supplier'),
-  }])
+  const sortOptions = computed(() => [
+    {
+      label: t('ingredient.sort_option.alphabetical'),
+      key: t('ingredient.sort_option.alphabetical'),
+    },
+    {
+      label: t('ingredient.sort_option.price'),
+      key: t('ingredient.sort_option.price'),
+    },
+    {
+      label: t('ingredient.sort_option.supplier'),
+      key: t('ingredient.sort_option.supplier'),
+    },
+  ])
 
   const sortKey = computed(() => {
     switch (sortSelected.value) {
@@ -67,7 +71,9 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
         const numberA = Number(valueA)
         const numberB = Number(valueB)
 
-        return isAscendentOrder ? numberA - numberB : numberB - numberA
+        return isAscendentOrder
+          ? numberA - numberB
+          : numberB - numberA
       }
 
       if (valueA == null || valueB == null) {
@@ -108,11 +114,18 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     },
 
     onMutate: async (updatedIngredient: Ingredient) => {
-      await queryClient.cancelQueries({ queryKey: ['allIngredients'] })
+      await queryClient.cancelQueries({
+        queryKey: ['allIngredients'],
+      })
 
       const previousIngredients = queryClient.getQueryData<Ingredient[]>(['allIngredients'])
       queryClient.setQueryData(['allIngredients'], (oldIngredients: Ingredient[]) => {
-        return oldIngredients.map(ingredient => ingredient.id === updatedIngredient.id ? { ...ingredient, ...updatedIngredient } : ingredient)
+        return oldIngredients.map(ingredient => ingredient.id === updatedIngredient.id
+          ? {
+              ...ingredient,
+              ...updatedIngredient,
+            }
+          : ingredient)
       })
       return { previousIngredients }
     },
@@ -124,7 +137,12 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
 
     onSuccess(data, updatedIngredient) {
       queryClient.setQueryData(['allIngredients'], (oldIngredients: Ingredient[]) => {
-        return oldIngredients.map(ingredient => ingredient.id === updatedIngredient.id ? { ...ingredient, ...updatedIngredient } : ingredient)
+        return oldIngredients.map(ingredient => ingredient.id === updatedIngredient.id
+          ? {
+              ...ingredient,
+              ...updatedIngredient,
+            }
+          : ingredient)
       })
     },
   })
@@ -135,7 +153,9 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     },
 
     onMutate: async (newIngredient: IngredientCreation) => {
-      await queryClient.cancelQueries({ queryKey: ['allIngredients'] })
+      await queryClient.cancelQueries({
+        queryKey: ['allIngredients'],
+      })
 
       const previousIngredients = queryClient.getQueryData<Ingredient[]>(['allIngredients'])
 
@@ -157,10 +177,42 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     onSuccess: (data, newIngredient, context) => {
       queryClient.setQueryData(['allIngredients'], (oldIngredients: Ingredient[]) => {
         return oldIngredients.map(ingredient =>
-          ingredient.id === context.tempId ? data : ingredient,
+          ingredient.id === context.tempId
+            ? data
+            : ingredient,
         )
       })
-      queryClient.invalidateQueries({ queryKey: ['allRecipes'] })
+      queryClient.invalidateQueries({
+        queryKey: ['allRecipes'],
+      })
+    },
+  })
+
+  const deleteIngredient = useMutation({
+    mutationFn: (ingredientId: string) => removeIngredient(ingredientId),
+
+    onMutate: async (ingredientId: string) => {
+      await queryClient.cancelQueries({
+        queryKey: ['allIngredients'],
+      })
+      const previousIngredients = queryClient.getQueryData<Ingredient[]>(['allIngredients'])
+      if (previousIngredients)
+        queryClient.setQueryData(['allIngredients'], previousIngredients.filter(ingredient => ingredient.id !== ingredientId))
+      return { previousIngredients }
+    },
+
+    onError: (err, _ingredientId, context) => {
+      console.error('Mutation Failed', err.message)
+      queryClient.setQueryData(['allIngredients'], context?.previousIngredients)
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['allIngredients'],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['allRecipes'],
+      })
     },
   })
 
@@ -203,6 +255,7 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
     newIngredientPrice,
     newIngredientUnit,
     addIngredient,
+    deleteIngredient,
     resetIngredientForm,
     addNewIngredient,
     updateIngredient,

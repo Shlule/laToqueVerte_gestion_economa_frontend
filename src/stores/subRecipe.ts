@@ -13,7 +13,7 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
   const updateSubRecipe = useMutation({
 
     // use SubRecipe and not Partial<SubRecipe> for ensuring to get id object
-    mutationFn: async ({ subRecipe }: { subRecipe: SubRecipe }) => {
+    mutationFn: async ({ subRecipe }: { subRecipe: SubRecipe, recipeId: string }) => {
       if (!subRecipe.id) {
         throw new Error ('Cannot update subRecipe without an ID')
       }
@@ -21,12 +21,19 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
     },
 
     onMutate: async ({ subRecipe, recipeId }: { subRecipe: SubRecipe, recipeId: string }) => {
-      await queryclient.cancelQueries({ queryKey: ['subRecipes', recipeId] })
+      await queryclient.cancelQueries({
+        queryKey: ['subRecipes', recipeId],
+      })
 
       const previousSubRecipes = queryclient.getQueryData<SubRecipe[]>(['subRecipes', recipeId])
       if (previousSubRecipes) {
         queryclient.setQueryData(['subRecipes', recipeId], previousSubRecipes.map(sub =>
-          sub.id === subRecipe.id ? { ...sub, ...subRecipe } : sub,
+          sub.id === subRecipe.id
+            ? {
+                ...sub,
+                ...subRecipe,
+              }
+            : sub,
         ))
       }
 
@@ -47,19 +54,25 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
     },
 
     onSettled: (_, __, { recipeId }) => {
-      queryclient.invalidateQueries({ queryKey: ['subRecipes', recipeId] })
-      queryclient.invalidateQueries({ queryKey: ['insufficientSubRecipes', recipeId] })
+      queryclient.invalidateQueries({
+        queryKey: ['subRecipes', recipeId],
+      })
+      queryclient.invalidateQueries({
+        queryKey: ['insufficientSubRecipes', recipeId],
+      })
     },
 
   })
 
   const removeSubRecipe = useMutation({
-    mutationFn: async ({ subRecipeId }: { subRecipeId: string }) => {
+    mutationFn: async ({ subRecipeId }: { subRecipeId: string, recipeId: string }) => {
       return deleteSubRecipe(subRecipeId)
     },
 
     onMutate: async ({ subRecipeId, recipeId }: { subRecipeId: string, recipeId: string }) => {
-      await queryclient.cancelQueries({ queryKey: ['subRecipes', recipeId] })
+      await queryclient.cancelQueries({
+        queryKey: ['subRecipes', recipeId],
+      })
       const previousSubRecipes = queryclient.getQueryData<SubRecipe[]>(['subRecipes', recipeId])
 
       if (previousSubRecipes) {
@@ -83,8 +96,12 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
     },
 
     onSettled: (_, __, { recipeId }) => {
-      queryclient.invalidateQueries({ queryKey: ['subRecipes', recipeId] })
-      queryclient.invalidateQueries({ queryKey: ['insufficientSubRecipes', recipeId] })
+      queryclient.invalidateQueries({
+        queryKey: ['subRecipes', recipeId],
+      })
+      queryclient.invalidateQueries({
+        queryKey: ['insufficientSubRecipes', recipeId],
+      })
     },
 
   })
@@ -97,7 +114,9 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
     onMutate: async ({ subRecipeList }: { subRecipeList: AddSubRecipe[] }) => {
       // we assume that all subRecipe in newRecipeList must be add to the same parentRecipe
       const recipeId = subRecipeList[0].parentRecipeId
-      await queryclient.cancelQueries({ queryKey: ['subRecipes', recipeId] })
+      await queryclient.cancelQueries({
+        queryKey: ['subRecipes', recipeId],
+      })
 
       const previousSubRecipes = queryclient.getQueryData<SubRecipe[]>(['subRecipes', recipeId])
 
@@ -125,7 +144,10 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
       })
 
       if (previousSubRecipes) {
-        queryclient.setQueryData(['subRecipes', recipeId], [...previousSubRecipes, ...newSubRecipeList])
+        queryclient.setQueryData(['subRecipes', recipeId], [
+          ...previousSubRecipes,
+          ...newSubRecipeList,
+        ])
       }
 
       const { previousRecipes } = updateRecipeCache(queryclient, recipeId)
@@ -143,8 +165,12 @@ export const useSubRecipeStore = defineStore('SubRecipe', () => {
     },
 
     onSettled: (_, __, ___, context) => {
-      queryclient.invalidateQueries({ queryKey: ['subRecipes', context?.recipeId] })
-      queryclient.invalidateQueries({ queryKey: ['insufficientSubRecipes', context?.recipeId] })
+      queryclient.invalidateQueries({
+        queryKey: ['subRecipes', context?.recipeId],
+      })
+      queryclient.invalidateQueries({
+        queryKey: ['insufficientSubRecipes', context?.recipeId],
+      })
     },
   })
 

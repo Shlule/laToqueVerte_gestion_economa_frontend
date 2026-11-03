@@ -24,13 +24,20 @@ export const useRecipeStore = defineStore('recipeStore', () => {
       return editRecipe(updatedRecipe)
     },
     onMutate: async (updatedRecipe: Recipe) => {
-      await queryClient.cancelQueries({ queryKey: ['allRecipes'] })
+      await queryClient.cancelQueries({
+        queryKey: ['allRecipes'],
+      })
 
       const previousRecipe = queryClient.getQueryData(['allRecipes'])
 
       queryClient.setQueryData(['allRecipes'], (oldRecipes: Recipe[]) => {
         return oldRecipes.map(recipe =>
-          recipe.id === updatedRecipe.id ? { ...recipe, ...updatedRecipe } : recipe,
+          recipe.id === updatedRecipe.id
+            ? {
+                ...recipe,
+                ...updatedRecipe,
+              }
+            : recipe,
         )
       })
       return { previousRecipe }
@@ -49,24 +56,27 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     return allRecipe.value.find(recipe => recipe.id === recipeId)
   }
 
-  const sortSelected = ref<string>(t('ingredient.sort_option.alphabetical'))
+  const sortSelected = ref<string>(t('recipe.sort_option.alphabetical'))
   const searchBarInput = ref('')
   const isAscendantOrder = ref<boolean>(true)
 
   // use computed to keep reactivity on I18n
-  const sortOptions = computed(() => [{
-    label: t('recipe.sort_option.alphabetical'),
-    key: t('recipe.sort_option.alphabetical'),
-  }, {
-    label: t('recipe.sort_option.cost'),
-    key: t('recipe.sort_option.cost'),
-  }])
+  const sortOptions = computed(() => [
+    {
+      label: t('recipe.sort_option.alphabetical'),
+      key: t('recipe.sort_option.alphabetical'),
+    },
+    {
+      label: t('recipe.sort_option.cost'),
+      key: t('recipe.sort_option.cost'),
+    },
+  ])
 
   const sortKey = computed(() => {
     switch (sortSelected.value) {
       case t('recipe.sort_option.alphabetical'):
         return 'name'
-      case t('ingredient.sort_option.price'):
+      case t('recipe.sort_option.cost'):
         return 'cost'
 
       default:
@@ -75,7 +85,7 @@ export const useRecipeStore = defineStore('recipeStore', () => {
   })
 
   // key parameter has only key of ingredient interface as type
-  function sortRecipesBy<K extends keyof Recipe>(array: Recipe[], key: K, isAscendentOrder: boolean = true): Ingredient[] {
+  function sortRecipesBy<K extends keyof Recipe>(array: Recipe[], key: K, isAscendentOrder: boolean = true): Recipe[] {
     return array.slice().sort((a, b) => {
       const valueA = a[key]
       const valueB = b[key]
@@ -84,7 +94,9 @@ export const useRecipeStore = defineStore('recipeStore', () => {
         const numberA = Number(valueA)
         const numberB = Number(valueB)
 
-        return isAscendentOrder ? numberA - numberB : numberB - numberA
+        return isAscendentOrder
+          ? numberA - numberB
+          : numberB - numberA
       }
 
       if (valueA == null || valueB == null) {
@@ -114,13 +126,16 @@ export const useRecipeStore = defineStore('recipeStore', () => {
     return sortRecipesBy(filteredIngredientList, sortKey.value, isAscendantOrder.value)
   })
 
-  const recipeOptions = computed(() => [{
-    label: t('recipe-option.number_of_piece'),
-    value: t('recipe-option.number_of_piece'),
-  }, {
-    label: t('recipe-option.weight'),
-    value: t('recipe-option.weight'),
-  }])
+  const recipeOptions = computed(() => [
+    {
+      label: t('recipe-option.number_of_piece'),
+      value: t('recipe-option.number_of_piece'),
+    },
+    {
+      label: t('recipe-option.weight'),
+      value: t('recipe-option.weight'),
+    },
+  ])
 
   return {
     recipeOptions,

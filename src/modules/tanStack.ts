@@ -1,6 +1,15 @@
 import type { UserModule } from '~/types'
-import { VueQueryPlugin } from '@tanstack/vue-query'
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 30,
+      retry: 1,
+    },
+  },
+})
 
 export const install: UserModule = ({ app }) => {
-  app.use(VueQueryPlugin, { enableDevtoolsV6Plugin: true })
+  app.use(VueQueryPlugin, { queryClient, enableDevtoolsV6Plugin: true })
 }

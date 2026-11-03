@@ -16,13 +16,17 @@ export function convertUnit(quantity: number, fromUnit: Unit, toUnit: Unit): num
   return quantity * conversionRate
 }
 
-export const unitOptions = [{
-  label: 'kg',
-  value: 'kg',
-}, {
-  label: 'g',
-  value: 'g',
-}, {
-  label: 'unit',
-  value: 'unit',
-}]
+export const unitOptions = [
+  {
+    label: 'kg',
+    value: 'kg',
+  },
+  {
+    label: 'g',
+    value: 'g',
+  },
+  {
+    label: 'unit',
+    value: 'unit',
+  },
+]

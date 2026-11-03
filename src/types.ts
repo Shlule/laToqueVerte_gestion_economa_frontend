@@ -1,6 +1,12 @@
-import type { ViteSSGContext } from 'vite-ssg'
+import type { App } from 'vue'
+import type { Router } from 'vue-router'
 
-export type UserModule = (ctx: ViteSSGContext) => void
+export interface UserModuleContext {
+  app: App
+  router: Router
+}
+
+export type UserModule = (ctx: UserModuleContext) => void
 
 export const units = {
   kg: 'kg',
@@ -10,7 +16,7 @@ export const units = {
 
 export type Unit = typeof units[keyof typeof units]
 
-export type IngredientCreation = Omit<Ingredient, 'RecipeIngredients' | 'stock' | 'id'>
+export type IngredientCreation = Omit<Ingredient, 'RecipeIngredients' | 'stocks' | 'id'>
 
 export interface Ingredient {
   id: string

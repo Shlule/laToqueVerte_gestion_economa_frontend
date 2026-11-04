@@ -25,3 +25,16 @@ html.dark {
   width: 100%;
   height: 2px;
 }
+
+/* Boutons d'action verts / rouges (modifier, supprimer, confirmer…) :
+   fond transparent au repos, remplis de leur couleur au survol, icône blanche. */
+.n-button[text-green]:not(:hover):not(:active),
+.n-button[text-red]:not(:hover):not(:active) {
+  background-color: transparent !important;
+}
+.n-button[text-green]:hover,
+.n-button[text-green]:active,
+.n-button[text-red]:hover,
+.n-button[text-red]:active {
+  color: #fff !important;
+}

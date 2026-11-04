@@ -105,6 +105,10 @@ recipe-tabmissing:
 recipeIngredient-block:
   quantity_needed: quantité
   cost: coût
+  missing: 'manque {quantity} {unit}'
+  missing_title: Stock insuffisant pour réaliser la recette
+  edit: Modifier
+  delete: Supprimer
 
 auth:
   login_title: Connexion
@@ -172,6 +176,11 @@ recipe-wizard:
   step_info: Infos
   step_composition: Composition
   step_process: Procédé
+  step_cooking: Cuisson
+  baked: Cette recette se cuit
+  not_baked: Pas de cuisson
+  cooking_time: Durée
+  cooking_temperature: Température
   step_summary: Récapitulatif
   name: Nom de la recette
   name_placeholder: ex. Tarte au citron meringuée

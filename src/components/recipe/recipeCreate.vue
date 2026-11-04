@@ -2,8 +2,9 @@
 import type { PickedComponent } from './componentPicker.vue'
 import type { ComposedRecipe, RecipeCompose, Unit } from '~/types'
 import { useQueryClient } from '@tanstack/vue-query'
-import { NButton, NCard, NEmpty, NInput, NInputNumber, NRadioButton, NRadioGroup, NSelect, NStep, NSteps, useNotification } from 'naive-ui'
+import { NButton, NCard, NEmpty, NInput, NInputNumber, NRadioButton, NRadioGroup, NSelect, NStep, NSteps, NSwitch, useNotification } from 'naive-ui'
 import { composeRecipe } from '~/composables/apiService'
+import { formatDuration } from '~/composables/cooking'
 import { formatPrice } from '~/composables/money'
 
 // Assistant de création de recette en 4 étapes :
@@ -16,7 +17,7 @@ const { t } = useI18n()
 const notification = useNotification()
 const queryClient = useQueryClient()
 
-const STEPS = 4
+const STEPS = 5
 const step = ref(1)
 const direction = ref<'next' | 'prev'>('next')
 
@@ -76,6 +77,13 @@ function moveStep(index: number, delta: -1 | 1) {
 }
 
 // ANCHOR - aperçu du coût, calculé par le serveur
+// ANCHOR - étape 4 : cuisson
+const baked = ref(true)
+const cookingTime = ref<number | null>(null)
+const cookingTemperature = ref<number | null>(null)
+// raccourcis pratiques en pâtisserie
+const temperaturePresets = [150, 160, 170, 180, 200]
+
 const payload = computed<RecipeCompose>(() => ({
   name: name.value.trim() || t('recipe-wizard.untitled'),
   quantity: quantity.value ?? 1,
@@ -83,6 +91,8 @@ const payload = computed<RecipeCompose>(() => ({
   ingredients: lines.value.filter(l => l.kind === 'ingredient').map(l => ({ ingredient: l.id, quantityNeeded: l.quantityNeeded, unit: l.unit })),
   subRecipes: lines.value.filter(l => l.kind === 'recipe').map(l => ({ childRecipe: l.id, quantityNeeded: l.quantityNeeded, unit: l.unit })),
   steps: steps.value.map(s => s.trim()).filter(Boolean),
+  cookingTime: baked.value ? cookingTime.value : null,
+  cookingTemperature: baked.value ? cookingTemperature.value : null,
 }))
 
 const preview = ref<ComposedRecipe | null>(null)
@@ -132,6 +142,7 @@ const stepValid = computed(() => {
   switch (step.value) {
     case 1: return !!name.value.trim() && (quantity.value ?? 0) > 0
     case 2: return lines.value.length > 0
+    case 4: return !baked.value || (!!cookingTime.value && !!cookingTemperature.value)
     default: return true
   }
 })
@@ -157,6 +168,9 @@ function reset() {
   quantity.value = 8
   lines.value = []
   steps.value = ['']
+  baked.value = true
+  cookingTime.value = null
+  cookingTemperature.value = null
   preview.value = null
   previewError.value = ''
 }
@@ -208,7 +222,8 @@ async function save() {
       <NStep :title="t('recipe-wizard.step_info')" @click="go(1)" />
       <NStep :title="t('recipe-wizard.step_composition')" @click="go(2)" />
       <NStep :title="t('recipe-wizard.step_process')" @click="go(3)" />
-      <NStep :title="t('recipe-wizard.step_summary')" @click="go(4)" />
+      <NStep :title="t('recipe-wizard.step_cooking')" @click="go(4)" />
+      <NStep :title="t('recipe-wizard.step_summary')" @click="go(5)" />
     </NSteps>
 
     <div relative min-h-18rem overflow-hidden>
@@ -288,14 +303,50 @@ async function save() {
           </NButton>
         </section>
 
-        <!-- 4. Récapitulatif -->
-        <section v-else key="4" flex flex-col gap-4>
+        <!-- 4. Cuisson -->
+        <section v-else-if="step === 4" key="4" flex flex-col gap-4>
+          <label flex items-center gap-3>
+            <NSwitch v-model:value="baked" />
+            <span>{{ baked ? t('recipe-wizard.baked') : t('recipe-wizard.not_baked') }}</span>
+          </label>
+          <template v-if="baked">
+            <div flex flex-wrap items-center gap-3>
+              <div i-carbon-time text-xl opacity-70 />
+              <NInputNumber v-model:value="cookingTime" :min="1" :max="10080" :step="5" w-10rem :placeholder="t('recipe-wizard.cooking_time')">
+                <template #suffix>
+                  min
+                </template>
+              </NInputNumber>
+              <span v-if="cookingTime && cookingTime >= 60" text-sm opacity-70>= {{ formatDuration(cookingTime) }}</span>
+            </div>
+            <div flex flex-wrap items-center gap-3>
+              <div i-carbon-temperature-hot text-xl opacity-70 />
+              <NInputNumber v-model:value="cookingTemperature" :min="1" :max="400" :step="5" w-10rem :placeholder="t('recipe-wizard.cooking_temperature')">
+                <template #suffix>
+                  °C
+                </template>
+              </NInputNumber>
+              <div flex flex-wrap gap-1>
+                <NButton v-for="preset in temperaturePresets" :key="preset" size="small" round secondary :type="cookingTemperature === preset ? 'primary' : 'default'" @click="cookingTemperature = preset">
+                  {{ preset }} °C
+                </NButton>
+              </div>
+            </div>
+          </template>
+        </section>
+
+        <!-- 5. Récapitulatif -->
+        <section v-else key="5" flex flex-col gap-4>
           <div flex flex-wrap items-baseline justify-between gap-2>
             <h3 text-2xl>
               {{ name }}
             </h3>
             <span opacity-80>{{ quantity }} {{ mode === 'pieces' ? t('recipe-wizard.pieces') : unitType }}</span>
           </div>
+          <p v-if="payload.cookingTime" flex items-center gap-2 opacity-80>
+            <span i-carbon-time /> {{ formatDuration(payload.cookingTime) }}
+            <span i-carbon-temperature-hot ml-2 /> {{ payload.cookingTemperature }} °C
+          </p>
 
           <table w-full text-left>
             <thead text-sm opacity-60>
@@ -376,7 +427,7 @@ async function save() {
             {{ t('recipe-wizard.previous') }}
           </NButton>
           <NButton v-if="step < STEPS" type="primary" :disabled="!stepValid" @click="go(step + 1)">
-            {{ step === 3 && !payload.steps.length ? t('recipe-wizard.skip') : t('recipe-wizard.next') }}
+            {{ (step === 3 && !payload.steps.length) || (step === 4 && !baked) ? t('recipe-wizard.skip') : t('recipe-wizard.next') }}
           </NButton>
           <NButton v-else type="primary" :loading="saving" :disabled="!preview || !!previewError" @click="save">
             {{ t('recipe-wizard.create') }}

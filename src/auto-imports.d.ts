@@ -61,6 +61,7 @@ declare global {
   const editSubRecipe: typeof import('./composables/apiService').editSubRecipe
   const effectScope: typeof import('vue').effectScope
   const extendRef: typeof import('@vueuse/core').extendRef
+  const formatDuration: typeof import('./composables/cooking').formatDuration
   const formatPrice: typeof import('./composables/money').formatPrice
   const getAllIngredient: typeof import('./composables/apiService').getAllIngredient
   const getAllRecipe: typeof import('./composables/apiService').getAllRecipe

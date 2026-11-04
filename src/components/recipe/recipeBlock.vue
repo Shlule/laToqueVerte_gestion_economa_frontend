@@ -3,6 +3,7 @@ import type { Recipe } from '~/types'
 import { useQuery } from '@tanstack/vue-query'
 import { NTabPane, NTabs } from 'naive-ui'
 import { getAllSubRecipeByRecipe, getInsufficientIngredients, getInsufficientSubRecipes } from '~/composables/apiService'
+import { formatDuration } from '~/composables/cooking'
 import RecipeIngredientBlock from '../recipe_ingredient/recipeIngredientBlock.vue'
 
 const recipeData = defineModel<Recipe>('recipeData', { required: true })
@@ -93,6 +94,14 @@ const insufficientSubRecipeQuery = useQuery({
   },
   enabled: isIngredientTab,
 })
+
+// manques de stock, affichés directement sur la ligne concernée
+function missingIngredient(ingredientId: string) {
+  return insufficientRecipeIngredientQuery.data.value?.find(item => item.ingredientId === ingredientId)
+}
+function missingSubRecipe(childRecipeId: string) {
+  return insufficientSubRecipeQuery.data.value?.find(item => item.childRecipeId === childRecipeId)
+}
 </script>
 
 <template>
@@ -104,7 +113,13 @@ const insufficientSubRecipeQuery = useQuery({
             {{ recipeData.name }}
           </p>
         </div>
-        <div flex gap-2>
+        <div flex items-center gap-4>
+          <div v-if="recipeData.cookingTime" flex items-center gap-1 text-sm opacity-80 :title="t('recipe-wizard.step_cooking')">
+            <span i-carbon-time />{{ formatDuration(recipeData.cookingTime) }}
+            <template v-if="recipeData.cookingTemperature">
+              <span i-carbon-temperature-hot ml-1 />{{ recipeData.cookingTemperature }} °C
+            </template>
+          </div>
           <p i-fluent:person-24-filled self-end />
           <p text-3xl>
             {{ recipeData.quantity }}
@@ -117,12 +132,6 @@ const insufficientSubRecipeQuery = useQuery({
         </NTabPane>
 
         <NTabPane name="ingredients" :tab="t('recipe-tabIngredients.tab_name')">
-          <HandleDisplay :query="insufficientRecipeIngredientQuery">
-            <NScrollbar max-h-16rem>
-              <InsufficientIngredientBlock v-for="insufficientIngredient in insufficientRecipeIngredientQuery.data.value" :key="insufficientIngredient.name" :insufficient-ingredient-data="insufficientIngredient" />
-              <InsufficientSubRecipeBlock v-for="insufficientSubRecipe in insufficientSubRecipeQuery.data.value" :key="insufficientSubRecipe.name" :insufficient-sub-recipe-data="insufficientSubRecipe" />
-            </NScrollbar>
-          </HandleDisplay>
           <div id="RecipeIngredient-container">
             <NButton round @click="toggleAddingSomething()">
               {{ t('button.add_recipeingredient') }}
@@ -130,8 +139,8 @@ const insufficientSubRecipeQuery = useQuery({
 
             <HandleDisplay :query="recipeIngredientQuery">
               <NScrollbar max-h-16rem>
-                <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientQuery.data.value" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" />
-                <SubRecipeBlock v-for="subRecipe in subRecipeQuery.data.value" :key="subRecipe.id" :recipe-ingredient-data="subRecipe" :recipe-id="recipeData.id" />
+                <RecipeIngredientBlock v-for="recipeIngredient in recipeIngredientQuery.data.value" :key="recipeIngredient.id" :recipe-ingredient-data="recipeIngredient" :recipe-id="recipeData.id" :missing="missingIngredient(recipeIngredient.ingredient.id)" />
+                <SubRecipeBlock v-for="subRecipe in subRecipeQuery.data.value" :key="subRecipe.id" :recipe-ingredient-data="subRecipe" :recipe-id="recipeData.id" :missing="missingSubRecipe(subRecipe.childRecipe.id)" />
               </NScrollbar>
             </HandleDisplay>
           </div>

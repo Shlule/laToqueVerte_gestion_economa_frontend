@@ -105,6 +105,10 @@ recipe-tabmissing:
 recipeIngredient-block:
   quantity_needed: quantity
   cost: cost
+  missing: '{quantity} {unit} short'
+  missing_title: Not enough stock to make the recipe
+  edit: Edit
+  delete: Delete
 
 auth:
   login_title: Sign in
@@ -172,6 +176,11 @@ recipe-wizard:
   step_info: Details
   step_composition: Composition
   step_process: Method
+  step_cooking: Baking
+  baked: This recipe is baked
+  not_baked: No baking
+  cooking_time: Duration
+  cooking_temperature: Temperature
   step_summary: Summary
   name: Recipe name
   name_placeholder: e.g. Lemon meringue tart

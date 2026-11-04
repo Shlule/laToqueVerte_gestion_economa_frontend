@@ -37,6 +37,9 @@ export interface Recipe {
   unitType: Unit
   /** Procédé : étapes de fabrication, dans l'ordre */
   steps?: string[]
+  /** cuisson : durée en minutes et température en °C (null si sans cuisson) */
+  cookingTime?: number | null
+  cookingTemperature?: number | null
   recipeIngredients: RecipeIngredient[]
   insufficientIngredient?: InsufficientIngredient[]
   subRecipes?: SubRecipe[]
@@ -146,6 +149,8 @@ export interface RecipeCompose {
   ingredients: ComposeIngredientLine[]
   subRecipes: ComposeSubRecipeLine[]
   steps: string[]
+  cookingTime: number | null
+  cookingTemperature: number | null
   /** true : calcule le coût sans rien enregistrer */
   dryRun?: boolean
 }

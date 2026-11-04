@@ -2,6 +2,7 @@
 // TODO - 1 try to create generic component with this one and RecipeIngredientBlock
 // TODO - 2 try to create generic compoenent for all Block
 import type { SubRecipe } from '~/types'
+import { formatPrice } from '~/composables/money'
 // import RecipeIngredientBlockEdit from './recipeIngredientBlockEdit.vue'
 
 const subRecipeData = defineModel<SubRecipe>('recipeIngredientData', { required: true })
@@ -41,7 +42,7 @@ function toggleEdit() {
             <div m-r-4 self-end text-4>
               {{ t('recipeIngredient-block.cost') }}:
             </div>
-            {{ subRecipeData.cost }}{{ t('money-symbol') }}
+            {{ formatPrice(subRecipeData.cost) }}
           </div>
         </div>
       </NCard>

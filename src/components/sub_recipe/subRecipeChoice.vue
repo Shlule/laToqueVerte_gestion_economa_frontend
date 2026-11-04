@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { AddSubRecipe, Recipe, Unit } from '~/types'
 // TODO - try to create generic component for this one and IngredientChoice.vue
 
-import type { AddSubRecipe, Recipe, Unit } from '~/types'
+import { formatPrice } from '~/composables/money'
 
 const RecipeData = defineModel<Recipe>('RecipeData', { required: true })
 
@@ -51,7 +52,7 @@ function confirm() {
         </div>
         <div flex gap-2>
           <div text-3xl>
-            {{ RecipeData.cost }}{{ t('money-symbol') }}
+            {{ formatPrice(RecipeData.cost) }}
           </div>
           <p text-lg>
             per {{ RecipeData.unitType }}

@@ -59,8 +59,11 @@ stock-create:
   form_input:
     quantity: quantity
     unit: unit
+    lot_number: batch no.
+    lot_placeholder: e.g. L2026-114 (optional)
 
 stock-block:
+  lot_number: Batch
   expiration_date: date
   remaining_days: remaining days
 
@@ -163,3 +166,43 @@ mfa:
   verify_email_title: Email verification
   verify_email_ok: Your email address is verified.
   verify_email_error: Invalid or expired link.
+
+recipe-wizard:
+  title: New recipe
+  step_info: Details
+  step_composition: Composition
+  step_process: Method
+  step_summary: Summary
+  name: Recipe name
+  name_placeholder: e.g. Lemon meringue tart
+  untitled: Untitled
+  yield: What the recipe makes
+  unit: Unit
+  quantity: Quantity
+  pieces: portions
+  unit_piece: piece
+  kind_ingredient: Ingredient
+  kind_recipe: Preparation
+  choose_ingredient: Choose an ingredient
+  choose_recipe: Choose a preparation (another recipe)
+  add: Add
+  remove: Remove
+  no_line: Add at least one ingredient or preparation.
+  process_help: Optional. One step per field, in order.
+  step_placeholder: e.g. Cream the butter and sugar
+  add_step: + Add a step
+  up: Move up
+  down: Move down
+  component: Component
+  cost: Cost
+  total_cost: Total cost
+  per_piece: Cost per portion
+  per_unit: Cost per {unit}
+  exact: exact
+  previous: Back
+  next: Next
+  skip: Skip
+  create: Create recipe
+  created: Recipe "{name}" created
+  error: The recipe could not be created
+  no_steps: No method yet.

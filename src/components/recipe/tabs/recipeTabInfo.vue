@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import type { Recipe } from '~/types'
 import { NSlider } from 'naive-ui'
+import { formatPrice } from '~/composables/money'
 
 const { recipeData } = defineProps<{ recipeData: Recipe }>()
 const { t } = useI18n()
 
 const pricePerPiece = computed(() => {
-  return (recipeData.cost / recipeData.quantity).toFixed(2)
+  return formatPrice(recipeData.cost / recipeData.quantity)
 })
 
 // TODO - Permit to change the equation to compute the selling price
 const sellingPrice = computed(() => {
-  return (recipeData.cost * 4.5).toFixed(2)
+  return formatPrice(recipeData.cost * 4.5)
 })
 const sellingPricePerPiece = computed(() => {
-  return (Number(pricePerPiece.value) * 4.5).toFixed(2)
+  return formatPrice(recipeData.cost / recipeData.quantity * 4.5)
 })
 </script>
 
@@ -26,7 +27,7 @@ const sellingPricePerPiece = computed(() => {
           {{ t('recipe-tabInfo.title.cost') }}
         </p>
         <p text-6>
-          {{ recipeData.cost }}
+          {{ formatPrice(recipeData.cost) }}
         </p>
       </div>
       <div class="bg-[url(~/media/images/marble-texture3.jpg)] bg-right dark:bg-[url(~/media/images/dark-earth-texture.jpg)]" bg-overlay dark:g-dark-1 w-full flex flex-col rounded-2xl dark:bg-blend-overlay>

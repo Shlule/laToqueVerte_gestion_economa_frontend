@@ -66,8 +66,11 @@ stock-create:
   form_input:
     quantity: quantité
     unit: unité
+    lot_number: n° de lot
+    lot_placeholder: ex. L2026-114 (facultatif)
 
 stock-block:
+  lot_number: Lot
   expiration_date: expiration
   remaining_days: jours restants
 
@@ -163,3 +166,43 @@ mfa:
   verify_email_title: Vérification de l'adresse e-mail
   verify_email_ok: Ton adresse e-mail est vérifiée.
   verify_email_error: Lien invalide ou expiré.
+
+recipe-wizard:
+  title: Nouvelle recette
+  step_info: Infos
+  step_composition: Composition
+  step_process: Procédé
+  step_summary: Récapitulatif
+  name: Nom de la recette
+  name_placeholder: ex. Tarte au citron meringuée
+  untitled: Sans nom
+  yield: Ce que produit la recette
+  unit: Unité
+  quantity: Quantité
+  pieces: parts
+  unit_piece: pièce
+  kind_ingredient: Ingrédient
+  kind_recipe: Préparation
+  choose_ingredient: Choisir un ingrédient
+  choose_recipe: Choisir une préparation (autre recette)
+  add: Ajouter
+  remove: Retirer
+  no_line: Ajoute au moins un ingrédient ou une préparation.
+  process_help: Facultatif. Une étape par champ, dans l'ordre de fabrication.
+  step_placeholder: ex. Crémer le beurre et le sucre
+  add_step: + Ajouter une étape
+  up: Monter
+  down: Descendre
+  component: Composant
+  cost: Coût
+  total_cost: Coût total
+  per_piece: Coût par part
+  per_unit: Coût par {unit}
+  exact: exact
+  previous: Précédent
+  next: Suivant
+  skip: Passer
+  create: Créer la recette
+  created: Recette « {name} » créée
+  error: La recette n'a pas pu être créée
+  no_steps: Aucun procédé renseigné.

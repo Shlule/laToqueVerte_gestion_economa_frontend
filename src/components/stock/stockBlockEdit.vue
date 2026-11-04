@@ -18,10 +18,12 @@ const localStockData = stockData.value
 const editExpirationDateDisplayed = ref<string>(format(localStockData.expirationDate, dayFormat))
 const editQuantity = ref<number>(Number(localStockData.quantity))
 const editUnit = ref<Unit>(localStockData.unit)
+const editLotNumber = ref(localStockData.lotNumber ?? '')
 
 const editStockData = computed<SupplierStock>(() => ({
   quantity: editQuantity.value,
   unit: editUnit.value,
+  lotNumber: editLotNumber.value.trim(),
   expirationDate: parse(editExpirationDateDisplayed.value, dayFormat, new Date()),
   id: stockData.value.id,
   ingredient: stockData.value.ingredient,
@@ -43,6 +45,12 @@ function confirm() {
     <div w-full flex>
       <NCard :bordered="false" flex rounded-2xl p-0 shadow-xl>
         <div id="form-input-container" h-full flex justify-between gap-2>
+          <div flex items-center gap-2 class="flex-basis-1/4">
+            <p flex-shrink-0>
+              {{ t('stock-create.form_input.lot_number') }}:
+            </p>
+            <NInput v-model:value="editLotNumber" :placeholder="t('stock-create.form_input.lot_placeholder')" />
+          </div>
           <div flex items-center gap-2 class="flex-basis-1/3">
             <p flex-shrink-0>
               {{ t('stock-create.form_input.quantity') }}:

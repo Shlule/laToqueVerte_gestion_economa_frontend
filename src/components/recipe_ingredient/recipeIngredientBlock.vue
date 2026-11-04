@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RecipeIngredient } from '~/types'
+import { formatPrice } from '~/composables/money'
 import RecipeIngredientBlockEdit from './recipeIngredientBlockEdit.vue'
 
 const recipeIngredientData = defineModel<RecipeIngredient>('recipeIngredientData', { required: true })
@@ -39,7 +40,7 @@ function toggleEdit() {
             <div m-r-4 self-end text-4>
               {{ t('recipeIngredient-block.cost') }}:
             </div>
-            {{ recipeIngredientData.cost }}{{ t('money-symbol') }}
+            {{ formatPrice(recipeIngredientData.cost) }}
           </div>
         </div>
       </NCard>

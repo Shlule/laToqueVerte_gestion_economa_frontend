@@ -18,6 +18,7 @@ declare global {
   const apiRequest: typeof import('./composables/apiService').apiRequest
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
+  const composeRecipe: typeof import('./composables/apiService').composeRecipe
   const computed: typeof import('vue').computed
   const computedAsync: typeof import('@vueuse/core').computedAsync
   const computedEager: typeof import('@vueuse/core').computedEager
@@ -60,6 +61,7 @@ declare global {
   const editSubRecipe: typeof import('./composables/apiService').editSubRecipe
   const effectScope: typeof import('vue').effectScope
   const extendRef: typeof import('@vueuse/core').extendRef
+  const formatPrice: typeof import('./composables/money').formatPrice
   const getAllIngredient: typeof import('./composables/apiService').getAllIngredient
   const getAllRecipe: typeof import('./composables/apiService').getAllRecipe
   const getAllRecipeIngredientByRecipe: typeof import('./composables/apiService').getAllRecipeIngredientByRecipe
@@ -379,6 +381,7 @@ declare module 'vue' {
     readonly apiRequest: UnwrapRef<typeof import('./composables/apiService')['apiRequest']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly composeRecipe: UnwrapRef<typeof import('./composables/apiService')['composeRecipe']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -421,6 +424,7 @@ declare module 'vue' {
     readonly editSubRecipe: UnwrapRef<typeof import('./composables/apiService')['editSubRecipe']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly formatPrice: UnwrapRef<typeof import('./composables/money')['formatPrice']>
     readonly getAllIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllIngredient']>
     readonly getAllRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipe']>
     readonly getAllRecipeIngredientByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipeIngredientByRecipe']>

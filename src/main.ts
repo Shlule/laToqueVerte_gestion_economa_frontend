@@ -6,7 +6,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { handleHotUpdate, routes } from 'vue-router/auto-routes'
 import App from './App.vue'
 
-import '@unocss/reset/tailwind.css'
+// version « compat » : ne retire pas le fond des boutons Naive UI
+import '@unocss/reset/tailwind-compat.css'
 import './styles/main.css'
 import 'uno.css'
 

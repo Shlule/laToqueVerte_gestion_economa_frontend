@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SupplierStockCreation, Unit } from '~/types'
 import { formatISO, isValid, parse } from 'date-fns'
-import { NDatePicker, NInputNumber, NSelect, useNotification } from 'naive-ui'
+import { NDatePicker, NInput, NInputNumber, NSelect, useNotification } from 'naive-ui'
 
 const showCreateStock = defineModel<boolean>('showCreateStock', { required: true })
 const ingredientId = defineModel<string>('ingredientId', { required: true })
@@ -14,6 +14,7 @@ const { t } = useI18n()
 const dateStore = useDateStore()
 const newStockUnit = ref<Unit>('kg')
 const newStockQuantity = ref<number>(0)
+const newStockLotNumber = ref('')
 const expirationDateDisplayed = ref<string>(dateStore.todayFormated)
 
 const newStockExpirationDate = computed<string>(() => {
@@ -26,6 +27,7 @@ const newStockExpirationDate = computed<string>(() => {
 
 const newStock = computed<SupplierStockCreation>(() => ({
   ingredient: ingredientId.value,
+  lotNumber: newStockLotNumber.value.trim(),
   unit: newStockUnit.value,
   quantity: newStockQuantity.value,
   // this value must be in ISO format
@@ -59,7 +61,13 @@ async function createStock() {
 
 <template>
   <NCard role="form-dialog" title="Create New Stock" w-36rem flex>
-    <div id="forms-input" flex gap-2>
+    <div id="forms-input" flex flex-col gap-3>
+      <div flex items-center gap-2>
+        <p flex-shrink-0>
+          {{ t('stock-create.form_input.lot_number') }}
+        </p>
+        <NInput v-model:value="newStockLotNumber" :placeholder="t('stock-create.form_input.lot_placeholder')" />
+      </div>
       <div flex gap-2>
         <div flex items-center gap-2 class="flex-basis-1/3">
           <p flex-shrink-0>

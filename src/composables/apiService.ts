@@ -2,11 +2,13 @@ import type { FetchOptions } from 'ofetch'
 import type {
   AddSubRecipe,
   AddToRecipe,
+  ComposedRecipe,
   Ingredient,
   IngredientCreation,
   InsufficientIngredient,
   InsufficientSubRecipe,
   Recipe,
+  RecipeCompose,
   RecipeIngredient,
   SubRecipe,
   SupplierStock,
@@ -122,6 +124,16 @@ export function createRecipe(newRecipe: Partial<Recipe>) {
     method: 'POST',
     url: '/recipes',
     data: newRecipe,
+    errorContext: 'création de la recette',
+  })
+}
+
+/** Crée une recette complète en une fois (ou calcule seulement son coût avec `dryRun`). */
+export function composeRecipe(recipe: RecipeCompose) {
+  return apiRequest<ComposedRecipe>({
+    method: 'POST',
+    url: '/recipes/compose',
+    data: recipe,
     errorContext: 'création de la recette',
   })
 }

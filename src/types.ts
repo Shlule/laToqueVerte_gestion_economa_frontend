@@ -35,6 +35,8 @@ export interface Recipe {
   cost: number
   quantity: number
   unitType: Unit
+  /** Procédé : étapes de fabrication, dans l'ordre */
+  steps?: string[]
   recipeIngredients: RecipeIngredient[]
   insufficientIngredient?: InsufficientIngredient[]
   subRecipes?: SubRecipe[]
@@ -90,6 +92,7 @@ export interface AddSubRecipe {
 
 export interface SupplierStockCreation {
   ingredient: string
+  lotNumber: string
   quantity: number
   unit: Unit
   expirationDate: string
@@ -98,6 +101,7 @@ export interface SupplierStockCreation {
 export interface SupplierStock {
   id: string
   ingredient: Ingredient
+  lotNumber?: string
   quantity: number
   unit: Unit
   expirationDate: Date
@@ -105,6 +109,7 @@ export interface SupplierStock {
 
 export interface CraftedStockCreation {
   recipe: string
+  lotNumber?: string
   quantity: number
   unit: Unit
   creationDate: string
@@ -114,7 +119,45 @@ export interface CraftedStockCreation {
 export interface CraftedStock {
   id: string
   recipe: Recipe
+  lotNumber?: string
   quantity: number
   unit: Unit
   creationDate: Date
+}
+
+// ANCHOR - assistant de création de recette (POST /recipes/compose)
+
+export interface ComposeIngredientLine {
+  ingredient: string
+  quantityNeeded: number
+  unit: Unit
+}
+
+export interface ComposeSubRecipeLine {
+  childRecipe: string
+  quantityNeeded: number
+  unit: Unit
+}
+
+export interface RecipeCompose {
+  name: string
+  quantity: number
+  unitType: Unit
+  ingredients: ComposeIngredientLine[]
+  subRecipes: ComposeSubRecipeLine[]
+  steps: string[]
+  /** true : calcule le coût sans rien enregistrer */
+  dryRun?: boolean
+}
+
+export interface ComposedRecipe {
+  id: string
+  name: string
+  cost: number
+  costPerUnit: number
+  quantity: number
+  unitType: Unit
+  steps: string[]
+  recipeIngredients: { id: string, ingredient: Ingredient, quantityNeeded: number, unit: Unit, cost: number }[]
+  subRecipes: { id: string, childRecipe: { id: string, name: string }, quantityNeeded: number, unit: Unit, cost: number }[]
 }

@@ -80,6 +80,9 @@ const backgroundExpiration = computed(() => {
         <div h-full flex justify-between>
           <div align-center text-6>
             {{ stockData.quantity }} {{ stockData.unit }}
+            <div v-if="stockData.lotNumber" whitespace-nowrap text-3 opacity-70>
+              {{ t('stock-block.lot_number') }} {{ stockData.lotNumber }}
+            </div>
           </div>
           <div id="expiration-date-block" flex self-center text-5>
             <div m-r-4 self-end text-4>

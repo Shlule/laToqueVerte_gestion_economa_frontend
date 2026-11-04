@@ -137,7 +137,16 @@ const insufficientSubRecipeQuery = useQuery({
           </div>
         </NTabPane>
 
-        <NTabPane name="stocks" />
+        <NTabPane name="process" :tab="t('recipe-wizard.step_process')">
+          <ol v-if="recipeData.steps?.length" list-decimal py-2 pl-6 text-left>
+            <li v-for="(text, index) in recipeData.steps" :key="index" whitespace-pre-line py-1>
+              {{ text }}
+            </li>
+          </ol>
+          <p v-else py-4 opacity-60>
+            {{ t('recipe-wizard.no_steps') }}
+          </p>
+        </NTabPane>
       </NTabs>
       <NModal v-model:show="isAddingSomething" @after-leave="resetComponentsToAdd()">
         <AddingIngredientOrSubRecipe @toggle-adding-something-to-recipe="toggleAddingSomething()" />

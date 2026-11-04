@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/types'
-
-const { t } = useI18n()
+import { formatPrice } from '~/composables/money'
 
 const ingredientData = defineModel<Ingredient>('ingredientData', { required: true })
 </script>
@@ -19,7 +18,7 @@ const ingredientData = defineModel<Ingredient>('ingredientData', { required: tru
       </div>
       <div flex gap-2>
         <div text-3xl>
-          {{ ingredientData.pricePerUnit }}{{ t('money-symbol') }}
+          {{ formatPrice(ingredientData.pricePerUnit, 4) }}
         </div>
         <p text-lg>
           per {{ ingredientData.unitType }}

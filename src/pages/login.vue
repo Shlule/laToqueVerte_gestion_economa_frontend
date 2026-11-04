@@ -13,6 +13,8 @@ const route = useRoute()
 const mode = ref<'login' | 'signup'>('login')
 const email = ref('')
 const password = ref('')
+const emailConfirm = ref('')
+const passwordConfirm = ref('')
 const code = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -21,6 +23,21 @@ const canUseKeys = webauthnSupported()
 // second facteur demandé par allauth après le mot de passe
 const mfaStep = computed(() => auth.pendingFlow?.id === 'mfa_authenticate')
 const mfaTypes = computed(() => auth.pendingFlow?.types ?? [])
+
+const isSignup = computed(() => mode.value === 'signup')
+// confirmations demandées uniquement à l'inscription (évite les fautes de frappe)
+const emailMismatch = computed(() => isSignup.value && !!emailConfirm.value
+  && emailConfirm.value.trim().toLowerCase() !== email.value.trim().toLowerCase())
+const passwordMismatch = computed(() => isSignup.value && !!passwordConfirm.value && passwordConfirm.value !== password.value)
+const canSubmit = computed(() => !!email.value && !!password.value && (!isSignup.value
+  || (!!emailConfirm.value && !!passwordConfirm.value && !emailMismatch.value && !passwordMismatch.value)))
+
+function toggleMode() {
+  mode.value = isSignup.value ? 'login' : 'signup'
+  emailConfirm.value = ''
+  passwordConfirm.value = ''
+  error.value = ''
+}
 
 function goToApp() {
   const redirect = typeof route.query.redirect === 'string'
@@ -36,6 +53,8 @@ async function run(action: () => Promise<unknown>) {
     await action()
     if (auth.isAuthenticated)
       goToApp()
+    else if (auth.pendingFlow?.id === 'verify_email')
+      error.value = t('auth.verify_email_pending')
     else if (!auth.pendingFlow)
       error.value = t('auth.error_generic')
   }
@@ -50,9 +69,12 @@ async function run(action: () => Promise<unknown>) {
 }
 
 function submit() {
-  return run(() => mode.value === 'login'
-    ? auth.login(email.value, password.value)
-    : auth.signup(email.value, password.value))
+  if (!canSubmit.value)
+    return
+  const cleanEmail = email.value.trim()
+  return run(() => isSignup.value
+    ? auth.signup(cleanEmail, password.value)
+    : auth.login(cleanEmail, password.value))
 }
 
 function submitCode() {
@@ -104,6 +126,18 @@ function cancelMfa() {
       <NFormItem :label="t('auth.email')">
         <NInput v-model:value="email" type="text" :input-props="{ type: 'email', autocomplete: 'email webauthn' }" />
       </NFormItem>
+      <template v-if="isSignup">
+        <NFormItem
+          :label="t('auth.email_confirm')"
+          :validation-status="emailMismatch ? 'error' : undefined"
+          :feedback="emailMismatch ? t('auth.email_mismatch') : undefined"
+        >
+          <NInput
+            v-model:value="emailConfirm" type="text"
+            :input-props="{ type: 'email', autocomplete: 'off' }"
+          />
+        </NFormItem>
+      </template>
       <NFormItem :label="t('auth.password')">
         <NInput
           v-model:value="password" type="password" show-password-on="click"
@@ -111,10 +145,23 @@ function cancelMfa() {
           @keydown.enter="submit"
         />
       </NFormItem>
+      <template v-if="isSignup">
+        <NFormItem
+          :label="t('auth.password_confirm')"
+          :validation-status="passwordMismatch ? 'error' : undefined"
+          :feedback="passwordMismatch ? t('auth.password_mismatch') : undefined"
+        >
+          <NInput
+            v-model:value="passwordConfirm" type="password" show-password-on="click"
+            :input-props="{ autocomplete: 'new-password' }"
+            @keydown.enter="submit"
+          />
+        </NFormItem>
+      </template>
       <NAlert v-if="error" type="error" mb-4>
         {{ error }}
       </NAlert>
-      <NButton type="primary" block attr-type="submit" :loading="loading" :disabled="!email || !password">
+      <NButton type="primary" block attr-type="submit" :loading="loading" :disabled="!canSubmit">
         {{ mode === 'login' ? t('auth.login') : t('auth.signup') }}
       </NButton>
     </NForm>
@@ -125,7 +172,7 @@ function cancelMfa() {
         {{ t('mfa.passkey_login') }}
       </NButton>
     </template>
-    <button mt-4 w-full text-sm text-teal-600 hover:underline @click="mode = mode === 'login' ? 'signup' : 'login'">
+    <button mt-4 w-full text-sm text-teal-600 hover:underline @click="toggleMode">
       {{ mode === 'login' ? t('auth.to_signup') : t('auth.to_login') }}
     </button>
   </NCard>

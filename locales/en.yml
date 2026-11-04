@@ -114,6 +114,11 @@ auth:
   to_signup: No account yet? Create one
   to_login: Already have an account? Sign in
   error_generic: Unable to sign in, check your credentials.
+  email_confirm: Confirm email address
+  password_confirm: Confirm password
+  email_mismatch: The email addresses do not match.
+  password_mismatch: The passwords do not match.
+  verify_email_pending: Your email address is not verified yet. Click the link we sent you (in dev it is printed in the Django terminal).
 
 mfa:
   title: Security

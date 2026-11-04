@@ -23,9 +23,17 @@ export const install: UserModule = ({ router }) => {
     return true
   })
 
-  setUnauthorizedHandler(() => {
+  // Une API qui répond 401/403 ne veut pas forcément dire « session expirée »
+  // (ex. 403 = action refusée) : on revérifie la session avant de déconnecter.
+  let checking: Promise<unknown> | null = null
+  setUnauthorizedHandler(async () => {
     const auth = useAuthStore()
-    auth.user = null
+    checking ??= auth.fetchSession().finally(() => {
+      checking = null
+    })
+    await checking
+    if (auth.isAuthenticated)
+      return
     queryClient.clear()
     const current = router.currentRoute.value
     if (!current.meta.public) {

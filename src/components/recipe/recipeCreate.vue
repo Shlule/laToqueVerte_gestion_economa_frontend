@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelectOption } from 'naive-ui'
+import type { PickedComponent } from './componentPicker.vue'
 import type { ComposedRecipe, RecipeCompose, Unit } from '~/types'
 import { useQueryClient } from '@tanstack/vue-query'
 import { NButton, NCard, NEmpty, NInput, NInputNumber, NRadioButton, NRadioGroup, NSelect, NStep, NSteps, useNotification } from 'naive-ui'
@@ -15,8 +15,6 @@ const show = defineModel<boolean>('showCreateIngredient', { required: true })
 const { t } = useI18n()
 const notification = useNotification()
 const queryClient = useQueryClient()
-const ingredientStore = useIngredientStore()
-const recipeStore = useRecipeStore()
 
 const STEPS = 4
 const step = ref(1)
@@ -41,70 +39,17 @@ interface Line {
   unit: Unit
 }
 const lines = ref<Line[]>([])
-const lineKind = ref<'ingredient' | 'recipe'>('ingredient')
-const lineId = ref<string | null>(null)
-const lineQuantity = ref<number | null>(null)
-const lineUnit = ref<Unit | null>(null)
-
-function compatibleUnits(unit: Unit): Unit[] {
-  return unit === 'unit'
-    ? ['unit']
-    : ['kg', 'g']
-}
 function unitLabel(unit: Unit) {
   return unit === 'unit'
     ? t('recipe-wizard.unit_piece')
     : unit
 }
 
-const ingredientOptions = computed<SelectOption[]>(() => (ingredientStore.allIngredient ?? []).map(ingredient => ({
-  value: ingredient.id,
-  label: `${ingredient.name} · ${formatPrice(ingredient.pricePerUnit, 4)} / ${unitLabel(ingredient.unitType)}`,
-})))
-const recipeOptions = computed<SelectOption[]>(() => (recipeStore.recipeList ?? []).map(recipe => ({
-  value: recipe.id,
-  label: `${recipe.name} · ${formatPrice(recipe.cost)} / ${Number(recipe.quantity)} ${unitLabel(recipe.unitType)}`,
-})))
-
-const selected = computed(() => {
-  if (!lineId.value)
-    return
-  if (lineKind.value === 'ingredient') {
-    const ingredient = ingredientStore.getIngredientCachedValue(lineId.value)
-    return ingredient && { name: ingredient.name, unit: ingredient.unitType }
-  }
-  const recipe = recipeStore.getRecipeCachedValue(lineId.value)
-  return recipe && { name: recipe.name, unit: recipe.unitType }
-})
-const lineUnitOptions = computed(() => selected.value
-  ? compatibleUnits(selected.value.unit).map(unit => ({
-      value: unit,
-      label: unitLabel(unit),
-    }))
-  : [])
-
-watch(lineKind, () => {
-  lineId.value = null
-})
-watch(selected, (item) => {
-  lineUnit.value = item?.unit ?? null
-})
-
-const canAddLine = computed(() => !!selected.value && !!lineUnit.value && (lineQuantity.value ?? 0) > 0)
-
-function addLine() {
-  if (!canAddLine.value || !selected.value)
-    return
+function addLine(component: PickedComponent) {
   lines.value.push({
     key: crypto.randomUUID(),
-    kind: lineKind.value,
-    id: lineId.value!,
-    name: selected.value.name,
-    quantityNeeded: lineQuantity.value!,
-    unit: lineUnit.value!,
+    ...component,
   })
-  lineId.value = null
-  lineQuantity.value = null
 }
 
 function removeLine(key: string) {
@@ -293,22 +238,7 @@ async function save() {
 
         <!-- 2. Composition -->
         <section v-else-if="step === 2" key="2" flex flex-col gap-4>
-          <div flex flex-wrap items-end gap-2>
-            <NRadioGroup v-model:value="lineKind">
-              <NRadioButton value="ingredient" :label="t('recipe-wizard.kind_ingredient')" />
-              <NRadioButton value="recipe" :label="t('recipe-wizard.kind_recipe')" />
-            </NRadioGroup>
-            <NSelect
-              v-model:value="lineId" filterable min-w-14rem flex-1
-              :options="lineKind === 'ingredient' ? ingredientOptions : recipeOptions"
-              :placeholder="lineKind === 'ingredient' ? t('recipe-wizard.choose_ingredient') : t('recipe-wizard.choose_recipe')"
-            />
-            <NInputNumber v-model:value="lineQuantity" :min="0" w-8rem :placeholder="t('recipe-wizard.quantity')" @keydown.enter="addLine" />
-            <NSelect v-model:value="lineUnit" :options="lineUnitOptions" :disabled="!selected" :placeholder="t('recipe-wizard.unit')" w-7rem />
-            <NButton type="primary" :disabled="!canAddLine" @click="addLine">
-              {{ t('recipe-wizard.add') }}
-            </NButton>
-          </div>
+          <ComponentPicker @add="addLine" />
 
           <NEmpty v-if="!lines.length" :description="t('recipe-wizard.no_line')" />
           <ul v-else flex flex-col gap-1>

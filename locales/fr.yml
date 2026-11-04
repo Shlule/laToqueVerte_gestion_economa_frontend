@@ -206,3 +206,15 @@ recipe-wizard:
   created: Recette « {name} » créée
   error: La recette n'a pas pu être créée
   no_steps: Aucun procédé renseigné.
+
+component-picker:
+  title: Ajouter à « {name} »
+  search_ingredient: Rechercher un ingrédient (nom, sans accents…)
+  search_recipe: Rechercher une préparation
+  for: pour
+  no_result: Aucun résultat pour « {query} ».
+  empty: Rien à proposer pour l'instant.
+  more: '… et {count} autres, affine la recherche.'
+  hint: Tape quelques lettres, choisis avec ↑ ↓ et Entrée, puis indique la quantité.
+  nothing_yet: Rien d'ajouté pour l'instant.
+  added: '{count} élément(s) ajouté(s)'

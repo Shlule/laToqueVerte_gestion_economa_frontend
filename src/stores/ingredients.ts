@@ -1,6 +1,7 @@
 import type { Ingredient, IngredientCreation, Unit } from '~/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { normalizeText } from '~/composables/search'
 
 // this store is use to display all information relative to ingredient
 // request data , sorting ingredient parameter
@@ -98,7 +99,10 @@ export const useIngredientStore = defineStore('useIngredientStore', () => {
       return
     }
     const filteredIngredientList = allIngredient.value.filter((ingredient: Ingredient) => {
-      return ingredient.name.toLocaleLowerCase().includes(searchBarInput.value.toLowerCase())
+      // recherche sans tenir compte des accents ni de la casse, tous les mots
+      const words = normalizeText(searchBarInput.value).split(' ')
+      const name = normalizeText(ingredient.name)
+      return words.every(word => name.includes(word))
     })
     return sortIngredientsBy(filteredIngredientList, sortKey.value, isAscendantOrder.value)
   })

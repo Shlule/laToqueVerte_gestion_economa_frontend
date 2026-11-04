@@ -89,6 +89,7 @@ declare global {
   const makeDestructurable: typeof import('@vueuse/core').makeDestructurable
   const markRaw: typeof import('vue').markRaw
   const nextTick: typeof import('vue').nextTick
+  const normalizeText: typeof import('./composables/search').normalizeText
   const onActivated: typeof import('vue').onActivated
   const onBeforeMount: typeof import('vue').onBeforeMount
   const onBeforeRouteLeave: typeof import('vue-router').onBeforeRouteLeave
@@ -130,6 +131,7 @@ declare global {
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const removeIngredient: typeof import('./composables/apiService').removeIngredient
   const resolveComponent: typeof import('vue').resolveComponent
+  const searchItems: typeof import('./composables/search').searchItems
   const setUnauthorizedHandler: typeof import('./composables/apiService').setUnauthorizedHandler
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
@@ -452,6 +454,7 @@ declare module 'vue' {
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeText: UnwrapRef<typeof import('./composables/search')['normalizeText']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
     readonly onBeforeRouteLeave: UnwrapRef<typeof import('vue-router')['onBeforeRouteLeave']>
@@ -493,6 +496,7 @@ declare module 'vue' {
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly removeIngredient: UnwrapRef<typeof import('./composables/apiService')['removeIngredient']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly searchItems: UnwrapRef<typeof import('./composables/search')['searchItems']>
     readonly setUnauthorizedHandler: UnwrapRef<typeof import('./composables/apiService')['setUnauthorizedHandler']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>

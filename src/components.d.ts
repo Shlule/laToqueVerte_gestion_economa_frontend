@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddingIngredientOrSubRecipe: typeof import('./components/recipe/addingIngredientOrSubRecipe.vue')['default']
+    ComponentPicker: typeof import('./components/recipe/componentPicker.vue')['default']
     CreateStock: typeof import('./components/stock/createStock.vue')['default']
     FadeSlideTransition: typeof import('./components/transitions/FadeSlideTransition.vue')['default']
     HandleDisplay: typeof import('./components/smart/handleDisplay.vue')['default']

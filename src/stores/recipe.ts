@@ -1,6 +1,7 @@
 import type { Recipe } from '~/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { defineStore } from 'pinia'
+import { normalizeText } from '~/composables/search'
 
 // this store is responsible to get information relative to ingredient creation
 
@@ -121,7 +122,10 @@ export const useRecipeStore = defineStore('recipeStore', () => {
       return
     }
     const filteredIngredientList = allRecipe.value.filter((recipe: Recipe) => {
-      return recipe.name.toLocaleLowerCase().includes(searchBarInput.value.toLowerCase())
+      // recherche sans tenir compte des accents ni de la casse, tous les mots
+      const words = normalizeText(searchBarInput.value).split(' ')
+      const name = normalizeText(recipe.name)
+      return words.every(word => name.includes(word))
     })
     return sortRecipesBy(filteredIngredientList, sortKey.value, isAscendantOrder.value)
   })

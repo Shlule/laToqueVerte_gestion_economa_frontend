@@ -206,3 +206,15 @@ recipe-wizard:
   created: Recipe "{name}" created
   error: The recipe could not be created
   no_steps: No method yet.
+
+component-picker:
+  title: Add to "{name}"
+  search_ingredient: Search an ingredient (name, accents optional…)
+  search_recipe: Search a preparation
+  for: for
+  no_result: No result for "{query}".
+  empty: Nothing to show yet.
+  more: … and {count} more, refine your search.
+  hint: Type a few letters, pick with ↑ ↓ and Enter, then set the quantity.
+  nothing_yet: Nothing added yet.
+  added: '{count} item(s) added'

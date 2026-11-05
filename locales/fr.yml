@@ -176,7 +176,10 @@ recipe-wizard:
   step_info: Infos
   step_composition: Composition
   step_process: Procédé
-  step_cooking: Cuisson
+  step_cooking: Temps et cuisson
+  labor_time: Temps de travail
+  labor_time_help: "Temps passé à préparer la recette (hors cuisson), pour le calcul de la main d'œuvre dans le coût de revient."
+  optional: facultatif
   baked: Cette recette se cuit
   not_baked: Pas de cuisson
   cooking_time: Durée
@@ -281,3 +284,45 @@ stock-lot:
     waste: Perte
     used: Utilisé en fabrication
     adjustment: Inventaire
+pricing:
+  production_cost: Coût de revient
+  per_piece: la pièce
+  per_unit: le {unit}
+  settings: Réglages
+  settings_title: Réglages des coûts de production
+  materials: Matières premières
+  cooking: Cuisson
+  energy: Énergie du four
+  labor: Main d'œuvre
+  no_cooking: pas de cuisson
+  no_labor: temps de travail non renseigné
+  from_sub_recipes: 'dont {amount} venant des préparations utilisées'
+  edit_times: Modifier les temps
+  selling_price: Prix de vente
+  recommended: conseillée
+  recommended_formula: Formule conseillée
+  custom_formula: Formule personnalisée
+  mode:
+    raw_coefficient: Coefficient sur les matières premières
+    cost_coefficient: Coefficient sur le coût de revient
+    margin: Taux de marge visé
+    fixed: Prix fixe
+  help:
+    raw_coefficient: 'La méthode classique en pâtisserie : prix HT = coût des matières premières × coefficient (souvent entre 3 et 4).'
+    cost_coefficient: "Prix HT = coût de revient complet (matières + énergie + main d'œuvre) × coefficient."
+    margin: 'Vous choisissez la part du prix HT qui reste après le coût de revient. 60 % = sur 10 € HT, 6 € de marge.'
+    fixed: "Vous fixez vous-même le prix TTC de vente d'une pièce (ou d'un kg) : la marge est calculée."
+  vat: TVA
+  whole_batch: Toute la recette
+  margin: 'Marge : {rate} %'
+  coefficient: 'Coefficient sur matières : × {value}'
+  use_recommended: Revenir à la formule conseillée
+  save: Enregistrer le prix
+  saved: Prix de vente enregistré
+  error: Impossible d'enregistrer
+  oven_power: Puissance du four
+  electricity_price: Prix de l'électricité
+  energy_help: "Coût d'une cuisson = durée × puissance × prix du kWh. La puissance d'une recette peut être différente (four plus petit, par exemple)."
+  hourly_rate: Coût horaire
+  labor_help: "Coût chargé d'une heure de travail. Mettez 0 si vous ne voulez pas compter la main d'œuvre."
+  settings_saved: Réglages enregistrés

@@ -10,8 +10,11 @@ export {}
 declare global {
   const API_BASE_URL: typeof import('./composables/apiService').API_BASE_URL
   const AllauthError: typeof import('./composables/allauth').AllauthError
+  const DEFAULT_VALUES: typeof import('./composables/pricing').DEFAULT_VALUES
   const EffectScope: typeof import('vue').EffectScope
+  const PRICING_MODES: typeof import('./composables/pricing').PRICING_MODES
   const ReauthenticationRequired: typeof import('./composables/allauth').ReauthenticationRequired
+  const VAT_RATES: typeof import('./composables/pricing').VAT_RATES
   const addStockMovement: typeof import('./composables/apiService').addStockMovement
   const allauth: typeof import('./composables/allauth').allauth
   const allauthRaw: typeof import('./composables/allauth').allauthRaw
@@ -78,7 +81,9 @@ declare global {
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const getInsufficientIngredients: typeof import('./composables/apiService').getInsufficientIngredients
   const getInsufficientSubRecipes: typeof import('./composables/apiService').getInsufficientSubRecipes
+  const getProductionSettings: typeof import('./composables/apiService').getProductionSettings
   const getRecipe: typeof import('./composables/apiService').getRecipe
+  const getRecipePricing: typeof import('./composables/apiService').getRecipePricing
   const h: typeof import('vue').h
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const inject: typeof import('vue').inject
@@ -115,6 +120,7 @@ declare global {
   const onUnmounted: typeof import('vue').onUnmounted
   const onUpdated: typeof import('vue').onUpdated
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
+  const patchRecipe: typeof import('./composables/apiService').patchRecipe
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
   const preferredDark: typeof import('./composables/dark').preferredDark
   const produceRecipe: typeof import('./composables/apiService').produceRecipe
@@ -162,6 +168,7 @@ declare global {
   const unref: typeof import('vue').unref
   const unrefElement: typeof import('@vueuse/core').unrefElement
   const until: typeof import('@vueuse/core').until
+  const updateProductionSettings: typeof import('./composables/apiService').updateProductionSettings
   const updateRecipeCache: typeof import('./composables/cacheManipulation').updateRecipeCache
   const useActiveElement: typeof import('@vueuse/core').useActiveElement
   const useAnimate: typeof import('@vueuse/core').useAnimate
@@ -381,8 +388,11 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly API_BASE_URL: UnwrapRef<typeof import('./composables/apiService')['API_BASE_URL']>
     readonly AllauthError: UnwrapRef<typeof import('./composables/allauth')['AllauthError']>
+    readonly DEFAULT_VALUES: UnwrapRef<typeof import('./composables/pricing')['DEFAULT_VALUES']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly PRICING_MODES: UnwrapRef<typeof import('./composables/pricing')['PRICING_MODES']>
     readonly ReauthenticationRequired: UnwrapRef<typeof import('./composables/allauth')['ReauthenticationRequired']>
+    readonly VAT_RATES: UnwrapRef<typeof import('./composables/pricing')['VAT_RATES']>
     readonly addStockMovement: UnwrapRef<typeof import('./composables/apiService')['addStockMovement']>
     readonly allauth: UnwrapRef<typeof import('./composables/allauth')['allauth']>
     readonly allauthRaw: UnwrapRef<typeof import('./composables/allauth')['allauthRaw']>
@@ -449,7 +459,9 @@ declare module 'vue' {
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly getInsufficientIngredients: UnwrapRef<typeof import('./composables/apiService')['getInsufficientIngredients']>
     readonly getInsufficientSubRecipes: UnwrapRef<typeof import('./composables/apiService')['getInsufficientSubRecipes']>
+    readonly getProductionSettings: UnwrapRef<typeof import('./composables/apiService')['getProductionSettings']>
     readonly getRecipe: UnwrapRef<typeof import('./composables/apiService')['getRecipe']>
+    readonly getRecipePricing: UnwrapRef<typeof import('./composables/apiService')['getRecipePricing']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -486,6 +498,7 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
+    readonly patchRecipe: UnwrapRef<typeof import('./composables/apiService')['patchRecipe']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly preferredDark: UnwrapRef<typeof import('./composables/dark')['preferredDark']>
     readonly produceRecipe: UnwrapRef<typeof import('./composables/apiService')['produceRecipe']>
@@ -533,6 +546,7 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
+    readonly updateProductionSettings: UnwrapRef<typeof import('./composables/apiService')['updateProductionSettings']>
     readonly updateRecipeCache: UnwrapRef<typeof import('./composables/cacheManipulation')['updateRecipeCache']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>

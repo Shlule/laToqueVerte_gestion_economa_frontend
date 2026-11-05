@@ -81,6 +81,8 @@ function moveStep(index: number, delta: -1 | 1) {
 const baked = ref(true)
 const cookingTime = ref<number | null>(null)
 const cookingTemperature = ref<number | null>(null)
+// temps de travail (main d'œuvre), compté dans le coût de revient
+const laborTime = ref<number | null>(null)
 // raccourcis pratiques en pâtisserie
 const temperaturePresets = [150, 160, 170, 180, 200]
 
@@ -93,6 +95,7 @@ const payload = computed<RecipeCompose>(() => ({
   steps: steps.value.map(s => s.trim()).filter(Boolean),
   cookingTime: baked.value ? cookingTime.value : null,
   cookingTemperature: baked.value ? cookingTemperature.value : null,
+  laborTime: laborTime.value || null,
 }))
 
 const preview = ref<ComposedRecipe | null>(null)
@@ -171,6 +174,7 @@ function reset() {
   baked.value = true
   cookingTime.value = null
   cookingTemperature.value = null
+  laborTime.value = null
   preview.value = null
   previewError.value = ''
 }
@@ -303,8 +307,23 @@ async function save() {
           </NButton>
         </section>
 
-        <!-- 4. Cuisson -->
+        <!-- 4. Temps et cuisson -->
         <section v-else-if="step === 4" key="4" flex flex-col gap-4>
+          <div flex flex-col gap-1>
+            <div flex flex-wrap items-center gap-3>
+              <div i-carbon-user-activity text-xl opacity-70 />
+              <span>{{ t('recipe-wizard.labor_time') }}</span>
+              <NInputNumber v-model:value="laborTime" :min="0" :max="10080" :step="5" w-10rem :placeholder="t('recipe-wizard.optional')">
+                <template #suffix>
+                  min
+                </template>
+              </NInputNumber>
+              <span v-if="laborTime && laborTime >= 60" text-sm opacity-70>= {{ formatDuration(laborTime) }}</span>
+            </div>
+            <p text-xs opacity-60>
+              {{ t('recipe-wizard.labor_time_help') }}
+            </p>
+          </div>
           <label flex items-center gap-3>
             <NSwitch v-model:value="baked" />
             <span>{{ baked ? t('recipe-wizard.baked') : t('recipe-wizard.not_baked') }}</span>
@@ -346,6 +365,9 @@ async function save() {
           <p v-if="payload.cookingTime" flex items-center gap-2 opacity-80>
             <span i-carbon-time /> {{ formatDuration(payload.cookingTime) }}
             <span i-carbon-temperature-hot ml-2 /> {{ payload.cookingTemperature }} °C
+          </p>
+          <p v-if="payload.laborTime" flex items-center gap-2 opacity-80>
+            <span i-carbon-user-activity /> {{ t('recipe-wizard.labor_time') }} : {{ formatDuration(payload.laborTime) }}
           </p>
 
           <table w-full text-left>

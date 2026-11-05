@@ -10,9 +10,11 @@ import type {
   InsufficientSubRecipe,
   ProduceRequest,
   ProduceResponse,
+  ProductionSettings,
   Recipe,
   RecipeCompose,
   RecipeIngredient,
+  RecipePricing,
   StockMovementInput,
   SubRecipe,
   SupplierStock,
@@ -280,5 +282,33 @@ export function produceRecipe(recipeId: string, request: ProduceRequest) {
     url: `/recipes/${recipeId}/produce`,
     data: request,
     errorContext: 'fabrication de la recette',
+  })
+}
+
+// ANCHOR - Coût de revient et réglages
+export function getRecipePricing(recipeId: string) {
+  return apiRequest<RecipePricing>({ url: `/recipes/${recipeId}/pricing`, errorContext: `prix de la recette ${recipeId}` })
+}
+
+/** Modifie seulement certains champs d'une recette (temps, formule de prix…). */
+export function patchRecipe(recipeId: string, changes: Partial<Recipe>) {
+  return apiRequest<Recipe>({
+    method: 'PATCH',
+    url: `/recipes/${recipeId}`,
+    data: changes,
+    errorContext: 'modification de la recette',
+  })
+}
+
+export function getProductionSettings() {
+  return apiRequest<ProductionSettings>({ url: '/settings/production', errorContext: 'réglages de production' })
+}
+
+export function updateProductionSettings(settings: ProductionSettings) {
+  return apiRequest<ProductionSettings>({
+    method: 'PUT',
+    url: '/settings/production',
+    data: settings,
+    errorContext: 'réglages de production',
   })
 }

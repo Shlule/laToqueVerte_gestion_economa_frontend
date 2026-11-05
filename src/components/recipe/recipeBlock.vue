@@ -122,7 +122,7 @@ function missingSubRecipe(childRecipeId: string) {
           </div>
         </div>
         <div flex items-center justify-between gap-3 text-sm>
-          <div flex items-center gap-1 opacity-80 :title="t('recipe-wizard.step_cooking')">
+          <div flex items-center gap-1 opacity-80 :title="t('pricing.cooking')">
             <template v-if="recipeData.cookingTime">
               <span i-carbon-time />{{ formatDuration(recipeData.cookingTime) }}
               <template v-if="recipeData.cookingTemperature">

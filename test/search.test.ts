@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { normalizeText, searchItems } from '../src/composables/search'
 
-const names = ['Beurre doux', 'Crème fraîche', 'Farine T55', 'Beurre de cacao', 'Pâte à choux']
+const names = [
+  'Beurre doux',
+  'Crème fraîche',
+  'Farine T55',
+  'Beurre de cacao',
+  'Pâte à choux',
+]
 
 describe('recherche', () => {
   it('ignore accents et casse', () => {

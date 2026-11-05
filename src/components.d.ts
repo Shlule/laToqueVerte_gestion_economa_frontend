@@ -37,6 +37,7 @@ declare module 'vue' {
     NSpin: typeof import('naive-ui')['NSpin']
     NSplit: typeof import('naive-ui')['NSplit']
     ProduceRecipe: typeof import('./components/recipe/produceRecipe.vue')['default']
+    ProductionSettingsDialog: typeof import('./components/recipe/productionSettingsDialog.vue')['default']
     RecipeBlock: typeof import('./components/recipe/recipeBlock.vue')['default']
     RecipeCreate: typeof import('./components/recipe/recipeCreate.vue')['default']
     RecipeHeader: typeof import('./components/recipe/recipeHeader.vue')['default']

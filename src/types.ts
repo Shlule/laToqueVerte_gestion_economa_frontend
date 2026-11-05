@@ -40,6 +40,14 @@ export interface Recipe {
   /** cuisson : durée en minutes et température en °C (null si sans cuisson) */
   cookingTime?: number | null
   cookingTemperature?: number | null
+  /** temps de travail pour une fournée, en minutes */
+  laborTime?: number | null
+  /** puissance du four si différente des réglages (kW) */
+  ovenPower?: number | null
+  /** formule de prix propre à la recette ('' = formule conseillée des réglages) */
+  pricingMode?: PricingMode | ''
+  pricingValue?: number | null
+  vatRate?: number | null
   recipeIngredients: RecipeIngredient[]
   insufficientIngredient?: InsufficientIngredient[]
   subRecipes?: SubRecipe[]
@@ -220,6 +228,7 @@ export interface RecipeCompose {
   steps: string[]
   cookingTime: number | null
   cookingTemperature: number | null
+  laborTime: number | null
   /** true : calcule le coût sans rien enregistrer */
   dryRun?: boolean
 }
@@ -234,4 +243,51 @@ export interface ComposedRecipe {
   steps: string[]
   recipeIngredients: { id: string, ingredient: Ingredient, quantityNeeded: number, unit: Unit, cost: number }[]
   subRecipes: { id: string, childRecipe: { id: string, name: string }, quantityNeeded: number, unit: Unit, cost: number }[]
+}
+
+// ANCHOR - coût de revient et prix de vente
+
+/**
+ * - raw_coefficient : coût matières × coefficient (usage courant en pâtisserie)
+ * - cost_coefficient : coût de revient complet × coefficient
+ * - margin : marge visée en % du prix HT
+ * - fixed : prix fixe TTC par part / par unité
+ */
+export type PricingMode = 'raw_coefficient' | 'cost_coefficient' | 'margin' | 'fixed'
+
+export interface ProductionSettings {
+  ovenPower: number
+  electricityPrice: number
+  laborHourlyRate: number
+  vatRate: number
+  pricingMode: PricingMode
+  pricingValue: number
+}
+
+export interface SellingPrice {
+  priceHT: number
+  priceTTC: number
+  perUnitHT: number | null
+  perUnitTTC: number | null
+  marginRate: number | null
+  coefficientOnMaterials: number | null
+}
+
+export interface RecipePricing {
+  settings: { ovenPower: number, electricityPrice: number, laborHourlyRate: number }
+  breakdown: {
+    materials: number
+    energy: number
+    labor: number
+    fromSubRecipes: number
+    productionCost: number
+    productionCostPerUnit: number | null
+    ownEnergy: number
+    ownLabor: number
+    cookingTime: number | null
+    laborTime: number | null
+    warnings: string[]
+  }
+  pricing: SellingPrice & { mode: PricingMode, value: number, vatRate: number, isCustom: boolean }
+  recommended: { mode: PricingMode, value: number, vatRate: number }
 }

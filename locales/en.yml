@@ -176,7 +176,10 @@ recipe-wizard:
   step_info: Details
   step_composition: Composition
   step_process: Method
-  step_cooking: Baking
+  step_cooking: Time & baking
+  labor_time: Working time
+  labor_time_help: 'Hands-on time spent on the recipe (baking excluded), used for the labour cost.'
+  optional: optional
   baked: This recipe is baked
   not_baked: No baking
   cooking_time: Duration
@@ -281,3 +284,45 @@ stock-lot:
     waste: Loss
     used: Used in production
     adjustment: Stock count
+pricing:
+  production_cost: Production cost
+  per_piece: per piece
+  per_unit: per {unit}
+  settings: Settings
+  settings_title: Production cost settings
+  materials: Raw materials
+  cooking: Baking
+  energy: Oven energy
+  labor: Labour
+  no_cooking: no baking
+  no_labor: working time not set
+  from_sub_recipes: 'including {amount} from the preparations used'
+  edit_times: Edit times
+  selling_price: Selling price
+  recommended: recommended
+  recommended_formula: Recommended formula
+  custom_formula: Custom formula
+  mode:
+    raw_coefficient: Multiplier on raw materials
+    cost_coefficient: Multiplier on production cost
+    margin: Target margin rate
+    fixed: Fixed price
+  help:
+    raw_coefficient: 'The classic pastry method: price excl. VAT = raw material cost × multiplier (often 3 to 4).'
+    cost_coefficient: 'Price excl. VAT = full production cost (materials + energy + labour) × multiplier.'
+    margin: 'Choose the share of the price excl. VAT left after the production cost. 60% = €6 margin on €10.'
+    fixed: 'You set the selling price incl. VAT of one piece (or kg): the margin is computed.'
+  vat: VAT
+  whole_batch: Whole recipe
+  margin: 'Margin: {rate}%'
+  coefficient: 'Multiplier on materials: × {value}'
+  use_recommended: Back to the recommended formula
+  save: Save price
+  saved: Selling price saved
+  error: Could not save
+  oven_power: Oven power
+  electricity_price: Electricity price
+  energy_help: 'Baking cost = duration × power × kWh price. A recipe can set its own power (smaller oven, for example).'
+  hourly_rate: Hourly cost
+  labor_help: Loaded cost of one hour of work. Set 0 to leave labour out.
+  settings_saved: Settings saved

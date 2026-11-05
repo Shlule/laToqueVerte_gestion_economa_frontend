@@ -15,6 +15,7 @@ import type {
   RecipeCompose,
   RecipeIngredient,
   RecipePricing,
+  RecipeUsage,
   StockMovementInput,
   SubRecipe,
   SupplierStock,
@@ -135,6 +136,30 @@ export function createRecipe(newRecipe: Partial<Recipe>) {
 }
 
 /** Crée une recette complète en une fois (ou calcule seulement son coût avec `dryRun`). */
+/** Recette complète (infos, lignes, procédé), pour pré-remplir l'assistant en modification. */
+export function getRecipeComposition(recipeId: string) {
+  return apiRequest<ComposedRecipe>({ url: `/recipes/${recipeId}/composition`, errorContext: `composition de la recette ${recipeId}` })
+}
+
+/** Remplace infos, composition et procédé d'une recette (stocks, parts et prix sont conservés). */
+export function updateRecipeComposition(recipeId: string, recipe: RecipeCompose) {
+  return apiRequest<ComposedRecipe>({
+    method: 'PUT',
+    url: `/recipes/${recipeId}/composition`,
+    data: recipe,
+    errorContext: 'modification de la recette',
+  })
+}
+
+/** Ce que la suppression emporterait : recettes qui l'utilisent, lots de stock. */
+export function getRecipeUsage(recipeId: string) {
+  return apiRequest<RecipeUsage>({ url: `/recipes/${recipeId}/usage`, errorContext: `utilisation de la recette ${recipeId}` })
+}
+
+export function deleteRecipe(recipeId: string) {
+  return apiRequest<void>({ method: 'DELETE', url: `/recipes/${recipeId}`, errorContext: `suppression de la recette ${recipeId}` })
+}
+
 export function composeRecipe(recipe: RecipeCompose) {
   return apiRequest<ComposedRecipe>({
     method: 'POST',

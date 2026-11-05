@@ -243,8 +243,17 @@ export interface ComposedRecipe {
   quantity: number
   unitType: Unit
   steps: string[]
+  cookingTime?: number | null
+  cookingTemperature?: number | null
+  laborTime?: number | null
   recipeIngredients: { id: string, ingredient: Ingredient, quantityNeeded: number, unit: Unit, cost: number }[]
   subRecipes: { id: string, childRecipe: { id: string, name: string }, quantityNeeded: number, unit: Unit, cost: number }[]
+}
+
+export interface RecipeUsage {
+  usedIn: { id: string, name: string }[]
+  stockLots: number
+  activeStockLots: number
 }
 
 // ANCHOR - coût de revient et prix de vente

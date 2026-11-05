@@ -216,6 +216,9 @@ recipe-wizard:
   skip: Passer
   create: Créer la recette
   created: Recette « {name} » créée
+  updated: 'Recette « {name} » modifiée'
+  edit_title: 'Modifier « {name} »'
+  save_changes: Enregistrer les modifications
   error: La recette n'a pas pu être créée
   no_steps: Aucun procédé renseigné.
 
@@ -342,3 +345,14 @@ pricing:
   hourly_rate: Coût horaire
   labor_help: "Coût chargé d'une heure de travail. Mettez 0 si vous ne voulez pas compter la main d'œuvre."
   settings_saved: Réglages enregistrés
+recipe-manage:
+  tab: Gérer
+  edit: Modifier la recette
+  edit_help: Nom, quantité produite, ingrédients et préparations, procédé, temps et cuisson. Les stocks, le nombre de parts et le prix de vente sont conservés.
+  delete: Supprimer la recette
+  delete_help: La recette disparaît définitivement, avec ses lots de stock et leur historique.
+  delete_confirm: 'Supprimer « {name} » ?'
+  delete_warning: Cette action est définitive.
+  used_in: 'Elle est utilisée dans : {names}. Elle en sera retirée et leur coût sera recalculé.'
+  stocks: '{count} lot de stock (dont {active} en cours) sera supprimé. | {count} lots de stock (dont {active} en cours) seront supprimés.'
+  deleted: 'Recette « {name} » supprimée'

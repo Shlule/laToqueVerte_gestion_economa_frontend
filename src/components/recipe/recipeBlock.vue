@@ -169,6 +169,10 @@ function missingSubRecipe(childRecipeId: string) {
             {{ t('recipe-wizard.no_steps') }}
           </p>
         </NTabPane>
+
+        <NTabPane name="manage" :tab="t('recipe-manage.tab')">
+          <RecipeTabManage :recipe="recipeData" />
+        </NTabPane>
       </NTabs>
       <NModal v-model:show="isProducing">
         <ProduceRecipe :recipe="recipeData" @close="toggleProducing(false)" />

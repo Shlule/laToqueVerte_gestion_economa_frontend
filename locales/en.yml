@@ -216,6 +216,9 @@ recipe-wizard:
   skip: Skip
   create: Create recipe
   created: Recipe "{name}" created
+  updated: 'Recipe "{name}" updated'
+  edit_title: 'Edit "{name}"'
+  save_changes: Save changes
   error: The recipe could not be created
   no_steps: No method yet.
 
@@ -342,3 +345,14 @@ pricing:
   hourly_rate: Hourly cost
   labor_help: Loaded cost of one hour of work. Set 0 to leave labour out.
   settings_saved: Settings saved
+recipe-manage:
+  tab: Manage
+  edit: Edit recipe
+  edit_help: Name, yield, ingredients and preparations, process, times and baking. Stocks, portions and selling price are kept.
+  delete: Delete recipe
+  delete_help: The recipe is removed for good, with its stock lots and their history.
+  delete_confirm: 'Delete "{name}"?'
+  delete_warning: This cannot be undone.
+  used_in: 'It is used in: {names}. It will be removed from them and their cost recomputed.'
+  stocks: '{count} stock lot ({active} active) will be deleted. | {count} stock lots ({active} active) will be deleted.'
+  deleted: 'Recipe "{name}" deleted'

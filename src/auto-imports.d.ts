@@ -55,6 +55,7 @@ declare global {
   const defineComponent: typeof import('vue').defineComponent
   const definePage: typeof import('vue-router/experimental').definePage
   const deleteCraftedStock: typeof import('./composables/apiService').deleteCraftedStock
+  const deleteRecipe: typeof import('./composables/apiService').deleteRecipe
   const deleteRecipeIngredient: typeof import('./composables/apiService').deleteRecipeIngredient
   const deleteStock: typeof import('./composables/apiService').deleteStock
   const deleteSubRecipe: typeof import('./composables/apiService').deleteSubRecipe
@@ -83,7 +84,9 @@ declare global {
   const getInsufficientSubRecipes: typeof import('./composables/apiService').getInsufficientSubRecipes
   const getProductionSettings: typeof import('./composables/apiService').getProductionSettings
   const getRecipe: typeof import('./composables/apiService').getRecipe
+  const getRecipeComposition: typeof import('./composables/apiService').getRecipeComposition
   const getRecipePricing: typeof import('./composables/apiService').getRecipePricing
+  const getRecipeUsage: typeof import('./composables/apiService').getRecipeUsage
   const h: typeof import('vue').h
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const inject: typeof import('vue').inject
@@ -170,6 +173,7 @@ declare global {
   const until: typeof import('@vueuse/core').until
   const updateProductionSettings: typeof import('./composables/apiService').updateProductionSettings
   const updateRecipeCache: typeof import('./composables/cacheManipulation').updateRecipeCache
+  const updateRecipeComposition: typeof import('./composables/apiService').updateRecipeComposition
   const useActiveElement: typeof import('@vueuse/core').useActiveElement
   const useAnimate: typeof import('@vueuse/core').useAnimate
   const useArrayDifference: typeof import('@vueuse/core').useArrayDifference
@@ -433,6 +437,7 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly definePage: UnwrapRef<typeof import('vue-router/experimental')['definePage']>
     readonly deleteCraftedStock: UnwrapRef<typeof import('./composables/apiService')['deleteCraftedStock']>
+    readonly deleteRecipe: UnwrapRef<typeof import('./composables/apiService')['deleteRecipe']>
     readonly deleteRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['deleteRecipeIngredient']>
     readonly deleteStock: UnwrapRef<typeof import('./composables/apiService')['deleteStock']>
     readonly deleteSubRecipe: UnwrapRef<typeof import('./composables/apiService')['deleteSubRecipe']>
@@ -461,7 +466,9 @@ declare module 'vue' {
     readonly getInsufficientSubRecipes: UnwrapRef<typeof import('./composables/apiService')['getInsufficientSubRecipes']>
     readonly getProductionSettings: UnwrapRef<typeof import('./composables/apiService')['getProductionSettings']>
     readonly getRecipe: UnwrapRef<typeof import('./composables/apiService')['getRecipe']>
+    readonly getRecipeComposition: UnwrapRef<typeof import('./composables/apiService')['getRecipeComposition']>
     readonly getRecipePricing: UnwrapRef<typeof import('./composables/apiService')['getRecipePricing']>
+    readonly getRecipeUsage: UnwrapRef<typeof import('./composables/apiService')['getRecipeUsage']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -548,6 +555,7 @@ declare module 'vue' {
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
     readonly updateProductionSettings: UnwrapRef<typeof import('./composables/apiService')['updateProductionSettings']>
     readonly updateRecipeCache: UnwrapRef<typeof import('./composables/cacheManipulation')['updateRecipeCache']>
+    readonly updateRecipeComposition: UnwrapRef<typeof import('./composables/apiService')['updateRecipeComposition']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>

@@ -2,16 +2,19 @@
 import type { PickedComponent } from './componentPicker.vue'
 import type { ComposedRecipe, RecipeCompose, Unit } from '~/types'
 import { useQueryClient } from '@tanstack/vue-query'
-import { NButton, NCard, NEmpty, NInput, NInputNumber, NRadioButton, NRadioGroup, NSelect, NStep, NSteps, NSwitch, useNotification } from 'naive-ui'
-import { composeRecipe } from '~/composables/apiService'
+import { NButton, NCard, NEmpty, NInput, NInputNumber, NRadioButton, NRadioGroup, NSelect, NSpin, NStep, NSteps, NSwitch, useNotification } from 'naive-ui'
+import { composeRecipe, getRecipeComposition, updateRecipeComposition } from '~/composables/apiService'
 import { formatDuration } from '~/composables/cooking'
 import { formatPrice } from '~/composables/money'
 
 // Assistant de création de recette en 4 étapes :
 // 1. infos  2. composition (ingrédients et préparations)  3. procédé (facultatif)  4. récapitulatif
 // Le coût affiché vient du serveur (aperçu `dryRun`) : c'est exactement celui qui sera enregistré.
+// Avec `recipeId`, le même assistant sert à modifier une recette existante (pré-remplie).
 
+const props = defineProps<{ recipeId?: string }>()
 const show = defineModel<boolean>('showCreateIngredient', { required: true })
+const editing = computed(() => !!props.recipeId)
 
 const { t } = useI18n()
 const notification = useNotification()
@@ -109,7 +112,10 @@ const refreshPreview = useDebounceFn(async () => {
   }
   previewLoading.value = true
   try {
-    preview.value = await composeRecipe({ ...payload.value, dryRun: true })
+    const body = { ...payload.value, dryRun: true }
+    preview.value = props.recipeId
+      ? await updateRecipeComposition(props.recipeId, body)
+      : await composeRecipe(body)
     previewError.value = ''
   }
   catch (e) {
@@ -179,6 +185,59 @@ function reset() {
   previewError.value = ''
 }
 
+// ANCHOR - modification : on remplit l'assistant avec la recette existante
+const loading = ref(false)
+const originalName = ref('')
+async function load(recipeId: string) {
+  loading.value = true
+  try {
+    const recipe = await getRecipeComposition(recipeId)
+    if (!recipe)
+      return
+    name.value = recipe.name
+    originalName.value = recipe.name
+    mode.value = recipe.unitType === 'unit'
+      ? 'pieces'
+      : 'weight'
+    if (recipe.unitType !== 'unit')
+      weightUnit.value = recipe.unitType
+    quantity.value = Number(recipe.quantity)
+    lines.value = [
+      ...recipe.recipeIngredients.map(line => ({
+        key: crypto.randomUUID(),
+        kind: 'ingredient' as const,
+        id: line.ingredient.id,
+        name: line.ingredient.name,
+        quantityNeeded: Number(line.quantityNeeded),
+        unit: line.unit,
+      })),
+      ...recipe.subRecipes.map(line => ({
+        key: crypto.randomUUID(),
+        kind: 'recipe' as const,
+        id: line.childRecipe.id,
+        name: line.childRecipe.name,
+        quantityNeeded: Number(line.quantityNeeded),
+        unit: line.unit,
+      })),
+    ]
+    steps.value = recipe.steps?.length
+      ? [...recipe.steps]
+      : ['']
+    baked.value = !!recipe.cookingTime
+    cookingTime.value = recipe.cookingTime ?? null
+    cookingTemperature.value = recipe.cookingTemperature ?? null
+    laborTime.value = recipe.laborTime ?? null
+    refreshPreview()
+  }
+  finally {
+    loading.value = false
+  }
+}
+watch(() => [show.value, props.recipeId] as const, ([visible, recipeId]) => {
+  if (visible && recipeId)
+    load(recipeId)
+}, { immediate: true })
+
 function close() {
   show.value = false
   reset()
@@ -188,12 +247,25 @@ const saving = ref(false)
 async function save() {
   saving.value = true
   try {
-    const created = await composeRecipe(payload.value)
-    await queryClient.invalidateQueries({
-      queryKey: ['allRecipes'],
-    })
+    const created = props.recipeId
+      ? await updateRecipeComposition(props.recipeId, payload.value)
+      : await composeRecipe(payload.value)
+    // une modification change aussi les lignes, les manques et le coût des recettes qui l'utilisent
+    await Promise.all([
+      'allRecipes',
+      'recipeIngredients',
+      'subRecipes',
+      'insufficientIngredients',
+      'insufficientSubRecipes',
+      'recipePricing',
+    ]
+      .map(key => queryClient.invalidateQueries({
+        queryKey: [key],
+      })))
     notification.success({
-      title: t('recipe-wizard.created', { name: created?.name }),
+      title: editing.value
+        ? t('recipe-wizard.updated', { name: created?.name })
+        : t('recipe-wizard.created', { name: created?.name }),
       content: `${t('recipe-wizard.total_cost')} : ${formatPrice(created?.cost)}`,
       duration: 3000,
     })
@@ -215,7 +287,7 @@ async function save() {
 </script>
 
 <template>
-  <NCard role="dialog" :title="t('recipe-wizard.title')" max-w-48rem w-92vw :segmented="{ content: true, footer: 'soft' }">
+  <NCard role="dialog" :title="editing ? t('recipe-wizard.edit_title', { name: originalName }) : t('recipe-wizard.title')" max-w-48rem w-92vw :segmented="{ content: true, footer: 'soft' }">
     <template #header-extra>
       <button icon-btn :title="t('button.cancel')" @click="close">
         <div i-material-symbols:close-rounded />
@@ -230,7 +302,10 @@ async function save() {
       <NStep :title="t('recipe-wizard.step_summary')" @click="go(5)" />
     </NSteps>
 
-    <div relative min-h-18rem overflow-hidden>
+    <div v-if="loading" min-h-18rem flex items-center justify-center>
+      <NSpin />
+    </div>
+    <div v-else relative min-h-18rem overflow-hidden>
       <Transition :name="`slide-${direction}`" mode="out-in">
         <!-- 1. Infos -->
         <section v-if="step === 1" key="1" flex flex-col gap-4>
@@ -257,7 +332,7 @@ async function save() {
 
         <!-- 2. Composition -->
         <section v-else-if="step === 2" key="2" flex flex-col gap-4>
-          <ComponentPicker @add="addLine" />
+          <ComponentPicker :exclude-recipe-ids="recipeId ? [recipeId] : []" @add="addLine" />
 
           <NEmpty v-if="!lines.length" :description="t('recipe-wizard.no_line')" />
           <ul v-else flex flex-col gap-1>
@@ -452,7 +527,7 @@ async function save() {
             {{ (step === 3 && !payload.steps.length) || (step === 4 && !baked) ? t('recipe-wizard.skip') : t('recipe-wizard.next') }}
           </NButton>
           <NButton v-else type="primary" :loading="saving" :disabled="!preview || !!previewError" @click="save">
-            {{ t('recipe-wizard.create') }}
+            {{ editing ? t('recipe-wizard.save_changes') : t('recipe-wizard.create') }}
           </NButton>
         </div>
       </div>

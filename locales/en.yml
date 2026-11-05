@@ -91,10 +91,10 @@ recipe-tabInfo:
   tab_name: economic
   cost: cost
   title:
-    cost: Cost
-    cost_per_unit: Cost for a Piece
-    selling: Selling Price
-    selling_per_unit: Selling Price for a Piece
+    cost: Production cost
+    cost_per: 'Cost per {unit}'
+    selling: Selling price incl. VAT
+    selling_per: 'Price incl. VAT per {unit}'
 
 recipe-tabIngredients:
   tab_name: ingredients
@@ -285,6 +285,8 @@ stock-lot:
     used: Used in production
     adjustment: Stock count
 pricing:
+  more_details: More details
+  detail_title: 'Cost and selling price · {name}'
   batch_price: 'Whole recipe ({qty}): {ttc} incl. VAT, {ht} excl. VAT'
   unit_piece: piece
   unit_portion: portion

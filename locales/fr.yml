@@ -91,10 +91,10 @@ recipe-tabInfo:
   tab_name: économat
   cost: coût
   title:
-    cost: Coût
-    cost_per_unit: Coût à la part
-    selling: Prix de revente
-    selling_per_unit: Prix de revente à la part
+    cost: Coût de revient
+    cost_per: 'Coût par {unit}'
+    selling: Prix de vente TTC
+    selling_per: 'Prix TTC par {unit}'
 
 recipe-tabIngredients:
   tab_name: ingrédients
@@ -285,6 +285,8 @@ stock-lot:
     used: Utilisé en fabrication
     adjustment: Inventaire
 pricing:
+  more_details: Plus de détails
+  detail_title: 'Coût et prix de vente · {name}'
   batch_price: 'Toute la recette ({qty}) : {ttc} TTC, soit {ht} HT'
   unit_piece: pièce
   unit_portion: part

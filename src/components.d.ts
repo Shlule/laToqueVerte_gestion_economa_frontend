@@ -46,6 +46,7 @@ declare module 'vue' {
     RecipeIngredientCreate: typeof import('./components/recipe_ingredient/recipeIngredientCreate.vue')['default']
     RecipeIngredientToAdd: typeof import('./components/recipe_ingredient/recipeIngredientToAdd.vue')['default']
     RecipeIngredientToAddEdit: typeof import('./components/recipe_ingredient/recipeIngredientToAddEdit.vue')['default']
+    RecipePricingDetail: typeof import('./components/recipe/recipePricingDetail.vue')['default']
     RecipeTabInfo: typeof import('./components/recipe/tabs/recipeTabInfo.vue')['default']
     RecipeTabStocks: typeof import('./components/recipe/tabs/recipeTabStocks.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

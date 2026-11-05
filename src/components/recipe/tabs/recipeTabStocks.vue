@@ -1,24 +1,31 @@
 <script setup lang="ts">
 import type { Recipe } from '~/types'
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
-import { differenceInCalendarDays, format, parseISO } from 'date-fns'
-import { NButton, NEmpty, NPopconfirm, NScrollbar, NSpin } from 'naive-ui'
-import { deleteCraftedStock, getCraftedStocksByRecipe } from '~/composables/apiService'
+import { useQuery } from '@tanstack/vue-query'
+import { NButton, NEmpty, NScrollbar, NSpin, NSwitch } from 'naive-ui'
+import { getCraftedStocksByRecipe } from '~/composables/apiService'
 
-// Onglet « Stocks » d'une recette : les fournées déjà réalisées (lot, dates, quantité).
+// Onglet « Stocks » d'une recette : les lots fabriqués, ce qu'il en reste,
+// et sur demande l'historique (lots épuisés ou masqués, jamais supprimés automatiquement).
 
 const props = defineProps<{ recipe: Recipe }>()
 const emit = defineEmits<{ produce: [] }>()
 
 const { t } = useI18n()
-const queryClient = useQueryClient()
+const showArchived = ref(false)
 
 const { data: stocks, isLoading } = useQuery({
-  queryKey: ['craftedStocks', props.recipe.id],
-  queryFn: async () => await getCraftedStocksByRecipe(props.recipe.id) ?? [],
+  queryKey: ['craftedStocks', props.recipe.id, showArchived],
+  queryFn: async () => await getCraftedStocksByRecipe(props.recipe.id, showArchived.value) ?? [],
 })
 
-const total = computed(() => (stocks.value ?? []).reduce((sum, stock) => sum + Number(stock.quantity), 0))
+// lots en cours d'abord, l'historique ensuite
+const sortedStocks = computed(() => [
+  ...(stocks.value ?? []),
+].sort((a, b) => Number(!!a.archived) - Number(!!b.archived)))
+
+const total = computed(() => (stocks.value ?? [])
+  .filter(stock => !stock.archived)
+  .reduce((sum, stock) => sum + Number(stock.quantity), 0))
 
 function unitLabel(value: string, count = 1) {
   if (value !== 'unit')
@@ -29,33 +36,6 @@ function unitLabel(value: string, count = 1) {
 }
 function qty(value: number) {
   return Number(value).toLocaleString('fr-FR', { maximumFractionDigits: 3 })
-}
-function day(value: string) {
-  return format(parseISO(value), 'dd/MM/yyyy')
-}
-function daysLeft(value?: string | null) {
-  return value
-    ? differenceInCalendarDays(parseISO(value), new Date())
-    : null
-}
-function freshnessClass(value?: string | null) {
-  const left = daysLeft(value)
-  if (left === null)
-    return 'bg-gray-400'
-  if (left < 0)
-    return 'bg-dark-1'
-  if (left < 2)
-    return 'bg-red-500'
-  if (left < 5)
-    return 'bg-amber'
-  return 'bg-green-500'
-}
-
-async function remove(stockId: string) {
-  await deleteCraftedStock(stockId)
-  await Promise.all(['craftedStocks', 'insufficientSubRecipes'].map(key => queryClient.invalidateQueries({
-    queryKey: [key],
-  })))
 }
 </script>
 
@@ -71,37 +51,16 @@ async function remove(stockId: string) {
         {{ t('produce.button') }}
       </NButton>
     </div>
+    <div flex items-center gap-2 text-sm>
+      <NSwitch v-model:value="showArchived" size="small" />
+      <span cursor-pointer select-none @click="showArchived = !showArchived">{{ t('stock-lot.show_archived') }}</span>
+    </div>
 
     <NSpin v-if="isLoading" />
     <NEmpty v-else-if="!stocks?.length" size="small" :description="t('produce.no_stock')" />
-    <NScrollbar v-else max-h-16rem>
+    <NScrollbar v-else max-h-22rem>
       <ul flex flex-col gap-2 pr-2>
-        <li v-for="stock in stocks" :key="stock.id" flex items-stretch gap-2>
-          <div flex flex-1 overflow-hidden rounded-xl shadow-sm bg="gray-500/6">
-            <div flex-1 px-3 py-2>
-              <div flex items-baseline justify-between gap-2>
-                <span text-lg>{{ qty(stock.quantity) }} {{ unitLabel(stock.unit, Number(stock.quantity)) }}</span>
-                <span v-if="stock.lotNumber" text-xs opacity-70>{{ t('stock-block.lot_number') }} {{ stock.lotNumber }}</span>
-              </div>
-              <div flex flex-wrap gap-x-3 text-xs opacity-70>
-                <span>{{ t('produce.made_on') }} {{ day(stock.creationDate) }}</span>
-                <span v-if="stock.expirationDate">
-                  {{ t('produce.best_before') }} {{ day(stock.expirationDate) }}
-                  ({{ t('produce.days_left', { count: daysLeft(stock.expirationDate) }) }})
-                </span>
-              </div>
-            </div>
-            <div w-2 :class="freshnessClass(stock.expirationDate)" />
-          </div>
-          <NPopconfirm @positive-click="remove(stock.id)">
-            <template #trigger>
-              <NButton type="error" circle self-center text-red :title="t('recipeIngredient-block.delete')">
-                <div i-fluent:delete-24-regular />
-              </NButton>
-            </template>
-            {{ t('produce.delete_confirm') }}
-          </NPopconfirm>
-        </li>
+        <CraftedStockLot v-for="stock in sortedStocks" :key="stock.id" :stock="stock" />
       </ul>
     </NScrollbar>
   </div>

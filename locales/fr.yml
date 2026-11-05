@@ -259,3 +259,25 @@ produce:
   no_stock: Aucun stock. Fais la recette pour en ajouter.
   days_left: '{count} j'
   delete_confirm: Supprimer ce lot du stock ?
+
+stock-lot:
+  sell: Vendre
+  waste: Déclarer une perte
+  adjustment: Faire l'inventaire
+  archive: Masquer ce lot
+  unarchive: Réafficher ce lot
+  delete: Supprimer définitivement
+  delete_confirm: Le lot et tout son historique seront effacés. Pour simplement le cacher, utilise plutôt « Masquer ce lot ».
+  more: Plus d'actions
+  hidden: masqué
+  empty: épuisé
+  history: Historique ({count})
+  show_archived: Afficher aussi les lots épuisés ou masqués
+  how_many: Combien ?
+  counted: Quantité comptée
+  note: Note (facultatif), ex. boutique, commande Dupont…
+  kind:
+    sold: Vendu
+    waste: Perte
+    used: Utilisé en fabrication
+    adjustment: Inventaire

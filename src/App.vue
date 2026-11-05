@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { darkTheme, NConfigProvider, NNotificationProvider } from 'naive-ui'
+import { darkTheme, NConfigProvider, NDialogProvider, NNotificationProvider } from 'naive-ui'
 import { naiveThemeOverrides } from './styles/naiveThemeOverrides'
 
 const currentTheme = computed(() => isDark.value ? darkTheme : undefined)
@@ -26,7 +26,9 @@ useHead({
 <template>
   <NConfigProvider :theme-overrides="naiveThemeOverrides" :theme="currentTheme" h-100dvh>
     <NNotificationProvider>
-      <RouterView />
+      <NDialogProvider>
+        <RouterView />
+      </NDialogProvider>
     </NNotificationProvider>
   </NConfigProvider>
 </template>

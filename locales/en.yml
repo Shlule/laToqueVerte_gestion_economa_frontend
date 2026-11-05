@@ -259,3 +259,25 @@ produce:
   no_stock: No stock yet. Make the recipe to add some.
   days_left: '{count} d'
   delete_confirm: Remove this batch from stock?
+
+stock-lot:
+  sell: Sell
+  waste: Record a loss
+  adjustment: Count stock
+  archive: Hide this batch
+  unarchive: Show this batch again
+  delete: Delete permanently
+  delete_confirm: The batch and its whole history will be erased. To just hide it, use "Hide this batch" instead.
+  more: More actions
+  hidden: hidden
+  empty: sold out
+  history: History ({count})
+  show_archived: Also show sold-out or hidden batches
+  how_many: How many?
+  counted: Counted quantity
+  note: Note (optional), e.g. shop, Smith order…
+  kind:
+    sold: Sold
+    waste: Loss
+    used: Used in production
+    adjustment: Stock count

@@ -12,6 +12,7 @@ declare global {
   const AllauthError: typeof import('./composables/allauth').AllauthError
   const EffectScope: typeof import('vue').EffectScope
   const ReauthenticationRequired: typeof import('./composables/allauth').ReauthenticationRequired
+  const addStockMovement: typeof import('./composables/apiService').addStockMovement
   const allauth: typeof import('./composables/allauth').allauth
   const allauthRaw: typeof import('./composables/allauth').allauthRaw
   const api: typeof import('./composables/apiService').api
@@ -136,6 +137,7 @@ declare global {
   const removeIngredient: typeof import('./composables/apiService').removeIngredient
   const resolveComponent: typeof import('vue').resolveComponent
   const searchItems: typeof import('./composables/search').searchItems
+  const setCraftedStockArchived: typeof import('./composables/apiService').setCraftedStockArchived
   const setUnauthorizedHandler: typeof import('./composables/apiService').setUnauthorizedHandler
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
@@ -381,6 +383,7 @@ declare module 'vue' {
     readonly AllauthError: UnwrapRef<typeof import('./composables/allauth')['AllauthError']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly ReauthenticationRequired: UnwrapRef<typeof import('./composables/allauth')['ReauthenticationRequired']>
+    readonly addStockMovement: UnwrapRef<typeof import('./composables/apiService')['addStockMovement']>
     readonly allauth: UnwrapRef<typeof import('./composables/allauth')['allauth']>
     readonly allauthRaw: UnwrapRef<typeof import('./composables/allauth')['allauthRaw']>
     readonly api: UnwrapRef<typeof import('./composables/apiService')['api']>
@@ -505,6 +508,7 @@ declare module 'vue' {
     readonly removeIngredient: UnwrapRef<typeof import('./composables/apiService')['removeIngredient']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly searchItems: UnwrapRef<typeof import('./composables/search')['searchItems']>
+    readonly setCraftedStockArchived: UnwrapRef<typeof import('./composables/apiService')['setCraftedStockArchived']>
     readonly setUnauthorizedHandler: UnwrapRef<typeof import('./composables/apiService')['setUnauthorizedHandler']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>

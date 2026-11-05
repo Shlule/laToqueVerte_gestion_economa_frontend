@@ -13,6 +13,7 @@ import type {
   Recipe,
   RecipeCompose,
   RecipeIngredient,
+  StockMovementInput,
   SubRecipe,
   SupplierStock,
   SupplierStockCreation,
@@ -240,8 +241,32 @@ export function deleteStock(stockId: string) {
 }
 
 // ANCHOR - Stocks de préparations (recettes fabriquées)
-export function getCraftedStocksByRecipe(recipeId: string) {
-  return apiRequest<CraftedStock[]>({ url: `/crafted-stocks/byRecipe/${recipeId}`, errorContext: `stocks de la recette ${recipeId}` })
+/** Lots d'une recette ; `all` inclut les lots épuisés ou masqués (historique). */
+export function getCraftedStocksByRecipe(recipeId: string, all = false) {
+  return apiRequest<CraftedStock[]>({
+    url: `/crafted-stocks/byRecipe/${recipeId}${all ? '?all=1' : ''}`,
+    errorContext: `stocks de la recette ${recipeId}`,
+  })
+}
+
+/** Vente, perte ou inventaire sur un lot. */
+export function addStockMovement(stockId: string, movement: StockMovementInput) {
+  return apiRequest<CraftedStock>({
+    method: 'POST',
+    url: `/crafted-stocks/${stockId}/movement`,
+    data: movement,
+    errorContext: 'mouvement de stock',
+  })
+}
+
+/** Masque (archive) ou réaffiche un lot. */
+export function setCraftedStockArchived(stockId: string, archived: boolean) {
+  return apiRequest<CraftedStock>({
+    method: 'PATCH',
+    url: `/crafted-stocks/${stockId}`,
+    data: { archived },
+    errorContext: 'archivage du lot',
+  })
 }
 
 export function deleteCraftedStock(stockId: string) {

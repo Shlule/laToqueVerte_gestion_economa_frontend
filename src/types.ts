@@ -108,6 +108,7 @@ export interface SupplierStock {
   quantity: number
   unit: Unit
   expirationDate: Date
+  archived?: boolean
 }
 
 export interface CraftedStockCreation {
@@ -127,6 +128,30 @@ export interface CraftedStock {
   unit: Unit
   creationDate: string
   expirationDate?: string | null
+  /** quantité fabriquée au départ */
+  initialQuantity?: number | null
+  /** lot épuisé ou masqué : gardé pour l'historique */
+  archived?: boolean
+  movements?: StockMovement[]
+}
+
+export type StockMovementKind = 'sold' | 'waste' | 'used' | 'adjustment'
+
+export interface StockMovement {
+  id: string
+  kind: StockMovementKind
+  /** quantité retirée du lot (négative si un inventaire en trouve plus) */
+  quantity: number
+  date: string
+  note: string
+}
+
+export interface StockMovementInput {
+  kind: Exclude<StockMovementKind, 'used'>
+  /** pour un inventaire : la quantité comptée */
+  quantity: number
+  date?: string
+  note?: string
 }
 
 // ANCHOR - production (« faire la recette »)

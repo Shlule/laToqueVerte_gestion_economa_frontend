@@ -50,6 +50,7 @@ declare global {
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
   const definePage: typeof import('vue-router/experimental').definePage
+  const deleteCraftedStock: typeof import('./composables/apiService').deleteCraftedStock
   const deleteRecipeIngredient: typeof import('./composables/apiService').deleteRecipeIngredient
   const deleteStock: typeof import('./composables/apiService').deleteStock
   const deleteSubRecipe: typeof import('./composables/apiService').deleteSubRecipe
@@ -68,6 +69,7 @@ declare global {
   const getAllRecipeIngredientByRecipe: typeof import('./composables/apiService').getAllRecipeIngredientByRecipe
   const getAllStocksByIngredient: typeof import('./composables/apiService').getAllStocksByIngredient
   const getAllSubRecipeByRecipe: typeof import('./composables/apiService').getAllSubRecipeByRecipe
+  const getCraftedStocksByRecipe: typeof import('./composables/apiService').getCraftedStocksByRecipe
   const getCredential: typeof import('./composables/allauth').getCredential
   const getCsrfToken: typeof import('./composables/apiService').getCsrfToken
   const getCurrentInstance: typeof import('vue').getCurrentInstance
@@ -114,6 +116,7 @@ declare global {
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
   const preferredDark: typeof import('./composables/dark').preferredDark
+  const produceRecipe: typeof import('./composables/apiService').produceRecipe
   const provide: typeof import('vue').provide
   const provideLocal: typeof import('@vueuse/core').provideLocal
   const reactify: typeof import('@vueuse/core').reactify
@@ -416,6 +419,7 @@ declare module 'vue' {
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly definePage: UnwrapRef<typeof import('vue-router/experimental')['definePage']>
+    readonly deleteCraftedStock: UnwrapRef<typeof import('./composables/apiService')['deleteCraftedStock']>
     readonly deleteRecipeIngredient: UnwrapRef<typeof import('./composables/apiService')['deleteRecipeIngredient']>
     readonly deleteStock: UnwrapRef<typeof import('./composables/apiService')['deleteStock']>
     readonly deleteSubRecipe: UnwrapRef<typeof import('./composables/apiService')['deleteSubRecipe']>
@@ -427,12 +431,14 @@ declare module 'vue' {
     readonly editSubRecipe: UnwrapRef<typeof import('./composables/apiService')['editSubRecipe']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly formatDuration: UnwrapRef<typeof import('./composables/cooking')['formatDuration']>
     readonly formatPrice: UnwrapRef<typeof import('./composables/money')['formatPrice']>
     readonly getAllIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllIngredient']>
     readonly getAllRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipe']>
     readonly getAllRecipeIngredientByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllRecipeIngredientByRecipe']>
     readonly getAllStocksByIngredient: UnwrapRef<typeof import('./composables/apiService')['getAllStocksByIngredient']>
     readonly getAllSubRecipeByRecipe: UnwrapRef<typeof import('./composables/apiService')['getAllSubRecipeByRecipe']>
+    readonly getCraftedStocksByRecipe: UnwrapRef<typeof import('./composables/apiService')['getCraftedStocksByRecipe']>
     readonly getCredential: UnwrapRef<typeof import('./composables/allauth')['getCredential']>
     readonly getCsrfToken: UnwrapRef<typeof import('./composables/apiService')['getCsrfToken']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
@@ -479,6 +485,7 @@ declare module 'vue' {
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly preferredDark: UnwrapRef<typeof import('./composables/dark')['preferredDark']>
+    readonly produceRecipe: UnwrapRef<typeof import('./composables/apiService')['produceRecipe']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>

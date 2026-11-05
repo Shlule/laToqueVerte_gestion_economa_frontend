@@ -227,3 +227,35 @@ component-picker:
   hint: Tape quelques lettres, choisis avec ↑ ↓ et Entrée, puis indique la quantité.
   nothing_yet: Rien d'ajouté pour l'instant.
   added: '{count} élément(s) ajouté(s)'
+
+produce:
+  pieces: pièces
+  pick_date: Choisir une date
+  optional: Facultatif
+  tab: Stocks
+  button: Faire la recette
+  title: Faire « {name} »
+  quantity: Quantité fabriquée
+  batches: '{count} fois la recette'
+  made_on: Fabriqué le
+  best_before: À consommer avant
+  uses: Ce que la fabrication utilise
+  needed: Besoin
+  in_stock: Stock
+  lots: Lots utilisés (les plus urgents d'abord)
+  missing: 'manque {quantity}'
+  no_lot: sans n°
+  emptied: vidé
+  nothing_used: Cette recette n'utilise aucun ingrédient.
+  shortage_title: Stock insuffisant
+  shortage_text: Seul ce qui est en stock sera retiré ; le reste est considéré comme pris ailleurs.
+  question: Retirer des stocks les ingrédients et préparations utilisés ?
+  consume_stock: Oui, retirer du stock
+  keep_stock: Non, ne rien retirer
+  done: '{quantity} {unit} de « {name} » ajouté(s) au stock'
+  done_consumed: Les ingrédients utilisés ont été retirés du stock.
+  done_kept: Les stocks des ingrédients n'ont pas été modifiés.
+  total: En stock
+  no_stock: Aucun stock. Fais la recette pour en ajouter.
+  days_left: '{count} j'
+  delete_confirm: Supprimer ce lot du stock ?

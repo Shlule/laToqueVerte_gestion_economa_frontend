@@ -125,7 +125,51 @@ export interface CraftedStock {
   lotNumber?: string
   quantity: number
   unit: Unit
-  creationDate: Date
+  creationDate: string
+  expirationDate?: string | null
+}
+
+// ANCHOR - production (« faire la recette »)
+
+export interface ProduceRequest {
+  quantity: number
+  unit: Unit
+  lotNumber?: string
+  creationDate?: string
+  expirationDate?: string | null
+  /** retirer des stocks les ingrédients et préparations utilisés */
+  consumeStock: boolean
+  dryRun?: boolean
+}
+
+export interface ConsumedLot {
+  stockId: string
+  lotNumber: string
+  taken: number
+  unit: Unit
+  emptied: boolean
+}
+
+export interface ConsumptionLine {
+  ingredientId?: string
+  childRecipeId?: string
+  name: string
+  needed: number
+  available: number
+  missing: number
+  unit: Unit
+  lots: ConsumedLot[]
+}
+
+export interface ProduceResponse {
+  stock: CraftedStock | null
+  consumed?: boolean
+  consumption: {
+    factor: number
+    ingredients: ConsumptionLine[]
+    subRecipes: ConsumptionLine[]
+    hasShortage: boolean
+  }
 }
 
 // ANCHOR - assistant de création de recette (POST /recipes/compose)

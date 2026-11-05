@@ -3,10 +3,13 @@ import type {
   AddSubRecipe,
   AddToRecipe,
   ComposedRecipe,
+  CraftedStock,
   Ingredient,
   IngredientCreation,
   InsufficientIngredient,
   InsufficientSubRecipe,
+  ProduceRequest,
+  ProduceResponse,
   Recipe,
   RecipeCompose,
   RecipeIngredient,
@@ -234,4 +237,23 @@ export function editStock(stock: SupplierStock) {
 
 export function deleteStock(stockId: string) {
   return apiRequest<void>({ method: 'DELETE', url: `/supplier-stocks/${stockId}`, errorContext: `suppression du stock ${stockId}` })
+}
+
+// ANCHOR - Stocks de préparations (recettes fabriquées)
+export function getCraftedStocksByRecipe(recipeId: string) {
+  return apiRequest<CraftedStock[]>({ url: `/crafted-stocks/byRecipe/${recipeId}`, errorContext: `stocks de la recette ${recipeId}` })
+}
+
+export function deleteCraftedStock(stockId: string) {
+  return apiRequest<void>({ method: 'DELETE', url: `/crafted-stocks/${stockId}`, errorContext: `suppression du stock ${stockId}` })
+}
+
+/** Fabrique une recette (ou calcule seulement ce qui serait retiré des stocks avec `dryRun`). */
+export function produceRecipe(recipeId: string, request: ProduceRequest) {
+  return apiRequest<ProduceResponse>({
+    method: 'POST',
+    url: `/recipes/${recipeId}/produce`,
+    data: request,
+    errorContext: 'fabrication de la recette',
+  })
 }

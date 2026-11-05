@@ -20,6 +20,7 @@ function resetComponentsToAdd() {
 }
 
 const activeTab = ref<string>('cost')
+const [isProducing, toggleProducing] = useToggle()
 provide('recipeId', recipeData.value.id)
 
 // SECTION -  do this for tan stack query only accept ref  for enabled prop
@@ -107,23 +108,31 @@ function missingSubRecipe(childRecipeId: string) {
 <template>
   <div grid w-full flex flex-col gap-2>
     <NCard :bordered="false" class="transition-all" flex rounded-2xl shadow-lg dark:ncard-dark hover:shadow-2xl>
-      <div id="recipe-header" flex items-center justify-between>
-        <div flex gap-2>
-          <p text-3xl>
+      <div id="recipe-header" mb-2 text-left>
+        <div flex items-center justify-between gap-3>
+          <p min-w-0 truncate text-3xl :title="recipeData.name">
             {{ recipeData.name }}
           </p>
+          <div flex shrink-0 items-center gap-1 :title="t('recipe-wizard.yield')">
+            <p i-fluent:person-24-filled self-end />
+            <p text-3xl>
+              {{ Number(recipeData.quantity) }}
+            </p>
+            <span v-if="recipeData.unitType !== 'unit'" self-end text-sm>{{ recipeData.unitType }}</span>
+          </div>
         </div>
-        <div flex items-center gap-4>
-          <div v-if="recipeData.cookingTime" flex items-center gap-1 text-sm opacity-80 :title="t('recipe-wizard.step_cooking')">
-            <span i-carbon-time />{{ formatDuration(recipeData.cookingTime) }}
-            <template v-if="recipeData.cookingTemperature">
-              <span i-carbon-temperature-hot ml-1 />{{ recipeData.cookingTemperature }} °C
+        <div flex items-center justify-between gap-3 text-sm>
+          <div flex items-center gap-1 opacity-80 :title="t('recipe-wizard.step_cooking')">
+            <template v-if="recipeData.cookingTime">
+              <span i-carbon-time />{{ formatDuration(recipeData.cookingTime) }}
+              <template v-if="recipeData.cookingTemperature">
+                <span i-carbon-temperature-hot ml-2 />{{ recipeData.cookingTemperature }} °C
+              </template>
             </template>
           </div>
-          <p i-fluent:person-24-filled self-end />
-          <p text-3xl>
-            {{ recipeData.quantity }}
-          </p>
+          <button icon-btn flex items-center gap-1 :title="t('produce.button')" @click="toggleProducing(true)">
+            <span i-carbon-restaurant />{{ t('produce.button') }}
+          </button>
         </div>
       </div>
       <NTabs v-model:value="activeTab" flex justify-content="space-evenly" type="segment">
@@ -146,6 +155,10 @@ function missingSubRecipe(childRecipeId: string) {
           </div>
         </NTabPane>
 
+        <NTabPane name="stocks" :tab="t('produce.tab')">
+          <RecipeTabStocks :recipe="recipeData" @produce="toggleProducing(true)" />
+        </NTabPane>
+
         <NTabPane name="process" :tab="t('recipe-wizard.step_process')">
           <ol v-if="recipeData.steps?.length" list-decimal py-2 pl-6 text-left>
             <li v-for="(text, index) in recipeData.steps" :key="index" whitespace-pre-line py-1>
@@ -157,6 +170,9 @@ function missingSubRecipe(childRecipeId: string) {
           </p>
         </NTabPane>
       </NTabs>
+      <NModal v-model:show="isProducing">
+        <ProduceRecipe :recipe="recipeData" @close="toggleProducing(false)" />
+      </NModal>
       <NModal v-model:show="isAddingSomething" @after-leave="resetComponentsToAdd()">
         <AddingIngredientOrSubRecipe @toggle-adding-something-to-recipe="toggleAddingSomething()" />
       </NModal>

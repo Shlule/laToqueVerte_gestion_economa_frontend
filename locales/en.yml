@@ -227,3 +227,35 @@ component-picker:
   hint: Type a few letters, pick with ↑ ↓ and Enter, then set the quantity.
   nothing_yet: Nothing added yet.
   added: '{count} item(s) added'
+
+produce:
+  pieces: pieces
+  pick_date: Pick a date
+  optional: Optional
+  tab: Stock
+  button: Make the recipe
+  title: Make "{name}"
+  quantity: Quantity made
+  batches: '{count} × the recipe'
+  made_on: Made on
+  best_before: Best before
+  uses: What this batch uses
+  needed: Needed
+  in_stock: Stock
+  lots: Batches used (most urgent first)
+  missing: '{quantity} short'
+  no_lot: no number
+  emptied: emptied
+  nothing_used: This recipe uses no ingredients.
+  shortage_title: Not enough stock
+  shortage_text: Only what is in stock will be removed; the rest is assumed to come from elsewhere.
+  question: Remove the ingredients and preparations used from stock?
+  consume_stock: Yes, remove from stock
+  keep_stock: No, remove nothing
+  done: '{quantity} {unit} of "{name}" added to stock'
+  done_consumed: The ingredients used were removed from stock.
+  done_kept: Ingredient stocks were left unchanged.
+  total: In stock
+  no_stock: No stock yet. Make the recipe to add some.
+  days_left: '{count} d'
+  delete_confirm: Remove this batch from stock?

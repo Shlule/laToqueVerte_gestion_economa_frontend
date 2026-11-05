@@ -42,6 +42,8 @@ export interface Recipe {
   cookingTemperature?: number | null
   /** temps de travail pour une fournée, en minutes */
   laborTime?: number | null
+  /** nombre de parts servies avec une fournée (ex. une tarte en 8 parts) */
+  portions?: number | null
   /** puissance du four si différente des réglages (kW) */
   ovenPower?: number | null
   /** formule de prix propre à la recette ('' = formule conseillée des réglages) */

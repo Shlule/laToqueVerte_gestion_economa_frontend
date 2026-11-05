@@ -285,19 +285,33 @@ stock-lot:
     used: Used in production
     adjustment: Stock count
 pricing:
+  batch_price: 'Whole recipe ({qty}): {ttc} incl. VAT, {ht} excl. VAT'
+  unit_piece: piece
+  unit_portion: portion
+  formula: Formula
+  margin_amount: '{amount} margin excl. VAT per {unit}'
+  portions_count: '{count} portion | {count} portions'
+  portions_help: e.g. a tart in 8 slices
+  portions: Portions
+  labor_detail: 'Work: {time} × {rate}/h'
+  energy_detail: 'Oven: {time} × {power} kW × {price}/kWh'
+  total: Total
+  per_portion: Per portion
+  per_g: Per g
+  per_100g: Per 100 g
+  per_kg: Per kg
   production_cost: Production cost
-  per_piece: per piece
-  per_unit: per {unit}
+  per_piece: Per piece
   settings: Settings
   settings_title: Production cost settings
   materials: Raw materials
   cooking: Baking
   energy: Oven energy
   labor: Labour
-  no_cooking: no baking
-  no_labor: working time not set
+  no_cooking: 'Oven: no baking'
+  no_labor: 'Work: time not set (labour not counted)'
   from_sub_recipes: 'including {amount} from the preparations used'
-  edit_times: Edit times
+  edit_times: Edit times and portions
   selling_price: Selling price
   recommended: recommended
   recommended_formula: Recommended formula

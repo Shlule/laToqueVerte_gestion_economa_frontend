@@ -27,46 +27,113 @@ const { data: pricing, isLoading } = useQuery({
 })
 
 const breakdown = computed(() => pricing.value?.breakdown)
-const perUnitLabel = computed(() => recipeData.unitType === 'unit'
-  ? t('pricing.per_piece')
-  : t('pricing.per_unit', { unit: recipeData.unitType }))
 
-/** Parts du coût de revient pour la barre colorée. */
-const segments = computed(() => {
+// ANCHOR - unités de calcul : la pièce, ou le kg / les 100 g / le g, et la part si on l'a renseignée
+interface Divisor { key: string, label: string, short: string, divisor: number, digits: number }
+const divisors = computed<Divisor[]>(() => {
+  const quantity = Number(recipeData.quantity)
+  const list: Divisor[] = []
+  if (recipeData.unitType === 'unit') {
+    list.push({
+      key: 'piece',
+      short: t('pricing.unit_piece'),
+      label: t('pricing.per_piece'),
+      divisor: quantity,
+      digits: 2,
+    })
+  }
+  else {
+    const kg = recipeData.unitType === 'kg'
+      ? quantity
+      : quantity / 1000
+    list.push(
+      {
+        key: 'kg',
+        short: 'kg',
+        label: t('pricing.per_kg'),
+        divisor: kg,
+        digits: 2,
+      },
+      {
+        key: '100g',
+        short: '100 g',
+        label: t('pricing.per_100g'),
+        divisor: kg * 10,
+        digits: 2,
+      },
+      {
+        key: 'g',
+        short: 'g',
+        label: t('pricing.per_g'),
+        divisor: kg * 1000,
+        digits: 4,
+      },
+    )
+  }
+  if (recipeData.portions) {
+    list.push({
+      key: 'part',
+      short: t('pricing.unit_portion'),
+      label: t('pricing.per_portion'),
+      divisor: recipeData.portions,
+      digits: 2,
+    })
+  }
+  return list.filter(d => d.divisor > 0)
+})
+/** Unité principale du tableau : la part si elle existe, sinon la pièce ou le kg. */
+const main = computed(() => divisors.value.find(d => d.key === 'part') ?? divisors.value[0])
+function per(amount: number | string, d: Divisor | undefined) {
+  return d
+    ? formatPrice(Number(amount) / d.divisor, d.digits)
+    : '–'
+}
+
+/** Lignes du coût de revient. */
+const rows = computed(() => {
   const b = breakdown.value
-  if (!b || !Number(b.productionCost))
+  if (!b)
     return []
-  const total = Number(b.productionCost)
+  const total = Number(b.productionCost) || 1
   return [
     {
       key: 'materials',
-      value: Number(b.materials),
-      class: 'bg-teal-500',
+      dot: 'bg-teal-500',
+      amount: Number(b.materials),
     },
     {
       key: 'energy',
-      value: Number(b.energy),
-      class: 'bg-amber-500',
+      dot: 'bg-amber-500',
+      amount: Number(b.energy),
     },
     {
       key: 'labor',
-      value: Number(b.labor),
-      class: 'bg-indigo-500',
+      dot: 'bg-indigo-500',
+      amount: Number(b.labor),
     },
-  ].map(segment => ({ ...segment, percent: segment.value / total * 100 }))
+  ].map(row => ({
+    ...row,
+    percent: Math.round(row.amount / total * 100),
+  }))
 })
 
-// ANCHOR - temps (main d'œuvre et cuisson), modifiables ici
+// ANCHOR - temps (main d'œuvre et cuisson) et nombre de parts, modifiables ici
 const editingTimes = ref(false)
 const laborTime = ref<number | null>(null)
 const cookingTime = ref<number | null>(null)
+const portions = ref<number | null>(null)
 function startEditTimes() {
   laborTime.value = recipeData.laborTime ?? null
   cookingTime.value = recipeData.cookingTime ?? null
+  portions.value = recipeData.portions ?? null
   editingTimes.value = true
 }
 async function saveTimes() {
-  await patchRecipe(recipeData.id, { laborTime: laborTime.value || null, cookingTime: cookingTime.value || null })
+  await patchRecipe(recipeData.id, {
+    laborTime: laborTime.value || null,
+    cookingTime: cookingTime.value || null,
+    portions: portions.value || null,
+  })
   editingTimes.value = false
   await Promise.all([
     ['allRecipes'],
@@ -131,6 +198,37 @@ const marginClass = computed(() => {
       : 'text-teal-700 dark:text-teal-300'
 })
 
+/** Ce qui reste après le coût de revient, pour une unité principale (HT). */
+const marginPerMain = computed(() => selling.value && breakdown.value && main.value
+  ? (selling.value.priceHT - Number(breakdown.value.productionCost)) / main.value.divisor
+  : null)
+
+/** Prix de vente pour la recette entière et par unité. */
+const sellingTiles = computed(() => {
+  const price = selling.value
+  if (!price)
+    return []
+  return [
+    ...divisors.value.map(d => ({
+      key: d.key,
+      label: d.label,
+      ttc: formatPrice(price.priceTTC / d.divisor, d.digits),
+      ht: formatPrice(price.priceHT / d.divisor, d.digits),
+      highlight: d === main.value,
+    })),
+  ]
+})
+
+const qtyLabel = computed(() => {
+  const quantity = Number(recipeData.quantity).toLocaleString('fr-FR', { maximumFractionDigits: 3 })
+  const unit = recipeData.unitType === 'unit'
+    ? t('produce.pieces')
+    : recipeData.unitType
+  return recipeData.portions
+    ? `${quantity} ${unit} · ${t('pricing.portions_count', { count: recipeData.portions })}`
+    : `${quantity} ${unit}`
+})
+
 const isRecommended = computed(() => !!pricing.value
   && mode.value === pricing.value.recommended.mode
   && value.value === Number(pricing.value.recommended.value)
@@ -170,151 +268,200 @@ const showSettings = ref(false)
 </script>
 
 <template>
-  <div mt-2 flex flex-col gap-4 text-left>
+  <div mt-2 flex flex-col gap-5 text-left>
     <NSpin v-if="isLoading" />
     <template v-else-if="breakdown && pricing">
-      <!-- coût de revient -->
-      <section flex flex-col gap-2>
-        <div flex items-baseline justify-between gap-2>
-          <h3 font-bold>
+      <!-- ============ coût de revient ============ -->
+      <section flex flex-col gap-3>
+        <div flex items-center justify-between gap-2>
+          <h3 text-lg font-bold>
             {{ t('pricing.production_cost') }}
           </h3>
           <button icon-btn flex items-center gap-1 text-sm :title="t('pricing.settings')" @click="showSettings = true">
             <span i-carbon-settings-adjust />{{ t('pricing.settings') }}
           </button>
         </div>
-        <div flex items-baseline justify-between gap-2>
-          <span text-2xl font-mono>{{ formatPrice(breakdown.productionCost) }}</span>
-          <span v-if="breakdown.productionCostPerUnit != null" text-sm opacity-80>
-            {{ formatPrice(breakdown.productionCostPerUnit) }} {{ perUnitLabel }}
-          </span>
+
+        <!-- le coût par unité -->
+        <div grid gap-2 :style="{ gridTemplateColumns: `repeat(${divisors.length}, minmax(0, 1fr))` }">
+          <div v-for="d in divisors" :key="d.key" rounded-xl px-3 py-2 :bg="d === main ? 'teal-500/12' : 'gray-500/8'">
+            <div text-xs opacity-70>
+              {{ d.label }}
+            </div>
+            <div whitespace-nowrap text-lg font-semibold>
+              {{ per(breakdown.productionCost, d) }}
+            </div>
+          </div>
         </div>
-        <div v-if="segments.length" h-2 flex overflow-hidden rounded-full bg="gray-500/15">
-          <div v-for="segment in segments" :key="segment.key" :class="segment.class" :style="{ width: `${segment.percent}%` }" />
-        </div>
-        <ul flex flex-col gap-1 text-sm>
-          <li flex items-center gap-2>
-            <span h-2 w-2 shrink-0 rounded-full bg-teal-500 />
-            <span flex-1>{{ t('pricing.materials') }}</span>
-            <span font-mono>{{ formatPrice(breakdown.materials) }}</span>
+
+        <!-- d'où vient ce coût -->
+        <table w-full text-sm>
+          <thead text-xs opacity-60>
+            <tr>
+              <th text-left font-normal />
+              <th text-right align-bottom font-normal>
+                {{ t('pricing.whole_batch') }}<br><span whitespace-nowrap>{{ qtyLabel }}</span>
+              </th>
+              <th pl-3 text-right align-bottom font-normal>
+                {{ main?.label }}
+              </th>
+              <th w-3rem text-right align-bottom font-normal>
+                %
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in rows" :key="row.key" border-t="1 gray-500/15">
+              <td py-1.5>
+                <span mr-2 inline-block h-2 w-2 rounded-full :class="row.dot" />{{ t(`pricing.${row.key}`) }}
+              </td>
+              <td text-right>
+                {{ formatPrice(row.amount) }}
+              </td>
+              <td text-right>
+                {{ per(row.amount, main) }}
+              </td>
+              <td text-right opacity-60>
+                {{ row.percent }} %
+              </td>
+            </tr>
+            <tr border-t="2 gray-500/30" font-semibold>
+              <td py-1.5>
+                {{ t('pricing.total') }}
+              </td>
+              <td text-right>
+                {{ formatPrice(breakdown.productionCost) }}
+              </td>
+              <td text-right>
+                {{ per(breakdown.productionCost, main) }}
+              </td>
+              <td />
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- comment c'est calculé -->
+        <ul flex flex-col gap-0.5 text-xs opacity-60>
+          <li>
+            <span i-carbon-temperature-hot mr-1 inline-block align-middle />
+            <template v-if="breakdown.cookingTime">
+              {{ t('pricing.energy_detail', { time: formatDuration(breakdown.cookingTime), power: Number(pricing.settings.ovenPower).toLocaleString('fr-FR'), price: formatPrice(pricing.settings.electricityPrice, 4) }) }}
+            </template>
+            <template v-else>
+              {{ t('pricing.no_cooking') }}
+            </template>
           </li>
-          <li flex items-center gap-2>
-            <span h-2 w-2 shrink-0 rounded-full bg-amber-500 />
-            <span flex-1>
-              {{ t('pricing.energy') }}
-              <span v-if="breakdown.cookingTime" text-xs opacity-60>
-                ({{ formatDuration(breakdown.cookingTime) }} × {{ Number(pricing.settings.ovenPower).toLocaleString('fr-FR') }} kW × {{ formatPrice(pricing.settings.electricityPrice, 4) }}/kWh)
-              </span>
-              <span v-else-if="!Number(breakdown.energy)" text-xs opacity-60>({{ t('pricing.no_cooking') }})</span>
-            </span>
-            <span font-mono>{{ formatPrice(breakdown.energy) }}</span>
+          <li>
+            <span i-carbon-user-activity mr-1 inline-block align-middle />
+            <template v-if="breakdown.laborTime">
+              {{ t('pricing.labor_detail', { time: formatDuration(breakdown.laborTime), rate: formatPrice(pricing.settings.laborHourlyRate) }) }}
+            </template>
+            <template v-else>
+              {{ t('pricing.no_labor') }}
+            </template>
           </li>
-          <li flex items-center gap-2>
-            <span h-2 w-2 shrink-0 rounded-full bg-indigo-500 />
-            <span flex-1>
-              {{ t('pricing.labor') }}
-              <span v-if="breakdown.laborTime" text-xs opacity-60>
-                ({{ formatDuration(breakdown.laborTime) }} × {{ formatPrice(pricing.settings.laborHourlyRate) }}/h)
-              </span>
-              <span v-else-if="!Number(breakdown.labor)" text-xs opacity-60>({{ t('pricing.no_labor') }})</span>
-            </span>
-            <span font-mono>{{ formatPrice(breakdown.labor) }}</span>
-          </li>
-          <li v-if="Number(breakdown.fromSubRecipes)" pl-4 text-xs opacity-60>
+          <li v-if="Number(breakdown.fromSubRecipes)">
+            <span i-carbon-chart-relationship mr-1 inline-block align-middle />
             {{ t('pricing.from_sub_recipes', { amount: formatPrice(breakdown.fromSubRecipes) }) }}
           </li>
         </ul>
 
         <div v-if="!editingTimes">
-          <NButton size="tiny" quaternary @click="startEditTimes">
-            <div i-carbon-time mr-1 />{{ t('pricing.edit_times') }}
+          <NButton size="small" secondary @click="startEditTimes">
+            <div i-carbon-edit mr-1 />{{ t('pricing.edit_times') }}
           </NButton>
         </div>
-        <div v-else flex flex-wrap items-center gap-2 rounded-lg p-2 text-sm bg="gray-500/8">
-          <span>{{ t('pricing.labor') }}</span>
-          <NInputNumber v-model:value="laborTime" :min="0" size="small" w-7rem>
+        <div v-else grid="~ cols-[auto_1fr]" items-center gap-x-3 gap-y-2 rounded-xl p-3 text-sm bg="gray-500/8">
+          <span>{{ t('recipe-wizard.labor_time') }}</span>
+          <NInputNumber v-model:value="laborTime" :min="0" size="small" w-9rem>
             <template #suffix>
               min
             </template>
           </NInputNumber>
           <span>{{ t('pricing.cooking') }}</span>
-          <NInputNumber v-model:value="cookingTime" :min="0" size="small" w-7rem>
+          <NInputNumber v-model:value="cookingTime" :min="0" size="small" w-9rem>
             <template #suffix>
               min
             </template>
           </NInputNumber>
-          <NButton size="small" type="primary" @click="saveTimes">
-            {{ t('button.confirm') }}
-          </NButton>
-          <NButton size="small" quaternary @click="editingTimes = false">
-            {{ t('button.cancel') }}
-          </NButton>
+          <span>{{ t('pricing.portions') }}</span>
+          <div flex items-center gap-2>
+            <NInputNumber v-model:value="portions" :min="0" size="small" w-9rem :placeholder="t('recipe-wizard.optional')" />
+            <span text-xs opacity-60>{{ t('pricing.portions_help') }}</span>
+          </div>
+          <div col-span-2 flex justify-end gap-2>
+            <NButton size="small" quaternary @click="editingTimes = false">
+              {{ t('button.cancel') }}
+            </NButton>
+            <NButton size="small" type="primary" @click="saveTimes">
+              {{ t('button.confirm') }}
+            </NButton>
+          </div>
         </div>
       </section>
 
-      <!-- prix de vente -->
-      <section flex flex-col gap-2 border-t="1 gray-500/15" pt-3>
+      <!-- ============ prix de vente ============ -->
+      <section flex flex-col gap-3 border-t="1 gray-500/15" pt-4>
         <div flex items-center justify-between gap-2>
-          <h3 font-bold>
+          <h3 text-lg font-bold>
             {{ t('pricing.selling_price') }}
           </h3>
-          <NTag v-if="isRecommended" size="small" type="success" round>
-            {{ t('pricing.recommended_formula') }}
-          </NTag>
-          <NTag v-else size="small" round>
-            {{ t('pricing.custom_formula') }}
+          <NTag size="small" round :type="isRecommended ? 'success' : 'default'">
+            {{ isRecommended ? t('pricing.recommended_formula') : t('pricing.custom_formula') }}
           </NTag>
         </div>
-        <NSelect :value="mode" :options="modeOptions" size="small" @update:value="onModeChange" />
-        <p text-xs opacity-60>
-          {{ t(`pricing.help.${mode}`) }}
+
+        <!-- le résultat d'abord -->
+        <div v-if="selling" grid gap-2 :style="{ gridTemplateColumns: `repeat(${divisors.length}, minmax(0, 1fr))` }">
+          <div v-for="tile in sellingTiles" :key="tile.key" rounded-xl px-3 py-2 :bg="tile.highlight ? 'teal-500/12' : 'gray-500/8'">
+            <div text-xs opacity-70>
+              {{ tile.label }}
+            </div>
+            <div whitespace-nowrap text-lg font-semibold>
+              {{ tile.ttc }}
+            </div>
+            <div text-xs opacity-60>
+              TTC · {{ tile.ht }} HT
+            </div>
+          </div>
+        </div>
+        <p v-if="selling" text-sm opacity-80>
+          {{ t('pricing.batch_price', { qty: qtyLabel, ttc: formatPrice(selling.priceTTC), ht: formatPrice(selling.priceHT) }) }}
         </p>
-        <div flex flex-wrap items-center gap-2>
-          <NInputNumber v-model:value="value" :min="0" :max="mode === 'margin' ? 99 : undefined" :step="mode === 'margin' ? 5 : 0.1" size="small" w-9rem @update:value="dirty = true">
-            <template #suffix>
-              {{ valueSuffix }}
+        <p v-if="selling" flex flex-wrap items-center gap-x-4 gap-y-1 text-sm>
+          <span font-semibold :class="marginClass">
+            {{ t('pricing.margin', { rate: selling.marginRate?.toLocaleString('fr-FR', { maximumFractionDigits: 1 }) ?? '–' }) }}
+            <template v-if="marginPerMain != null && main">
+              · {{ t('pricing.margin_amount', { amount: formatPrice(marginPerMain), unit: main.short }) }}
             </template>
-          </NInputNumber>
-          <span text-sm opacity-70>{{ t('pricing.vat') }}</span>
-          <NSelect v-model:value="vatRate" :options="vatOptions" size="small" w-7rem @update:value="dirty = true" />
-        </div>
-
-        <div v-if="selling" grid="~ cols-2" gap-2>
-          <div rounded-xl p-2 bg="teal-500/10">
-            <div text-xs opacity-70>
-              {{ perUnitLabel }} TTC
-            </div>
-            <div text-xl font-mono>
-              {{ formatPrice(selling.perUnitTTC) }}
-            </div>
-            <div text-xs opacity-60>
-              {{ formatPrice(selling.perUnitHT) }} HT
-            </div>
-          </div>
-          <div rounded-xl p-2 bg="teal-500/10">
-            <div text-xs opacity-70>
-              {{ t('pricing.whole_batch') }} TTC
-            </div>
-            <div text-xl font-mono>
-              {{ formatPrice(selling.priceTTC) }}
-            </div>
-            <div text-xs opacity-60>
-              {{ formatPrice(selling.priceHT) }} HT
-            </div>
-          </div>
-        </div>
-        <p v-if="selling" flex flex-wrap gap-x-4 text-sm>
-          <span :class="marginClass">{{ t('pricing.margin', { rate: selling.marginRate?.toLocaleString('fr-FR', { maximumFractionDigits: 1 }) ?? '–' }) }}</span>
-          <span v-if="selling.coefficientOnMaterials" opacity-70>{{ t('pricing.coefficient', { value: selling.coefficientOnMaterials.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) }) }}</span>
+          </span>
+          <span v-if="selling.coefficientOnMaterials" text-xs opacity-60>{{ t('pricing.coefficient', { value: selling.coefficientOnMaterials.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) }) }}</span>
         </p>
 
-        <div flex flex-wrap justify-end gap-2>
-          <NButton v-if="pricing.pricing.isCustom" size="small" quaternary :disabled="saving" @click="savePricing(true)">
-            {{ t('pricing.use_recommended') }}
-          </NButton>
-          <NButton size="small" type="primary" :loading="saving" :disabled="!dirty || value == null" @click="savePricing()">
-            {{ t('pricing.save') }}
-          </NButton>
+        <!-- la formule -->
+        <div flex flex-col gap-2 rounded-xl p-3 bg="gray-500/8">
+          <span text-xs font-semibold uppercase opacity-60>{{ t('pricing.formula') }}</span>
+          <NSelect :value="mode" :options="modeOptions" size="small" @update:value="onModeChange" />
+          <p text-xs opacity-60>
+            {{ t(`pricing.help.${mode}`) }}
+          </p>
+          <div flex flex-wrap items-center gap-2>
+            <NInputNumber v-model:value="value" :min="0" :max="mode === 'margin' ? 99 : undefined" :step="mode === 'margin' ? 5 : 0.1" size="small" w-9rem @update:value="dirty = true">
+              <template #suffix>
+                {{ valueSuffix }}
+              </template>
+            </NInputNumber>
+            <span text-sm opacity-70>{{ t('pricing.vat') }}</span>
+            <NSelect v-model:value="vatRate" :options="vatOptions" size="small" w-7rem @update:value="dirty = true" />
+          </div>
+          <div flex flex-wrap justify-end gap-2>
+            <NButton v-if="pricing.pricing.isCustom" size="small" quaternary :disabled="saving" @click="savePricing(true)">
+              {{ t('pricing.use_recommended') }}
+            </NButton>
+            <NButton size="small" type="primary" :loading="saving" :disabled="!dirty || value == null" @click="savePricing()">
+              {{ t('pricing.save') }}
+            </NButton>
+          </div>
         </div>
       </section>
     </template>

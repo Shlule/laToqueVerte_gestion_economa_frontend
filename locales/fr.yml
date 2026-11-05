@@ -285,19 +285,33 @@ stock-lot:
     used: Utilisé en fabrication
     adjustment: Inventaire
 pricing:
+  batch_price: 'Toute la recette ({qty}) : {ttc} TTC, soit {ht} HT'
+  unit_piece: pièce
+  unit_portion: part
+  formula: Formule de calcul
+  margin_amount: '{amount} de marge HT par {unit}'
+  portions_count: '{count} part | {count} parts'
+  portions_help: ex. une tarte en 8 parts
+  portions: Nombre de parts
+  labor_detail: 'Travail : {time} × {rate}/h'
+  energy_detail: 'Four : {time} × {power} kW × {price}/kWh'
+  total: Total
+  per_portion: La part
+  per_g: Le g
+  per_100g: Les 100 g
+  per_kg: Le kg
   production_cost: Coût de revient
-  per_piece: la pièce
-  per_unit: le {unit}
+  per_piece: La pièce
   settings: Réglages
   settings_title: Réglages des coûts de production
   materials: Matières premières
   cooking: Cuisson
   energy: Énergie du four
   labor: Main d'œuvre
-  no_cooking: pas de cuisson
-  no_labor: temps de travail non renseigné
+  no_cooking: 'Four : pas de cuisson'
+  no_labor: "Travail : temps non renseigné (main d'œuvre non comptée)"
   from_sub_recipes: 'dont {amount} venant des préparations utilisées'
-  edit_times: Modifier les temps
+  edit_times: Modifier les temps et les parts
   selling_price: Prix de vente
   recommended: conseillée
   recommended_formula: Formule conseillée
@@ -313,7 +327,7 @@ pricing:
     margin: 'Vous choisissez la part du prix HT qui reste après le coût de revient. 60 % = sur 10 € HT, 6 € de marge.'
     fixed: "Vous fixez vous-même le prix TTC de vente d'une pièce (ou d'un kg) : la marge est calculée."
   vat: TVA
-  whole_batch: Toute la recette
+  whole_batch: La recette
   margin: 'Marge : {rate} %'
   coefficient: 'Coefficient sur matières : × {value}'
   use_recommended: Revenir à la formule conseillée
